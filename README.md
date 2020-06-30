@@ -87,3 +87,11 @@ Swagger doc
 - App configurable
 - Cron
 - Redis
+
+## Command
+```
+swag init
+go build
+go mod vendor
+go run main.go
+```
