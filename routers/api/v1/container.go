@@ -14,6 +14,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"go-docker/pkg/app"
+	"go-docker/pkg/docker"
 	"go-docker/pkg/e"
 
 	"github.com/docker/docker/api/types"
@@ -220,4 +221,23 @@ func CreateImages(c *gin.Context) {
 	data := make(map[string]interface{})
 
 	appG.Response(http.StatusOK, e.SUCCESS, data)
+}
+
+// @Summary Get list containers
+// @Produce  json
+// @Tags  Containers
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Router /api/v1/containers [get]
+func GetContainers(c *gin.Context) {
+	appG := app.Gin{C: c}
+
+	containers, err := docker.ListContainers(docker.Client.Client)
+
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_GET_LIST_CONTAINER, nil)
+		return
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, containers)
 }

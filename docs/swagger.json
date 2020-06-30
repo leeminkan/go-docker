@@ -1,14 +1,10 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "An example of gin",
+        "description": "Go Project",
         "title": "Go Project",
-        "termsOfService": "https://github.com/EDDYCJY/go-gin-example",
         "contact": {},
-        "license": {
-            "name": "MIT",
-            "url": "https://github.com/EDDYCJY/go-gin-example/blob/master/LICENSE"
-        },
+        "license": {},
         "version": "1.0"
     },
     "paths": {
@@ -258,6 +254,31 @@
                         "required": true
                     }
                 ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/containers": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Containers"
+                ],
+                "summary": "Get list containers",
                 "responses": {
                     "200": {
                         "description": "OK",

@@ -18,12 +18,8 @@ var doc = `{
     "info": {
         "description": "{{.Description}}",
         "title": "{{.Title}}",
-        "termsOfService": "https://github.com/EDDYCJY/go-gin-example",
         "contact": {},
-        "license": {
-            "name": "MIT",
-            "url": "https://github.com/EDDYCJY/go-gin-example/blob/master/LICENSE"
-        },
+        "license": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -275,6 +271,31 @@ var doc = `{
                         "required": true
                     }
                 ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/containers": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Containers"
+                ],
+                "summary": "Get list containers",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -673,7 +694,7 @@ var SwaggerInfo = swaggerInfo{
 	BasePath:    "",
 	Schemes:     []string{},
 	Title:       "Go Project",
-	Description: "An example of gin",
+	Description: "Go Project",
 }
 
 type s struct{}

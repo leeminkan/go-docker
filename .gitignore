@@ -6,6 +6,7 @@ runtime/*
 !runtime/fonts
 /vendor
 /docs/swagger/*
-/docs/swagger/docs.go
-/docs/swagger/swagger.json
-/docs/swagger/swagger.yaml
+/docs/docs.go
+/docs/swagger.json
+/docs/swagger.yaml
+go-docker.exe

@@ -43,6 +43,8 @@ func InitRouter() *gin.Engine {
 	apiv1.GET("/images", v1.GetImages)
 	//Run example container
 	apiv1.GET("/containers/run-example", v1.RunContainers)
+	//Get list container
+	apiv1.GET("/containers", v1.GetContainers)
 
 	////////////////////////////////////////////////////////////////////
 	///////						End								////////

@@ -31,7 +31,8 @@ var MsgFlags = map[int]string{
 	ERROR_UPLOAD_CHECK_IMAGE_FAIL:   "检查图片失败",
 	ERROR_UPLOAD_CHECK_IMAGE_FORMAT: "校验图片错误，图片格式或大小有问题",
 
-	ERROR_GET_LIST_IMAGE: "Sorry! Cann't get list image in this time",
+	ERROR_GET_LIST_IMAGE:     "Sorry! Cann't get list image in this time",
+	ERROR_GET_LIST_CONTAINER: "Sorry! Cann't get list container in this time",
 }
 
 // GetMsg get error information based on Code

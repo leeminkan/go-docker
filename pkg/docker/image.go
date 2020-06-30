@@ -12,17 +12,17 @@ func ListImages(client *client.Client) ([]types.ImageSummary, error) {
 
 	// Define the options to use for get image list
 	// https://godoc.org/github.com/docker/docker/api/types#ImageListOptions
-	imageListOptions := types.ImageListOptions{}
+	options := types.ImageListOptions{}
 
 	// Get List Image
-	images, err := client.ImageList(
+	result, err := client.ImageList(
 		ctx,
-		imageListOptions,
+		options,
 	)
 
 	if err != nil {
-		return images, err
+		return result, err
 	}
 
-	return images, err
+	return result, err
 }
