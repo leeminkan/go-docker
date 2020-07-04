@@ -125,3 +125,19 @@ func RemoveImage(client *client.Client, imageID string) ([]types.ImageDeleteResp
 
 	return result, err
 }
+
+func GetImage(client *client.Client, imageID string) (types.ImageInspect, error) {
+	ctx := context.Background()
+
+	// Get List Image
+	result, _, err := client.ImageInspectWithRaw(
+		ctx,
+		imageID,
+	)
+
+	if err != nil {
+		return result, err
+	}
+
+	return result, err
+}

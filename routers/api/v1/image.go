@@ -10,6 +10,27 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// @Summary Get single image
+// @Produce  json
+// @Tags  Images
+// @Param id path string true "ID"
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Router /api/v1/images/{id} [get]
+func GetImage(c *gin.Context) {
+	appG := app.Gin{C: c}
+	id := c.Param("id")
+
+	result, err := docker.GetImage(docker.Client.Client, id)
+
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_GET_LIST_IMAGE, nil)
+		return
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, result)
+}
+
 // @Summary Get list images
 // @Produce  json
 // @Tags  Images
