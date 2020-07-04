@@ -66,3 +66,24 @@ func BuildImageFromDockerFile(c *gin.Context) {
 
 	appG.Response(http.StatusOK, e.SUCCESS, response)
 }
+
+// @Summary Remove image
+// @Produce  json
+// @Tags  Images
+// @Param id path string true "ID"
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Router /api/v1/images/{id} [delete]
+func RemoveImage(c *gin.Context) {
+	appG := app.Gin{C: c}
+	id := c.Param("id")
+
+	result, err := docker.RemoveImage(docker.Client.Client, id)
+
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_GET_LIST_IMAGE, nil)
+		return
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, result)
+}

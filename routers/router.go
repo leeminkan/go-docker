@@ -41,6 +41,8 @@ func InitRouter() *gin.Engine {
 	apiv1.GET("/images/create-example", v1.CreateImages)
 	//Get list images
 	apiv1.GET("/images", v1.GetImages)
+	//Remove image
+	apiv1.DELETE("/images/:id", v1.RemoveImage)
 	//Build image
 	apiv1.POST("/images/build-from-docker-file", v1.BuildImageFromDockerFile)
 	//Run example container

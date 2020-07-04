@@ -102,3 +102,26 @@ func BuildImageFromDockerFile(client *client.Client, tags []string, file multipa
 	}
 	return mOutput, err
 }
+
+func RemoveImage(client *client.Client, imageID string) ([]types.ImageDeleteResponseItem, error) {
+	ctx := context.Background()
+
+	// Define the options to use for get image list
+	// https://godoc.org/github.com/docker/docker/api/types#ImageRemoveOptions
+	options := types.ImageRemoveOptions{
+		Force: true,
+	}
+
+	// Get List Image
+	result, err := client.ImageRemove(
+		ctx,
+		imageID,
+		options,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return result, err
+}
