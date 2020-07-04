@@ -10,3 +10,4 @@ runtime/*
 /docs/swagger.json
 /docs/swagger.yaml
 go-docker.exe
+/frontend/node_modules
