@@ -12,7 +12,9 @@ func ListContainers(client *client.Client) ([]types.Container, error) {
 
 	// Define the options to use for get image list
 	// https://godoc.org/github.com/docker/docker/api/types#Container
-	options := types.ContainerListOptions{}
+	options := types.ContainerListOptions{
+		All: true,
+	}
 
 	// Get List Image
 	result, err := client.ContainerList(
