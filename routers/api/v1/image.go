@@ -5,7 +5,6 @@ import (
 	"go-docker/pkg/docker"
 	"go-docker/pkg/e"
 	"go-docker/pkg/logging"
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -60,7 +59,7 @@ func BuildImageFromDockerFile(c *gin.Context) {
 	response, err := docker.BuildImageFromDockerFile(docker.Client.Client, tags, file, fileHeader)
 
 	if err != nil {
-		log.Fatalf("Error: %s", err)
+		logging.Warn(err)
 		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
 		return
 	}

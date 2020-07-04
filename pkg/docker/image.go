@@ -4,10 +4,13 @@ import (
 	"archive/tar"
 	"bytes"
 	"context"
+	"encoding/json"
+	"go-docker/pkg/logging"
 	"io"
-	"os"
-
 	"mime/multipart"
+	"strings"
+
+	"io/ioutil"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
@@ -33,7 +36,7 @@ func ListImages(client *client.Client) ([]types.ImageSummary, error) {
 	return result, err
 }
 
-func BuildImageFromDockerFile(client *client.Client, tags []string, file multipart.File, fileHeader *multipart.FileHeader) (types.ImageBuildResponse, error) {
+func BuildImageFromDockerFile(client *client.Client, tags []string, file multipart.File, fileHeader *multipart.FileHeader) ([]interface{}, error) {
 	ctx := context.Background()
 	var result types.ImageBuildResponse
 
@@ -52,12 +55,12 @@ func BuildImageFromDockerFile(client *client.Client, tags []string, file multipa
 	err := tw.WriteHeader(tarHeader)
 
 	if err != nil {
-		return result, err
+		return nil, err
 	}
 
 	// Writes the docker file for the TAR file
 	if _, err := io.Copy(tw, file); err != nil {
-		return result, err
+		return nil, err
 	}
 
 	dockerFileTarReader := bytes.NewReader(buf.Bytes())
@@ -79,16 +82,23 @@ func BuildImageFromDockerFile(client *client.Client, tags []string, file multipa
 	)
 
 	if err != nil {
-		return result, err
+		return nil, err
 	}
-
-	// Read the STDOUT from the build process
 	defer result.Body.Close()
-	_, err = io.Copy(os.Stdout, result.Body)
 
+	response, err := ioutil.ReadAll(result.Body)
 	if err != nil {
-		return result, err
+		logging.Warn("Error: %s", err)
 	}
-
-	return result, err
+	var mResponse = string(response)
+	rawData := (strings.Split(mResponse, "\r\n"))
+	var mOutput []interface{}
+	for _, d := range rawData {
+		var data map[string]interface{}
+		_ = json.Unmarshal([]byte(d), &data)
+		if data != nil {
+			mOutput = append(mOutput, data)
+		}
+	}
+	return mOutput, err
 }
