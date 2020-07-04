@@ -26,3 +26,19 @@ func ListContainers(client *client.Client) ([]types.Container, error) {
 
 	return result, err
 }
+
+func GetContainer(client *client.Client, containerID string) (types.ContainerJSON, error) {
+	ctx := context.Background()
+
+	// Get List Container
+	result, err := client.ContainerInspect(
+		ctx,
+		containerID,
+	)
+
+	if err != nil {
+		return result, err
+	}
+
+	return result, err
+}

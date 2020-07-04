@@ -39,18 +39,16 @@ func InitRouter() *gin.Engine {
 
 	//Get list images
 	apiv1.GET("/images", v1.GetImages)
-	//Create example image
-	// apiv1.GET("/images/create-example", v1.CreateImages)
 	//Get image
 	apiv1.GET("/images/:id", v1.GetImage)
 	//Build image
 	apiv1.POST("/images/build-from-docker-file", v1.BuildImageFromDockerFile)
 	//Remove image
 	apiv1.DELETE("/images/:id", v1.RemoveImage)
-	//Run example container
-	apiv1.GET("/containers/run-example", v1.RunContainers)
 	//Get list container
 	apiv1.GET("/containers", v1.GetContainers)
+	//Get container
+	apiv1.GET("/containers/:id", v1.GetContainer)
 
 	////////////////////////////////////////////////////////////////////
 	///////						End								////////

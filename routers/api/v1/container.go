@@ -241,3 +241,24 @@ func GetContainers(c *gin.Context) {
 
 	appG.Response(http.StatusOK, e.SUCCESS, containers)
 }
+
+// @Summary Get single container
+// @Produce  json
+// @Tags  Containers
+// @Param id path string true "ID"
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Router /api/v1/containers/{id} [get]
+func GetContainer(c *gin.Context) {
+	appG := app.Gin{C: c}
+	id := c.Param("id")
+
+	result, err := docker.GetContainer(docker.Client.Client, id)
+
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_GET_LIST_IMAGE, nil)
+		return
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, result)
+}
