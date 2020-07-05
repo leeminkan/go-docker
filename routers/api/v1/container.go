@@ -16,6 +16,7 @@ import (
 	"go-docker/pkg/app"
 	"go-docker/pkg/docker"
 	"go-docker/pkg/e"
+	"go-docker/pkg/logging"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
@@ -256,6 +257,44 @@ func GetContainer(c *gin.Context) {
 	result, err := docker.GetContainer(docker.Client.Client, id)
 
 	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_GET_LIST_IMAGE, nil)
+		return
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, result)
+}
+
+type CreateContainerInput struct {
+	Name      string `form:"name" binding:"required"`
+	ImageName string `form:"imageName" binding:"required"`
+}
+
+// @Summary Create a container
+// @Produce  json
+// @Accept  multipart/form-data
+// @Tags  Containers
+// @Param name formData string true "Name"
+// @Param imageName formData string false "ImageName"
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Router /api/v1/containers [post]
+func CreateContainer(c *gin.Context) {
+	var (
+		appG = app.Gin{C: c}
+		form CreateContainerInput
+	)
+
+	httpCode, errCode := app.BindAndValid(c, &form)
+
+	if errCode != e.SUCCESS {
+		appG.Response(httpCode, errCode, nil)
+		return
+	}
+
+	result, err := docker.CreateContainerWithName(docker.Client.Client, form.Name, form.ImageName)
+
+	if err != nil {
+		logging.Warn(err)
 		appG.Response(http.StatusInternalServerError, e.ERROR_GET_LIST_IMAGE, nil)
 		return
 	}

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 )
 
@@ -37,6 +38,21 @@ func GetContainer(client *client.Client, containerID string) (types.ContainerJSO
 		ctx,
 		containerID,
 	)
+
+	if err != nil {
+		return result, err
+	}
+
+	return result, err
+}
+
+func CreateContainerWithName(client *client.Client, containerName string, imageName string) (container.ContainerCreateCreatedBody, error) {
+	ctx := context.Background()
+	var config container.Config
+
+	config = container.Config{Image: imageName}
+
+	result, err := client.ContainerCreate(ctx, &config, nil, nil, containerName)
 
 	if err != nil {
 		return result, err
