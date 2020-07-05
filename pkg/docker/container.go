@@ -60,3 +60,21 @@ func CreateContainerWithName(client *client.Client, containerName string, imageN
 
 	return result, err
 }
+
+func RemoveContainer(client *client.Client, containerID string) error {
+	ctx := context.Background()
+
+	// Define the options to use for get image list
+	// https://godoc.org/github.com/docker/docker/api/types#ContainerRemoveOptions
+	options := types.ContainerRemoveOptions{
+		Force: true,
+	}
+
+	err := client.ContainerRemove(
+		ctx,
+		containerID,
+		options,
+	)
+
+	return err
+}

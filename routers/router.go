@@ -51,6 +51,8 @@ func InitRouter() *gin.Engine {
 	apiv1.GET("/containers/:id", v1.GetContainer)
 	//Create a container
 	apiv1.POST("/containers", v1.CreateContainer)
+	//Remove container
+	apiv1.DELETE("/containers/:id", v1.RemoveContainer)
 
 	////////////////////////////////////////////////////////////////////
 	///////						End								////////
