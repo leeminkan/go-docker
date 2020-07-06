@@ -33,8 +33,35 @@ func InitRouter() *gin.Engine {
 	r.POST("/upload", api.UploadImage)
 
 	apiv1 := r.Group("/api/v1")
+	////////////////////////////////////////////////////////////////////
+	///////						Start							////////
+	////////////////////////////////////////////////////////////////////
+
+	//Get list images
+	apiv1.GET("/images", v1.GetImages)
+	//Get image
+	apiv1.GET("/images/:id", v1.GetImage)
+	//Build image
+	apiv1.POST("/images/build-from-docker-file", v1.BuildImageFromDockerFile)
+	//Remove image
+	apiv1.DELETE("/images/:id", v1.RemoveImage)
+	//Get list container
+	apiv1.GET("/containers", v1.GetContainers)
+	//Get container
+	apiv1.GET("/containers/:id", v1.GetContainer)
+	//Create a container
+	apiv1.POST("/containers", v1.CreateContainer)
+	//Remove container
+	apiv1.DELETE("/containers/:id", v1.RemoveContainer)
+
+	////////////////////////////////////////////////////////////////////
+	///////						End								////////
+	////////////////////////////////////////////////////////////////////
 	apiv1.Use(jwt.JWT())
 	{
+		////////////////////////////////////////////////////////////////////
+		///////						Start							////////
+		////////////////////////////////////////////////////////////////////
 		//获取标签列表
 		apiv1.GET("/tags", v1.GetTags)
 		//新建标签
@@ -60,6 +87,9 @@ func InitRouter() *gin.Engine {
 		apiv1.DELETE("/articles/:id", v1.DeleteArticle)
 		//生成文章海报
 		apiv1.POST("/articles/poster/generate", v1.GenerateArticlePoster)
+		////////////////////////////////////////////////////////////////////
+		///////							End							////////
+		////////////////////////////////////////////////////////////////////
 	}
 
 	return r
