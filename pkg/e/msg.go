@@ -31,8 +31,12 @@ var MsgFlags = map[int]string{
 	ERROR_UPLOAD_CHECK_IMAGE_FAIL:   "检查图片失败",
 	ERROR_UPLOAD_CHECK_IMAGE_FORMAT: "校验图片错误，图片格式或大小有问题",
 
-	ERROR_GET_LIST_IMAGE:     "Sorry! Cann't get list image in this time",
-	ERROR_GET_LIST_CONTAINER: "Sorry! Cann't get list container in this time",
+	ERROR_GET_LIST_IMAGE:                   "Sorry! Cann't get list image in this time",
+	ERROR_GET_LIST_CONTAINER:               "Sorry! Cann't get list container in this time",
+	ERROR_CREATE_USER_FAIL:                 "Create user fail!",
+	ERROR_EXIST_USER_FAIL:                  "The username is already existed",
+	ERROR_MATCH_CONFIRM_PASSWORD_USER_FAIL: "Confirm password must match with password",
+	ERROR_USER_LOGIN_FAIL:                  "Login fail!",
 }
 
 // GetMsg get error information based on Code

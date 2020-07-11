@@ -53,6 +53,10 @@ func InitRouter() *gin.Engine {
 	apiv1.POST("/containers", v1.CreateContainer)
 	//Remove container
 	apiv1.DELETE("/containers/:id", v1.RemoveContainer)
+	//Create user
+	apiv1.POST("/users", v1.CreateUser)
+	//Login user
+	apiv1.POST("/users/login", v1.Login)
 
 	////////////////////////////////////////////////////////////////////
 	///////						End								////////
