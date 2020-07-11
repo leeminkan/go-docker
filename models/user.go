@@ -28,8 +28,8 @@ func CreateUser(username string, password string, is_admin bool) error {
 	return nil
 }
 
-// ExistTagByUserName checks if there is a user with the same name
-func ExistTagByUserName(username string) (bool, error) {
+// ExistByUserName checks if there is a user with the same name
+func ExistByUserName(username string) (bool, error) {
 	var user User
 	err := db.Select("id").Where("username = ? AND deleted_on = ? ", username, 0).First(&user).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
@@ -67,4 +67,20 @@ func CheckLogin(username, password string) error {
 	}
 
 	return nil
+}
+
+// GetUserByUserName
+func GetUserByUserName(username string) (User, error) {
+	var user User
+	err := db.Select("id").Where("username = ? AND deleted_on = ? ", username, 0).First(&user).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		logging.Warn(err)
+		return user, err
+	}
+
+	if user.ID > 0 {
+		return user, nil
+	}
+
+	return user, nil
 }

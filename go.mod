@@ -25,7 +25,7 @@ require (
 	github.com/morikuni/aec v1.0.0 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/sirupsen/logrus v1.6.0 // indirect
-	github.com/skanehira/docui v0.0.0-20191016134616-dba36160b2e3
+	github.com/skanehira/docui v0.0.0-20191016134616-dba36160b2e3 // indirect
 	github.com/swaggo/gin-swagger v1.2.0
 	github.com/swaggo/swag v1.5.1
 	github.com/tealeg/xlsx v1.0.4-0.20180419195153-f36fa3be8893

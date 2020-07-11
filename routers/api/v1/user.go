@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"go-docker/models"
 	"go-docker/pkg/app"
 	"go-docker/pkg/e"
 	"go-docker/pkg/logging"
@@ -128,6 +129,25 @@ func Login(c *gin.Context) {
 
 	appG.Response(http.StatusOK, e.SUCCESS, map[string]string{
 		"token": token,
+	})
+	return
+}
+
+// @Summary Get Info User
+// @Produce  json
+// @Security ApiKeyAuth
+// @Tags  Users
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Router /api/v1/users/mine [get]
+func GetInfo(c *gin.Context) {
+	var (
+		appG = app.Gin{C: c}
+	)
+
+	user, _ := c.MustGet("user").(models.User)
+	appG.Response(http.StatusOK, e.SUCCESS, map[string]int{
+		"user": user.ID,
 	})
 	return
 }
