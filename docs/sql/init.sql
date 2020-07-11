@@ -13,4 +13,4 @@ CREATE TABLE `user` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `user` (`id`, `username`, `password`, `is_admin`, `created_on`, `modified_on`) VALUES ('1', 'admin', '$2a$10$xIG496.l6ZfJQBOixKmxnO.Nx/Z1OsJYx2KQ1wPwnMp', 1, '1594460461', '1594460461');
+INSERT INTO `user` (`id`, `username`, `password`, `is_admin`, `created_on`, `modified_on`, `deleted_on`) VALUES ('1', 'admin', '$2a$10$xIG496.l6ZfJQBOixKmxnO.Nx/Z1OsJYx2KQ1wPwnMp', 1, '1594460461', '1594460461', '0');

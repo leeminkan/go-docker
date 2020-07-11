@@ -11,3 +11,4 @@ runtime/*
 /docs/swagger.yaml
 go-docker.exe
 /frontend/node_modules
+go.mod
