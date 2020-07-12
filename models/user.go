@@ -3,6 +3,8 @@ package models
 import (
 	"go-docker/pkg/logging"
 
+	"go-docker/pkg/e"
+
 	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -66,7 +68,7 @@ func CheckLogin(username, password string) error {
 		return nil
 	}
 
-	return nil
+	return e.New("User not found!")
 }
 
 // GetUserByUserName
