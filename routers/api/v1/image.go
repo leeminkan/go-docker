@@ -5,6 +5,7 @@ import (
 	"go-docker/pkg/docker"
 	"go-docker/pkg/e"
 	"go-docker/pkg/logging"
+	imageType "go-docker/type/image"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -55,13 +56,14 @@ func GetImages(c *gin.Context) {
 // @Accept  multipart/form-data
 // @Tags  Images
 // @Param file formData file true "Docker File"
+// @Param options query OptionsBuildImageFromDockerFile true "Options"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
 // @Router /api/v1/images/build-from-docker-file [post]
 func BuildImageFromDockerFile(c *gin.Context) {
 	appG := app.Gin{C: c}
-	file, fileHeader, err := c.Request.FormFile("file")
 
+	file, fileHeader, err := c.Request.FormFile("file")
 	defer file.Close()
 
 	if err != nil {
@@ -75,9 +77,15 @@ func BuildImageFromDockerFile(c *gin.Context) {
 		return
 	}
 
-	tags := []string{"tag", "tag2"}
+	var options imageType.OptionsBuildImageFromDockerFile
+	err = c.ShouldBindQuery(&options)
+	if err != nil {
+		logging.Warn(err)
+		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		return
+	}
 
-	response, err := docker.BuildImageFromDockerFile(docker.Client.Client, tags, file, fileHeader)
+	response, err := docker.BuildImageFromDockerFile(docker.Client.Client, options, file, fileHeader)
 
 	if err != nil {
 		logging.Warn(err)

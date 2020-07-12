@@ -6,6 +6,7 @@ import (
 	"context"
 	"encoding/json"
 	"go-docker/pkg/logging"
+	imageType "go-docker/type/image"
 	"io"
 	"mime/multipart"
 	"strings"
@@ -36,7 +37,7 @@ func ListImages(client *client.Client) ([]types.ImageSummary, error) {
 	return result, err
 }
 
-func BuildImageFromDockerFile(client *client.Client, tags []string, file multipart.File, fileHeader *multipart.FileHeader) ([]interface{}, error) {
+func BuildImageFromDockerFile(client *client.Client, mOptions imageType.OptionsBuildImageFromDockerFile, file multipart.File, fileHeader *multipart.FileHeader) ([]interface{}, error) {
 	ctx := context.Background()
 	var result types.ImageBuildResponse
 
@@ -71,7 +72,7 @@ func BuildImageFromDockerFile(client *client.Client, tags []string, file multipa
 		Context:    dockerFileTarReader,
 		Dockerfile: fileHeader.Filename,
 		Remove:     true,
-		Tags:       tags,
+		Tags:       mOptions.Tags,
 	}
 
 	// Build the actual image
