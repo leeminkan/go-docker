@@ -1,35 +1,70 @@
-import React from "react";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import React, { Component } from "react";
+import { MuiThemeProvider } from "@material-ui/core/styles";
+import { history } from "./redux";
+import { Router, Switch } from "react-router-dom";
+import theme from "./commons/styles/theme";
+import { CssBaseline } from "@material-ui/core";
+import { ADMIN_ROUTES, ROUTES } from "./constants/route";
+import AdminLayoutRoute from "./layout/AdminLayout";
+import DefaultLayoutRoute from "./layout/DefaultLayout";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-import routes from "./routes";
-import withTracker from "./withTracker";
+class App extends Component {
+  renderAdminRoutes() {
+    let xhtml = null;
+    xhtml = ADMIN_ROUTES.map((item, index) => {
+      return (
+        <AdminLayoutRoute
+          component={item.component}
+          exact={item.exact}
+          key={index}
+          path={item.path}
+        />
+      );
+    });
+    return xhtml;
+  }
 
-import "bootstrap/dist/css/bootstrap.min.css";
-import "./styles/shards-dashboards.1.1.0.min.css";
-import Login from "./views/Login";
-import Register from "./views/Register";
+  renderDefaultRoutes() {
+    let xhtml = null;
+    xhtml = ROUTES.map((item, index) => {
+      return (
+        <DefaultLayoutRoute
+          component={item.component}
+          exact={item.exact}
+          key={index}
+          path={item.path}
+        />
+      );
+    });
+    return xhtml;
+  }
 
-export default () => (
-  <Router basename={process.env.REACT_APP_BASENAME || ""}>
-    <div>
-      <Route component={Login} path="/login" />
-      <Route component={Register} path="/register" />
-      {routes.map((route, index) => {
-        return (
-          <Route
-            key={index}
-            path={route.path}
-            exact={route.exact}
-            component={withTracker(props => {
-              return (
-                <route.layout {...props}>
-                  <route.component {...props} />
-                </route.layout>
-              );
-            })}
-          />
-        );
-      })}
-    </div>
-  </Router>
-);
+  renderRoutes() {
+    let xhtml = null;
+    xhtml = (
+      <Switch>
+        {this.renderAdminRoutes()}
+        {this.renderDefaultRoutes()}
+      </Switch>
+    );
+    return xhtml;
+  }
+
+  render() {
+    return (
+      <Router history={history}>
+        <MuiThemeProvider theme={theme}>
+          <div className="App">
+            <ToastContainer />
+            <CssBaseline />
+            {this.renderRoutes()}
+          </div>
+        </MuiThemeProvider>
+      </Router>
+    );
+  }
+}
+
+export default App;
