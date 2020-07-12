@@ -28,6 +28,9 @@ func init() {
 // @title Go Project
 // @version 1.0
 // @description Go Project
+// @securityDefinitions.apikey  ApiKeyAuth
+// @in header
+// @name Authorization
 func main() {
 	gin.SetMode(setting.ServerSetting.RunMode)
 

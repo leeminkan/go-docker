@@ -18,7 +18,7 @@ func (u *User) Create() error {
 }
 
 func (u *User) ExistByUserName() (bool, error) {
-	return models.ExistTagByUserName(u.Username)
+	return models.ExistByUserName(u.Username)
 }
 
 func (u *User) Login() (string, error) {
@@ -28,11 +28,21 @@ func (u *User) Login() (string, error) {
 		return "", err
 	}
 
-	token, err := util.GenerateToken(u.Username, u.Password)
+	token, err := util.GenerateToken(u.Username)
 	if err != nil {
 		logging.Warn(err)
 		return "", err
 	}
 
 	return token, nil
+}
+
+func GetUserByUserName(username string) (models.User, error) {
+	user, err := models.GetUserByUserName(username)
+	if err != nil {
+		logging.Warn(err)
+		return user, err
+	}
+
+	return user, nil
 }
