@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Drawer from "@material-ui/core/Drawer";
-import { List, ListItem, Typography } from "@material-ui/core";
+import { List, ListItem, Typography, Toolbar } from "@material-ui/core";
 import { withStyles } from "@material-ui/styles";
 import { NavLink } from "react-router-dom";
 import styles from "./styles";
@@ -29,9 +29,14 @@ class Sidebar extends Component {
               activeClassName={classes.menuLinkActive}
             >
               <ListItem className={classes.menuItem} button>
-                <Typography className={classes.menuTitle}>
-                  {item.name}
-                </Typography>
+                <Toolbar className={classes.tool}>
+                  <div className={classes.icon}>
+                    <span className="material-icons">{item.icon}</span>
+                  </div>
+                  <Typography className={classes.menuTitle}>
+                    {item.name}
+                  </Typography>
+                </Toolbar>
               </ListItem>
             </NavLink>
           );

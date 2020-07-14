@@ -1,15 +1,15 @@
-import { withStyles } from '@material-ui/core';
-import cn from 'classnames';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators, compose } from 'redux';
-import * as uiActions from '../../actions/ui';
-import Header from './Header';
-import Sidebar from './Sidebar';
-import styles from './styles';
+import { withStyles } from "@material-ui/core";
+import cn from "classnames";
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import { bindActionCreators, compose } from "redux";
+import * as uiActions from "../../actions/ui";
+import Header from "./Header";
+import Sidebar from "./Sidebar";
+import styles from "./styles";
 
 class Dashboard extends Component {
-  handleToggleSidebar = value => {
+  handleToggleSidebar = (value) => {
     const { uiActions } = this.props;
     const { showSidebar, hideSidebar } = uiActions;
     if (value === true) {
@@ -31,7 +31,7 @@ class Dashboard extends Component {
           />
           <div
             className={cn(classes.wrapperContent, {
-              [classes.shiftLeft]: showSidebar === true
+              [classes.shiftLeft]: showSidebar === true,
             })}
           >
             {children}
@@ -42,24 +42,18 @@ class Dashboard extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    showSidebar: state.ui.showSidebar
+    showSidebar: state.ui.showSidebar,
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    uiActions: bindActionCreators(uiActions, dispatch)
+    uiActions: bindActionCreators(uiActions, dispatch),
   };
 };
 
-const withConnect = connect(
-  mapStateToProps,
-  mapDispatchToProps
-);
+const withConnect = connect(mapStateToProps, mapDispatchToProps);
 
-export default compose(
-  withStyles(styles),
-  withConnect
-)(Dashboard);
+export default compose(withStyles(styles), withConnect)(Dashboard);

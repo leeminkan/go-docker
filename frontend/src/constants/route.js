@@ -1,21 +1,35 @@
 import HomePage from "../containers/HomePage";
 import LoginPage from "../containers/LoginPage";
 import RegisterPage from "../containers/RegisterPage";
-import ListImage from "../containers/ListImage";
+import ImageList from "../containers/ImageList";
+import BuildImage from "../containers/BuildImage";
+import ReconfigNode from "../containers/ReconfigNode";
 
 export const ADMIN_ROUTES = [
   {
     path: "/",
     name: "Trang Chủ",
-    number: 1,
     exact: true,
     component: HomePage,
+    icon: "home",
+  },
+  {
+    path: "/buildimage",
+    name: "Build Image",
+    component: BuildImage,
+    icon: "construction",
   },
   {
     path: "/imagelist",
-    name: "Image",
-    number: 2,
-    component: ListImage,
+    name: "List Image",
+    component: ImageList,
+    icon: "dynamic_feed",
+  },
+  {
+    path: "/reconfig-node",
+    name: "Reconfig Edge Node",
+    component: ReconfigNode,
+    icon: "cached",
   },
 ];
 
