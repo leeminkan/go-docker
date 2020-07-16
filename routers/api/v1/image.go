@@ -56,7 +56,7 @@ func GetImages(c *gin.Context) {
 // @Accept  multipart/form-data
 // @Tags  Images
 // @Param file formData file true "Docker File"
-// @Param options query OptionsBuildImageFromDockerFile true "Options"
+// @Param options query image.OptionsBuildImageFromDockerFile true "Options"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
 // @Router /api/v1/images/build-from-docker-file [post]
