@@ -1,5 +1,5 @@
 package image
 
-type OptionsBuildImageFromDockerFile struct {
+type OptionsBuildImage struct {
 	Tags []string `form:"tags"`
 }
