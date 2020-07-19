@@ -189,3 +189,45 @@ func BuildImageFromTar(client *client.Client, mOptions imageType.OptionsBuildIma
 	}
 	return mOutput, err
 }
+
+func PushImage(client *client.Client, image string, mOptions imageType.OptionsPushImage) (interface{}, error) {
+	ctx := context.Background()
+
+	// Define the options to use for push image
+	// https://godoc.org/github.com/docker/docker/api/types#ImagePushOptions
+	options := types.ImagePushOptions{
+		RegistryAuth: mOptions.RegistryAuth,
+	}
+
+	// Push image
+	result, err := client.ImagePush(
+		ctx,
+		image,
+		options,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer result.Close()
+
+	response, err := ioutil.ReadAll(result)
+
+	if err != nil {
+		logging.Warn("Error: %s", err)
+	}
+
+	var mResponse = string(response)
+	logging.Warn("mResponse: %s", mResponse)
+	rawData := (strings.Split(mResponse, "\r\n"))
+	var mOutput []interface{}
+	for _, d := range rawData {
+		var data map[string]interface{}
+		_ = json.Unmarshal([]byte(d), &data)
+		if data != nil {
+			mOutput = append(mOutput, data)
+		}
+	}
+	return mOutput, err
+}

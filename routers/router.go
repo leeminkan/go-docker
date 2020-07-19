@@ -48,6 +48,8 @@ func InitRouter() *gin.Engine {
 	apiv1.POST("/images/build-from-docker-file", v1.BuildImageFromDockerFile)
 	//Build image
 	apiv1.POST("/images/build-from-tar", v1.BuildImageFromTar)
+	//Push image
+	apiv1.POST("/images/push", v1.PushImage)
 	//Remove image
 	apiv1.DELETE("/images/:id", v1.RemoveImage)
 	//Get list container

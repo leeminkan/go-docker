@@ -19,7 +19,7 @@ import (
 // @Param id path string true "ID"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /api/v1/images/{id} [get]
+// @Router /images/{id} [get]
 func GetImage(c *gin.Context) {
 	appG := app.Gin{C: c}
 	id := c.Param("id")
@@ -39,7 +39,7 @@ func GetImage(c *gin.Context) {
 // @Tags  Images
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /api/v1/images [get]
+// @Router /images [get]
 func GetImages(c *gin.Context) {
 	appG := app.Gin{C: c}
 
@@ -61,7 +61,7 @@ func GetImages(c *gin.Context) {
 // @Param options query image.OptionsBuildImage true "Options"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /api/v1/images/build-from-docker-file [post]
+// @Router /images/build-from-docker-file [post]
 func BuildImageFromDockerFile(c *gin.Context) {
 	appG := app.Gin{C: c}
 
@@ -104,7 +104,7 @@ func BuildImageFromDockerFile(c *gin.Context) {
 // @Param id path string true "ID"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /api/v1/images/{id} [delete]
+// @Router /images/{id} [delete]
 func RemoveImage(c *gin.Context) {
 	appG := app.Gin{C: c}
 	id := c.Param("id")
@@ -127,7 +127,7 @@ func RemoveImage(c *gin.Context) {
 // @Param options query image.OptionsBuildImage true "Options"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /api/v1/images/build-from-tar [post]
+// @Router /images/build-from-tar [post]
 func BuildImageFromTar(c *gin.Context) {
 	appG := app.Gin{C: c}
 
@@ -169,4 +169,47 @@ func BuildImageFromTar(c *gin.Context) {
 	}
 
 	appG.Response(http.StatusOK, e.SUCCESS, response)
+}
+
+// @Summary Push Image
+// @Produce  json
+// @Accept  application/json
+// @Tags  Images
+// @Param options query image.OptionsPushImage true "Options"
+// @Param body body image.InputPushImage true "body"
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Router /images/push [post]
+func PushImage(c *gin.Context) {
+	var (
+		appG = app.Gin{C: c}
+		form imageType.InputPushImage
+	)
+
+	var options imageType.OptionsPushImage
+	err := c.ShouldBindQuery(&options)
+	if err != nil {
+		logging.Warn(err)
+		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		return
+	}
+
+	httpCode, errCode := app.BindAndValid(c, &form)
+
+	if errCode != e.SUCCESS {
+		logging.Warn(errCode)
+		appG.Response(httpCode, errCode, nil)
+		return
+	}
+
+	result, err := docker.PushImage(docker.Client.Client, form.Image, options)
+
+	if err != nil {
+		logging.Warn(err)
+		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		return
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, result)
+	return
 }
