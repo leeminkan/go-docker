@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"go-docker/models"
 	"go-docker/pkg/app"
 	"go-docker/pkg/docker"
 	"go-docker/pkg/e"
@@ -9,11 +10,15 @@ import (
 
 	dockerType "go-docker/type/docker"
 
+	b64 "encoding/base64"
+	"encoding/json"
+
 	"github.com/gin-gonic/gin"
 )
 
 // @Summary Docker Hub Login
 // @Produce  json
+// @Security ApiKeyAuth
 // @Accept  application/json
 // @Tags  Docker
 // @Param login body docker.LoginDockerInput true "login"
@@ -35,6 +40,26 @@ func LoginDockerHub(c *gin.Context) {
 	}
 
 	result, err := docker.RegistryLogin(docker.Client.Client, form.Username, form.Password)
+
+	if err != nil {
+		logging.Warn(err)
+		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		return
+	}
+
+	user, _ := c.MustGet("user").(models.User)
+
+	mJson, err := json.Marshal(form)
+
+	if err != nil {
+		logging.Warn(err)
+		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		return
+	}
+
+	sEnc := b64.StdEncoding.EncodeToString([]byte(mJson))
+
+	err = user.UpdateXRegistryAuth(true, sEnc)
 
 	if err != nil {
 		logging.Warn(err)

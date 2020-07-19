@@ -38,8 +38,6 @@ func InitRouter() *gin.Engine {
 	///////						Start							////////
 	////////////////////////////////////////////////////////////////////
 
-	//Login Docker Hub
-	apiv1.POST("/docker/login", v1.LoginDockerHub)
 	//Get list images
 	apiv1.GET("/images", v1.GetImages)
 	//Get image
@@ -69,6 +67,8 @@ func InitRouter() *gin.Engine {
 	{
 		//Login user
 		apiv1.GET("/users/mine", v1.GetInfo)
+		//Login Docker Hub
+		apiv1.POST("/docker/login", v1.LoginDockerHub)
 	}
 
 	////////////////////////////////////////////////////////////////////
