@@ -1,7 +1,9 @@
 import * as types from "./constant";
 import { toastSuccess, toastError } from "../../helpers/toastHelper";
 
-const initialState = {};
+const initialState = {
+  tag: "",
+};
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {

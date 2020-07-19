@@ -5,18 +5,27 @@ import * as api from "../../constants/config";
 import axios from "axios";
 
 const apiBuildImage = async (image) => {
-  console.log(image);
   //let token = await localStorage.getItem("JWT_TOKEN");
+  let tags = image.tag;
+
   let formData = new FormData();
-  //formData.append("imagename", image.name);
-  formData.append("file", image);
+  formData.append("file", image.file);
+
+  let urlCall =
+    image.file.type === "application/x-tar"
+      ? api.API_BUILD_TAR
+      : api.API_BUILD_DOCKERFILE;
+
   let result = await axios({
     method: "POST",
-    url: `${api.API_BUILD_IMAGE}`,
+    url: urlCall,
     data: formData,
     headers: {
       //Authorization: `Bearer ${token}`,
       "content-type": "multipart/form-data",
+    },
+    params: {
+      tags,
     },
   });
   return result;

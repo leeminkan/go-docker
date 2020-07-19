@@ -45,12 +45,13 @@ const styles = (theme) => ({
   },
   text: {
     fontSize: "14px",
-    backgroundColor: "black",
+    backgroundColor: "#41444e",
     color: "white",
   },
   result: {
-    backgroundColor: "black",
+    backgroundColor: "#41444e",
     padding: "10px 40px",
+    borderRadius: "4px",
   },
 });
 
