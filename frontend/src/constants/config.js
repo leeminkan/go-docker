@@ -8,3 +8,4 @@ export const API_BUILD_DOCKERFILE = `${HOST}/images/build-from-docker-file`;
 
 export const API_BUILD_TAR = `${HOST}/images/build-from-tar`;
 
+export const API_LOGIN_DOCKERHUB = `${HOST}/docker/login`;

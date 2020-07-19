@@ -16,6 +16,7 @@ class Sidebar extends Component {
 
   renderList() {
     const { classes } = this.props;
+
     let xhtml = null;
     xhtml = (
       <List component={classes.list}>

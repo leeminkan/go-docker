@@ -4,6 +4,10 @@ import RegisterPage from "../containers/RegisterPage";
 import ImageList from "../containers/ImageList";
 import BuildImage from "../containers/BuildImage";
 import ReconfigNode from "../containers/ReconfigNode";
+import ImageDockerHub from "../containers/ImageDockerHub";
+import LoginDokcerHub from "../containers/LoginDokcerHub";
+
+const AuthDockerHub = localStorage.getItem("DOCKERHUB");
 
 export const ADMIN_ROUTES = [
   {
@@ -20,10 +24,22 @@ export const ADMIN_ROUTES = [
     icon: "construction",
   },
   {
+    path: "/login-docker-hub",
+    name: "Login Docker Hub",
+    component: LoginDokcerHub,
+    icon: "lock",
+  },
+  {
     path: "/imagelist",
     name: "List Image",
     component: ImageList,
     icon: "dynamic_feed",
+  },
+  {
+    path: "/image-dockerhub",
+    name: "List Image Docker Hub",
+    component: ImageDockerHub,
+    icon: "content_copy",
   },
   {
     path: "/reconfig-node",
