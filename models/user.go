@@ -76,7 +76,7 @@ func CheckLogin(username, password string) error {
 // GetUserByUserName
 func GetUserByUserName(username string) (User, error) {
 	var user User
-	err := db.Select("id").Where("username = ? AND deleted_on = ? ", username, 0).First(&user).Error
+	err := db.Where("username = ? AND deleted_on = ? ", username, 0).First(&user).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		logging.Warn(err)
 		return user, err

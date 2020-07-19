@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"go-docker/models"
 	"go-docker/pkg/app"
 	"go-docker/pkg/docker"
 	"go-docker/pkg/e"
@@ -174,8 +175,8 @@ func BuildImageFromTar(c *gin.Context) {
 // @Summary Push Image
 // @Produce  json
 // @Accept  application/json
+// @Security ApiKeyAuth
 // @Tags  Images
-// @Param options query image.OptionsPushImage true "Options"
 // @Param body body image.InputPushImage true "body"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
@@ -186,13 +187,7 @@ func PushImage(c *gin.Context) {
 		form imageType.InputPushImage
 	)
 
-	var options imageType.OptionsPushImage
-	err := c.ShouldBindQuery(&options)
-	if err != nil {
-		logging.Warn(err)
-		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
-		return
-	}
+	user, _ := c.MustGet("user").(models.User)
 
 	httpCode, errCode := app.BindAndValid(c, &form)
 
@@ -202,7 +197,7 @@ func PushImage(c *gin.Context) {
 		return
 	}
 
-	result, err := docker.PushImage(docker.Client.Client, form.Image, options)
+	result, err := docker.PushImage(docker.Client.Client, form.Image, user.XRegistryAuth)
 
 	if err != nil {
 		logging.Warn(err)

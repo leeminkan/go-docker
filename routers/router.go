@@ -11,6 +11,7 @@ import (
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 
 	"go-docker/middleware/cors"
+	"go-docker/middleware/docker"
 	"go-docker/middleware/jwt"
 	"go-docker/pkg/export"
 	"go-docker/pkg/qrcode"
@@ -46,8 +47,6 @@ func InitRouter() *gin.Engine {
 	apiv1.POST("/images/build-from-docker-file", v1.BuildImageFromDockerFile)
 	//Build image
 	apiv1.POST("/images/build-from-tar", v1.BuildImageFromTar)
-	//Push image
-	apiv1.POST("/images/push", v1.PushImage)
 	//Remove image
 	apiv1.DELETE("/images/:id", v1.RemoveImage)
 	//Get list container
@@ -69,6 +68,11 @@ func InitRouter() *gin.Engine {
 		apiv1.GET("/users/mine", v1.GetInfo)
 		//Login Docker Hub
 		apiv1.POST("/docker/login", v1.LoginDockerHub)
+		apiv1.Use(docker.CheckLoginDockerHub())
+		{
+			//Push image
+			apiv1.POST("/images/push", v1.PushImage)
+		}
 	}
 
 	////////////////////////////////////////////////////////////////////
