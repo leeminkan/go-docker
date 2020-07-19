@@ -12,9 +12,11 @@ import (
 type User struct {
 	Model
 
-	Username string `json:"username"`
-	Password string `json:"password"`
-	IsAdmin  bool   `json:"is_admin"`
+	Username         string `json:"username"`
+	Password         string `json:"password"`
+	IsAdmin          bool   `json:"is_admin"`
+	XRegistryAuth    string `json:"x_registry_auth"`
+	IsLoginDockerHub bool   `json:"is_login_docker_hub"`
 }
 
 func CreateUser(username string, password string, is_admin bool) error {
@@ -74,7 +76,7 @@ func CheckLogin(username, password string) error {
 // GetUserByUserName
 func GetUserByUserName(username string) (User, error) {
 	var user User
-	err := db.Select("id").Where("username = ? AND deleted_on = ? ", username, 0).First(&user).Error
+	err := db.Where("username = ? AND deleted_on = ? ", username, 0).First(&user).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		logging.Warn(err)
 		return user, err
@@ -85,4 +87,25 @@ func GetUserByUserName(username string) (User, error) {
 	}
 
 	return user, nil
+}
+
+// update X-Registry-Auth
+func (user User) UpdateXRegistryAuth(login bool, xRegistryAuth string) error {
+	if login == true {
+		err := db.Model(&user).Where("deleted_on = ?", 0).Updates(map[string]interface{}{"x_registry_auth": xRegistryAuth, "is_login_docker_hub": true}).Error
+
+		if err != nil {
+			logging.Warn(err)
+			return err
+		}
+	} else {
+		err := db.Model(&user).Where("deleted_on = ?", 0).Updates(map[string]interface{}{"x_registry_auth": nil, "is_login_docker_hub": false}).Error
+
+		if err != nil {
+			logging.Warn(err)
+			return err
+		}
+	}
+
+	return nil
 }
