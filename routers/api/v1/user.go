@@ -31,7 +31,7 @@ type CreateUserInput struct {
 // @Param is_admin formData boolean true "is_admin"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /api/v1/users [post]
+// @Router /users [post]
 func CreateUser(c *gin.Context) {
 	var (
 		appG = app.Gin{C: c}
@@ -100,7 +100,7 @@ type LoginUserInput struct {
 // @Param password formData string true "password"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /api/v1/users/login [post]
+// @Router /users/login [post]
 func Login(c *gin.Context) {
 	var (
 		appG = app.Gin{C: c}
@@ -139,7 +139,7 @@ func Login(c *gin.Context) {
 // @Tags  Users
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /api/v1/users/mine [get]
+// @Router /users/mine [get]
 func GetInfo(c *gin.Context) {
 	var (
 		appG = app.Gin{C: c}

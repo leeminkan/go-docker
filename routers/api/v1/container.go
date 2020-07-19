@@ -102,7 +102,7 @@ func runContainer(client *client.Client, imagename string, containername string,
 // @Produce  json
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /api/v1/containers/run-example [get]
+// @Router /containers/run-example [get]
 func RunContainers(c *gin.Context) {
 	appG := app.Gin{C: c}
 
@@ -200,7 +200,7 @@ func buildImage(client *client.Client, tags []string, dockerfile string) error {
 // @Produce  json
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /api/v1/images/create-example [get]
+// @Router /images/create-example [get]
 func CreateImages(c *gin.Context) {
 	appG := app.Gin{C: c}
 
@@ -229,7 +229,7 @@ func CreateImages(c *gin.Context) {
 // @Tags  Containers
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /api/v1/containers [get]
+// @Router /containers [get]
 func GetContainers(c *gin.Context) {
 	appG := app.Gin{C: c}
 
@@ -249,7 +249,7 @@ func GetContainers(c *gin.Context) {
 // @Param id path string true "ID"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /api/v1/containers/{id} [get]
+// @Router /containers/{id} [get]
 func GetContainer(c *gin.Context) {
 	appG := app.Gin{C: c}
 	id := c.Param("id")
@@ -277,7 +277,7 @@ type CreateContainerInput struct {
 // @Param imageName formData string false "ImageName"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /api/v1/containers [post]
+// @Router /containers [post]
 func CreateContainer(c *gin.Context) {
 	var (
 		appG = app.Gin{C: c}
@@ -308,7 +308,7 @@ func CreateContainer(c *gin.Context) {
 // @Param id path string true "ID"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /api/v1/containers/{id} [delete]
+// @Router /containers/{id} [delete]
 func RemoveContainer(c *gin.Context) {
 	appG := app.Gin{C: c}
 	id := c.Param("id")

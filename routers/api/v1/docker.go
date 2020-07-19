@@ -19,7 +19,7 @@ import (
 // @Param login body docker.LoginDockerInput true "login"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /api/v1/docker/login [post]
+// @Router /docker/login [post]
 func LoginDockerHub(c *gin.Context) {
 	var (
 		appG = app.Gin{C: c}

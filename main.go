@@ -31,6 +31,8 @@ func init() {
 // @securityDefinitions.apikey  ApiKeyAuth
 // @in header
 // @name Authorization
+// @host localhost:8001
+// @BasePath /api/v1
 func main() {
 	gin.SetMode(setting.ServerSetting.RunMode)
 
