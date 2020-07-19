@@ -170,3 +170,46 @@ func BuildImageFromTar(c *gin.Context) {
 
 	appG.Response(http.StatusOK, e.SUCCESS, response)
 }
+
+// @Summary Push Image
+// @Produce  json
+// @Accept  application/json
+// @Tags  Images
+// @Param options query image.OptionsPushImage true "Options"
+// @Param body body image.InputPushImage true "body"
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Router /api/v1/images/push [post]
+func PushImage(c *gin.Context) {
+	var (
+		appG = app.Gin{C: c}
+		form imageType.InputPushImage
+	)
+
+	var options imageType.OptionsPushImage
+	err := c.ShouldBindQuery(&options)
+	if err != nil {
+		logging.Warn(err)
+		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		return
+	}
+
+	httpCode, errCode := app.BindAndValid(c, &form)
+
+	if errCode != e.SUCCESS {
+		logging.Warn(errCode)
+		appG.Response(httpCode, errCode, nil)
+		return
+	}
+
+	result, err := docker.PushImage(docker.Client.Client, form.Image, options)
+
+	if err != nil {
+		logging.Warn(err)
+		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		return
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, result)
+	return
+}
