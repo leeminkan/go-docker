@@ -1,11 +1,15 @@
 package v1
 
 import (
+	"go-docker/models"
 	"go-docker/pkg/app"
 	"go-docker/pkg/docker"
 	"go-docker/pkg/e"
 	"go-docker/pkg/logging"
+	imageType "go-docker/type/image"
 	"net/http"
+
+	"go-docker/pkg/util"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,7 +20,7 @@ import (
 // @Param id path string true "ID"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /api/v1/images/{id} [get]
+// @Router /images/{id} [get]
 func GetImage(c *gin.Context) {
 	appG := app.Gin{C: c}
 	id := c.Param("id")
@@ -36,7 +40,7 @@ func GetImage(c *gin.Context) {
 // @Tags  Images
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /api/v1/images [get]
+// @Router /images [get]
 func GetImages(c *gin.Context) {
 	appG := app.Gin{C: c}
 
@@ -55,13 +59,14 @@ func GetImages(c *gin.Context) {
 // @Accept  multipart/form-data
 // @Tags  Images
 // @Param file formData file true "Docker File"
+// @Param options query image.OptionsBuildImage true "Options"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /api/v1/images/build-from-docker-file [post]
+// @Router /images/build-from-docker-file [post]
 func BuildImageFromDockerFile(c *gin.Context) {
 	appG := app.Gin{C: c}
-	file, fileHeader, err := c.Request.FormFile("file")
 
+	file, fileHeader, err := c.Request.FormFile("file")
 	defer file.Close()
 
 	if err != nil {
@@ -75,9 +80,15 @@ func BuildImageFromDockerFile(c *gin.Context) {
 		return
 	}
 
-	tags := []string{"tag", "tag2"}
+	var options imageType.OptionsBuildImage
+	err = c.ShouldBindQuery(&options)
+	if err != nil {
+		logging.Warn(err)
+		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		return
+	}
 
-	response, err := docker.BuildImageFromDockerFile(docker.Client.Client, tags, file, fileHeader)
+	response, err := docker.BuildImageFromDockerFile(docker.Client.Client, options, file, fileHeader)
 
 	if err != nil {
 		logging.Warn(err)
@@ -94,7 +105,7 @@ func BuildImageFromDockerFile(c *gin.Context) {
 // @Param id path string true "ID"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /api/v1/images/{id} [delete]
+// @Router /images/{id} [delete]
 func RemoveImage(c *gin.Context) {
 	appG := app.Gin{C: c}
 	id := c.Param("id")
@@ -107,4 +118,93 @@ func RemoveImage(c *gin.Context) {
 	}
 
 	appG.Response(http.StatusOK, e.SUCCESS, result)
+}
+
+// @Summary Build images from tar
+// @Produce  json
+// @Accept  multipart/form-data
+// @Tags  Images
+// @Param file formData file true "Tar"
+// @Param options query image.OptionsBuildImage true "Options"
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Router /images/build-from-tar [post]
+func BuildImageFromTar(c *gin.Context) {
+	appG := app.Gin{C: c}
+
+	file, fileHeader, err := c.Request.FormFile("file")
+	defer file.Close()
+
+	if err != nil {
+		logging.Warn(err)
+		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		return
+	}
+
+	if file == nil {
+		appG.Response(http.StatusBadRequest, e.INVALID_PARAMS, nil)
+		return
+	}
+	_, success := util.Find(fileHeader.Header["Content-Type"], "application/x-tar")
+
+	if success != true {
+		logging.Warn("Content-type header not properly set in the request. Expected 'application/x-tar', got %s", fileHeader.Header)
+		appG.Response(http.StatusBadRequest, e.ERROR_TYPE_MUST_BE_TAR, nil)
+		return
+	}
+
+	var options imageType.OptionsBuildImage
+	err = c.ShouldBindQuery(&options)
+	if err != nil {
+		logging.Warn(err)
+		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		return
+	}
+
+	response, err := docker.BuildImageFromTar(docker.Client.Client, options, file)
+
+	if err != nil {
+		logging.Warn(err)
+		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		return
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, response)
+}
+
+// @Summary Push Image
+// @Produce  json
+// @Accept  application/json
+// @Security ApiKeyAuth
+// @Tags  Images
+// @Param body body image.InputPushImage true "body"
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Router /images/push [post]
+func PushImage(c *gin.Context) {
+	var (
+		appG = app.Gin{C: c}
+		form imageType.InputPushImage
+	)
+
+	user, _ := c.MustGet("user").(models.User)
+
+	httpCode, errCode := app.BindAndValid(c, &form)
+
+	if errCode != e.SUCCESS {
+		logging.Warn(errCode)
+		appG.Response(httpCode, errCode, nil)
+		return
+	}
+
+	result, err := docker.PushImage(docker.Client.Client, form.Image, user.XRegistryAuth)
+
+	if err != nil {
+		logging.Warn(err)
+		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		return
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, result)
+	return
 }

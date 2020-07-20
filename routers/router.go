@@ -10,6 +10,8 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 
+	"go-docker/middleware/cors"
+	"go-docker/middleware/docker"
 	"go-docker/middleware/jwt"
 	"go-docker/pkg/export"
 	"go-docker/pkg/qrcode"
@@ -23,12 +25,12 @@ func InitRouter() *gin.Engine {
 	r := gin.New()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
+	r.Use(cors.CORSMiddleware())
 
 	r.StaticFS("/export", http.Dir(export.GetExcelFullPath()))
 	r.StaticFS("/upload/images", http.Dir(upload.GetImageFullPath()))
 	r.StaticFS("/qrcode", http.Dir(qrcode.GetQrCodeFullPath()))
 
-	r.POST("/auth", api.GetAuth)
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	r.POST("/upload", api.UploadImage)
 
@@ -43,6 +45,8 @@ func InitRouter() *gin.Engine {
 	apiv1.GET("/images/:id", v1.GetImage)
 	//Build image
 	apiv1.POST("/images/build-from-docker-file", v1.BuildImageFromDockerFile)
+	//Build image
+	apiv1.POST("/images/build-from-tar", v1.BuildImageFromTar)
 	//Remove image
 	apiv1.DELETE("/images/:id", v1.RemoveImage)
 	//Get list container
@@ -53,6 +57,23 @@ func InitRouter() *gin.Engine {
 	apiv1.POST("/containers", v1.CreateContainer)
 	//Remove container
 	apiv1.DELETE("/containers/:id", v1.RemoveContainer)
+	//Create user
+	apiv1.POST("/users", v1.CreateUser)
+	//Login user
+	apiv1.POST("/users/login", v1.Login)
+
+	apiv1.Use(jwt.JWTCustom())
+	{
+		//Login user
+		apiv1.GET("/users/mine", v1.GetInfo)
+		//Login Docker Hub
+		apiv1.POST("/docker/login", v1.LoginDockerHub)
+		apiv1.Use(docker.CheckLoginDockerHub())
+		{
+			//Push image
+			apiv1.POST("/images/push", v1.PushImage)
+		}
+	}
 
 	////////////////////////////////////////////////////////////////////
 	///////						End								////////

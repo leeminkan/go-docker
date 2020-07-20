@@ -2,10 +2,13 @@ package docker
 
 import (
 	"archive/tar"
+	"bufio"
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"go-docker/pkg/logging"
+	imageType "go-docker/type/image"
 	"io"
 	"mime/multipart"
 	"strings"
@@ -36,7 +39,7 @@ func ListImages(client *client.Client) ([]types.ImageSummary, error) {
 	return result, err
 }
 
-func BuildImageFromDockerFile(client *client.Client, tags []string, file multipart.File, fileHeader *multipart.FileHeader) ([]interface{}, error) {
+func BuildImageFromDockerFile(client *client.Client, mOptions imageType.OptionsBuildImage, file multipart.File, fileHeader *multipart.FileHeader) ([]interface{}, error) {
 	ctx := context.Background()
 	var result types.ImageBuildResponse
 
@@ -71,7 +74,7 @@ func BuildImageFromDockerFile(client *client.Client, tags []string, file multipa
 		Context:    dockerFileTarReader,
 		Dockerfile: fileHeader.Filename,
 		Remove:     true,
-		Tags:       tags,
+		Tags:       mOptions.Tags,
 	}
 
 	// Build the actual image
@@ -140,4 +143,86 @@ func GetImage(client *client.Client, imageID string) (types.ImageInspect, error)
 	}
 
 	return result, err
+}
+
+func BuildImageFromTar(client *client.Client, mOptions imageType.OptionsBuildImage, file io.Reader) ([]interface{}, error) {
+	ctx := context.Background()
+	var result types.ImageBuildResponse
+
+	// Define the options to use for build image
+	// https://godoc.org/github.com/docker/docker/api/types#ImageBuildOptions
+	options := types.ImageBuildOptions{
+		Context: file,
+		Remove:  true,
+		Tags:    mOptions.Tags,
+	}
+
+	// Build the actual image
+	result, err := client.ImageBuild(
+		ctx,
+		file,
+		options,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+	defer result.Body.Close()
+
+	response, err := ioutil.ReadAll(result.Body)
+	if err != nil {
+		logging.Warn("Error: %s", err)
+	}
+	var mResponse = string(response)
+	rawData := (strings.Split(mResponse, "\r\n"))
+	var mOutput []interface{}
+	for _, d := range rawData {
+		var data map[string]interface{}
+		_ = json.Unmarshal([]byte(d), &data)
+		if data != nil {
+			if val, ok := data["aux"]; ok {
+				test := val.(map[string]interface{})
+				if val, ok = test["ID"]; ok {
+					logging.Warn("Value: %s", val)
+				}
+			}
+			mOutput = append(mOutput, data)
+		}
+	}
+	return mOutput, err
+}
+
+func PushImage(client *client.Client, image string, registryAuth string) (interface{}, error) {
+	ctx := context.Background()
+
+	// Define the options to use for push image
+	// https://godoc.org/github.com/docker/docker/api/types#ImagePushOptions
+	options := types.ImagePushOptions{
+		RegistryAuth: registryAuth,
+	}
+
+	// Push image
+	result, err := client.ImagePush(
+		ctx,
+		image,
+		options,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	go ReadResult(result)
+
+	return result, err
+}
+
+func ReadResult(result io.ReadCloser) {
+	defer result.Close()
+	scanner := bufio.NewScanner(result)
+	for scanner.Scan() {
+		var data map[string]interface{}
+		_ = json.Unmarshal([]byte(scanner.Text()), &data)
+		fmt.Println(data)
+	}
 }

@@ -28,6 +28,11 @@ func init() {
 // @title Go Project
 // @version 1.0
 // @description Go Project
+// @securityDefinitions.apikey  ApiKeyAuth
+// @in header
+// @name Authorization
+// @host localhost:8001
+// @BasePath /api/v1
 func main() {
 	gin.SetMode(setting.ServerSetting.RunMode)
 
