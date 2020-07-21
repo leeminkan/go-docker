@@ -1,5 +1,5 @@
 -- ----------------------------
--- Table structure for user
+-- Table structure for device
 -- ----------------------------
 DROP TABLE IF EXISTS `device`;
 CREATE TABLE `device` (
