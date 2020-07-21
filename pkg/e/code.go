@@ -43,4 +43,11 @@ const (
 	ERROR_EXIST_USER_FAIL                  = 1511
 	ERROR_MATCH_CONFIRM_PASSWORD_USER_FAIL = 1512
 	ERROR_USER_LOGIN_FAIL                  = 1612
+	ERROR_CREATE_DEVICE_FAIL               = 1710
+	ERROR_EXIST_DEVICE_FAIL                = 1711
+	ERROR_NOT_EXIST_DEVICE                 = 1712
+	ERROR_GET_LIST_DEVICE                  = 1713
+	ERROR_DELETE_DEVICE                    = 1714
+	ERROR_EXIST_DEVICE                     = 1715
+	ERROR_CONNECT_DEVICE_FAIL              = 1716
 )

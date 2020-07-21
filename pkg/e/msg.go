@@ -39,6 +39,13 @@ var MsgFlags = map[int]string{
 	ERROR_EXIST_USER_FAIL:                  "The username is already existed",
 	ERROR_MATCH_CONFIRM_PASSWORD_USER_FAIL: "Confirm password must match with password",
 	ERROR_USER_LOGIN_FAIL:                  "Login fail!",
+	ERROR_CREATE_DEVICE_FAIL:               "Create device fail!",
+	ERROR_EXIST_DEVICE_FAIL:                "Check device exists fail!",
+	ERROR_NOT_EXIST_DEVICE:                 "Device not exists!",
+	ERROR_GET_LIST_DEVICE:                  "Cannot get list image!",
+	ERROR_DELETE_DEVICE:                    "Cannot delete image!",
+	ERROR_EXIST_DEVICE:                     "Device already exist!",
+	ERROR_CONNECT_DEVICE_FAIL:              "Device connect fail!",
 }
 
 // GetMsg get error information based on Code
