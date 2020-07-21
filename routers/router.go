@@ -18,6 +18,8 @@ import (
 	"go-docker/pkg/upload"
 	"go-docker/routers/api"
 	v1 "go-docker/routers/api/v1"
+
+	"github.com/gin-gonic/contrib/static"
 )
 
 // InitRouter initialize routing information
@@ -27,6 +29,7 @@ func InitRouter() *gin.Engine {
 	r.Use(gin.Recovery())
 	r.Use(cors.CORSMiddleware())
 
+	r.Use(static.Serve("/", static.LocalFile("./runtime/public", true)))
 	r.StaticFS("/export", http.Dir(export.GetExcelFullPath()))
 	r.StaticFS("/upload/images", http.Dir(upload.GetImageFullPath()))
 	r.StaticFS("/qrcode", http.Dir(qrcode.GetQrCodeFullPath()))
