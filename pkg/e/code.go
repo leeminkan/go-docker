@@ -50,4 +50,6 @@ const (
 	ERROR_DELETE_DEVICE                    = 1714
 	ERROR_EXIST_DEVICE                     = 1715
 	ERROR_CONNECT_DEVICE_FAIL              = 1716
+
+	ERROR_SET_MESSAGE_MQTT = 40001
 )

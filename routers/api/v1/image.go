@@ -15,7 +15,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var Global = mqtt.InitMQTT()
+var GlobalClient = mqtt.InitMQTT()
 
 // @Summary Get single image
 // @Produce  json
@@ -55,9 +55,17 @@ func GetImages(c *gin.Context) {
 	}
 
 	appG.Response(http.StatusOK, e.SUCCESS, images)
-	text := "xxx"
-	tokenPub := Global.Publish("cba", 0, false, text)
-	tokenPub.Wait()
+
+	value, err := models.SetValueMessage(1, "Ahihihi")
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_SET_MESSAGE_MQTT, nil)
+		return
+	}
+	if value != nil {
+		// appG.Response(http.StatusOK, e.SUCCESS, nil)
+		tokenPub := GlobalClient.Publish("image/list", 0, false, value)
+		tokenPub.Wait()
+	}
 
 }
 
