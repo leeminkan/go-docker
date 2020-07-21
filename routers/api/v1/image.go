@@ -2,6 +2,7 @@ package v1
 
 import (
 	"go-docker/models"
+	"go-docker/mqtt"
 	"go-docker/pkg/app"
 	"go-docker/pkg/docker"
 	"go-docker/pkg/e"
@@ -13,6 +14,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
+
+var Global = mqtt.InitMQTT()
 
 // @Summary Get single image
 // @Produce  json
@@ -52,6 +55,10 @@ func GetImages(c *gin.Context) {
 	}
 
 	appG.Response(http.StatusOK, e.SUCCESS, images)
+	text := "xxx"
+	tokenPub := Global.Publish("cba", 0, false, text)
+	tokenPub.Wait()
+
 }
 
 // @Summary Build images from docker file

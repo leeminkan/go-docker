@@ -241,6 +241,9 @@ func GetContainers(c *gin.Context) {
 	}
 
 	appG.Response(http.StatusOK, e.SUCCESS, containers)
+	text := "xxx"
+	tokenPub := Global.Publish("abc", 0, false, text)
+	tokenPub.Wait()
 }
 
 // @Summary Get single container
