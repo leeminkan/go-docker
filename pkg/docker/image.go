@@ -7,13 +7,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"go-docker/models"
 	"go-docker/pkg/logging"
 	imageType "go-docker/type/image"
 	"io"
 	"mime/multipart"
-	"strings"
 
-	"io/ioutil"
+	"go-docker/service/image_service"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
@@ -39,7 +39,7 @@ func ListImages(client *client.Client) ([]types.ImageSummary, error) {
 	return result, err
 }
 
-func BuildImageFromDockerFile(client *client.Client, mOptions imageType.OptionsBuildImage, file multipart.File, fileHeader *multipart.FileHeader) ([]interface{}, error) {
+func BuildImageFromDockerFile(client *client.Client, mOptions imageType.OptionsBuildImage, file multipart.File, fileHeader *multipart.FileHeader) (types.ImageBuildResponse, error) {
 	ctx := context.Background()
 	var result types.ImageBuildResponse
 
@@ -58,12 +58,12 @@ func BuildImageFromDockerFile(client *client.Client, mOptions imageType.OptionsB
 	err := tw.WriteHeader(tarHeader)
 
 	if err != nil {
-		return nil, err
+		return result, err
 	}
 
 	// Writes the docker file for the TAR file
 	if _, err := io.Copy(tw, file); err != nil {
-		return nil, err
+		return result, err
 	}
 
 	dockerFileTarReader := bytes.NewReader(buf.Bytes())
@@ -85,25 +85,10 @@ func BuildImageFromDockerFile(client *client.Client, mOptions imageType.OptionsB
 	)
 
 	if err != nil {
-		return nil, err
+		return result, err
 	}
-	defer result.Body.Close()
 
-	response, err := ioutil.ReadAll(result.Body)
-	if err != nil {
-		logging.Warn("Error: %s", err)
-	}
-	var mResponse = string(response)
-	rawData := (strings.Split(mResponse, "\r\n"))
-	var mOutput []interface{}
-	for _, d := range rawData {
-		var data map[string]interface{}
-		_ = json.Unmarshal([]byte(d), &data)
-		if data != nil {
-			mOutput = append(mOutput, data)
-		}
-	}
-	return mOutput, err
+	return result, err
 }
 
 func RemoveImage(client *client.Client, imageID string) ([]types.ImageDeleteResponseItem, error) {
@@ -145,7 +130,7 @@ func GetImage(client *client.Client, imageID string) (types.ImageInspect, error)
 	return result, err
 }
 
-func BuildImageFromTar(client *client.Client, mOptions imageType.OptionsBuildImage, file io.Reader) ([]interface{}, error) {
+func BuildImageFromTar(client *client.Client, mOptions imageType.OptionsBuildImage, file io.Reader) (types.ImageBuildResponse, error) {
 	ctx := context.Background()
 	var result types.ImageBuildResponse
 
@@ -165,31 +150,37 @@ func BuildImageFromTar(client *client.Client, mOptions imageType.OptionsBuildIma
 	)
 
 	if err != nil {
-		return nil, err
+		return result, err
 	}
-	defer result.Body.Close()
 
-	response, err := ioutil.ReadAll(result.Body)
-	if err != nil {
-		logging.Warn("Error: %s", err)
-	}
-	var mResponse = string(response)
-	rawData := (strings.Split(mResponse, "\r\n"))
-	var mOutput []interface{}
-	for _, d := range rawData {
+	return result, err
+}
+
+func HandleResultForBuild(result io.ReadCloser, image models.ImageBuild) {
+	defer result.Close()
+	scanner := bufio.NewScanner(result)
+	done := false
+	var imageID string
+	for scanner.Scan() {
 		var data map[string]interface{}
-		_ = json.Unmarshal([]byte(d), &data)
+		_ = json.Unmarshal([]byte(scanner.Text()), &data)
 		if data != nil {
 			if val, ok := data["aux"]; ok {
-				test := val.(map[string]interface{})
-				if val, ok = test["ID"]; ok {
-					logging.Warn("Value: %s", val)
+				aux := val.(map[string]interface{})
+				if id, ok := aux["ID"]; ok {
+					logging.Warn("Value: %s", id.(string))
+					imageID = id.(string)
+					done = true
 				}
 			}
-			mOutput = append(mOutput, data)
+			fmt.Println(data)
 		}
 	}
-	return mOutput, err
+	if done == true {
+		image.Update(image.RepoName, imageID, image.UserID, image_service.Status["Done"])
+	} else {
+		image.Update(image.RepoName, imageID, image.UserID, image_service.Status["Fail"])
+	}
 }
 
 func PushImage(client *client.Client, image string, registryAuth string) (interface{}, error) {
