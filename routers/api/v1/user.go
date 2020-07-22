@@ -9,6 +9,7 @@ import (
 	"go-docker/pkg/app"
 	"go-docker/pkg/e"
 	"go-docker/pkg/logging"
+	"go-docker/pkg/util"
 	"go-docker/service/user_service"
 
 	"golang.org/x/crypto/bcrypt"
@@ -146,8 +147,8 @@ func GetInfo(c *gin.Context) {
 	)
 
 	user, _ := c.MustGet("user").(models.User)
-	appG.Response(http.StatusOK, e.SUCCESS, map[string]int{
-		"user": user.ID,
-	})
+	data, _ := util.DecodeBase64XRegistryAuth(user.XRegistryAuth)
+
+	appG.Response(http.StatusOK, e.SUCCESS, data.Username)
 	return
 }
