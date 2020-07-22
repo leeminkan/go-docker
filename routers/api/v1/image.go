@@ -123,7 +123,7 @@ func BuildImageFromDockerFile(c *gin.Context) {
 
 	go docker.HandleResultForBuild(result.Body, image)
 
-	appG.Response(http.StatusOK, e.SUCCESS, result)
+	appG.Response(http.StatusOK, e.SUCCESS, image)
 }
 
 // @Summary Remove image
@@ -222,7 +222,7 @@ func BuildImageFromTar(c *gin.Context) {
 
 	go docker.HandleResultForBuild(result.Body, image)
 
-	appG.Response(http.StatusOK, e.SUCCESS, result)
+	appG.Response(http.StatusOK, e.SUCCESS, image)
 }
 
 // @Summary Push Image
