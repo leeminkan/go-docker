@@ -34,3 +34,7 @@ func (image *ImageBuild) GetByID() (bool, models.ImageBuild, error) {
 func (image *ImageBuild) Get() (bool, models.ImageBuild, error) {
 	return models.GetImageBuild(image.RepoName, image.ImageID)
 }
+
+func GetList() ([]models.ImageBuild, error) {
+	return models.GetListImageBuild()
+}

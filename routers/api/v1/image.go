@@ -298,6 +298,27 @@ func GetImageBuild(c *gin.Context) {
 	appG.Response(http.StatusOK, e.SUCCESS, image)
 }
 
+// @Summary Get list image build
+// @Produce  json
+// @Security ApiKeyAuth
+// @Tags  Images
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Router /images-list-build [get]
+func GetListImageBuild(c *gin.Context) {
+	appG := app.Gin{C: c}
+
+	images, err := image_service.GetList()
+
+	if err != nil {
+		logging.Warn(err)
+		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		return
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, images)
+}
+
 // @Summary Get image build by id
 // @Produce  json
 // @Security ApiKeyAuth

@@ -85,6 +85,8 @@ func InitRouter() *gin.Engine {
 		apiv1.GET("/images-build/:id", v1.GetImageBuildByID)
 		//Get image build
 		apiv1.GET("/images-build", v1.GetImageBuild)
+		//Get list image build
+		apiv1.GET("/images-list-build", v1.GetListImageBuild)
 		apiv1.Use(docker.CheckLoginDockerHub())
 		{
 			//Push image

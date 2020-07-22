@@ -86,3 +86,14 @@ func GetImageBuild(repo_name string, image_id string) (bool, ImageBuild, error) 
 
 	return false, image, nil
 }
+
+func GetListImageBuild() ([]ImageBuild, error) {
+	var images []ImageBuild
+	err := db.Where("deleted_on = ?", 0).Find(&images).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		logging.Warn(err)
+		return images, err
+	}
+
+	return images, nil
+}
