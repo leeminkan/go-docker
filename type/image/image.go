@@ -10,3 +10,8 @@ type OptionsPushImage struct {
 type InputPushImage struct {
 	Image string `form:"image"`
 }
+
+type InputGetImageBuild struct {
+	Image string `form:"image"`
+	Tag   string `form:"tag"`
+}

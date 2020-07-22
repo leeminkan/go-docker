@@ -6,12 +6,14 @@ import (
 	"go-docker/pkg/docker"
 	"go-docker/pkg/e"
 	"go-docker/pkg/logging"
+	"go-docker/service/image_service"
 	imageType "go-docker/type/image"
 	"net/http"
 
 	"go-docker/pkg/util"
 
 	"github.com/gin-gonic/gin"
+	"github.com/unknwon/com"
 )
 
 // @Summary Get single image
@@ -57,6 +59,7 @@ func GetImages(c *gin.Context) {
 // @Summary Build images from docker file
 // @Produce  json
 // @Accept  multipart/form-data
+// @Security ApiKeyAuth
 // @Tags  Images
 // @Param file formData file true "Docker File"
 // @Param options query image.OptionsBuildImage true "Options"
@@ -88,7 +91,7 @@ func BuildImageFromDockerFile(c *gin.Context) {
 		return
 	}
 
-	response, err := docker.BuildImageFromDockerFile(docker.Client.Client, options, file, fileHeader)
+	result, err := docker.BuildImageFromDockerFile(docker.Client.Client, options, file, fileHeader)
 
 	if err != nil {
 		logging.Warn(err)
@@ -96,12 +99,37 @@ func BuildImageFromDockerFile(c *gin.Context) {
 		return
 	}
 
-	appG.Response(http.StatusOK, e.SUCCESS, response)
+	user, _ := c.MustGet("user").(models.User)
+	imageService := image_service.ImageBuild{
+		RepoName: options.Tags[0],
+		UserID:   user.ID,
+		Status:   image_service.Status["OnProgress"],
+	}
+	err = imageService.RemoveRepoNameIfExist()
+
+	if err != nil {
+		logging.Warn(err)
+		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		return
+	}
+
+	image, err := imageService.CreateBuild()
+
+	if err != nil {
+		logging.Warn(err)
+		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		return
+	}
+
+	go docker.HandleResultForBuild(result.Body, image)
+
+	appG.Response(http.StatusOK, e.SUCCESS, result)
 }
 
 // @Summary Remove image
 // @Produce  json
 // @Tags  Images
+// @Security ApiKeyAuth
 // @Param id path string true "ID"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
@@ -123,6 +151,7 @@ func RemoveImage(c *gin.Context) {
 // @Summary Build images from tar
 // @Produce  json
 // @Accept  multipart/form-data
+// @Security ApiKeyAuth
 // @Tags  Images
 // @Param file formData file true "Tar"
 // @Param options query image.OptionsBuildImage true "Options"
@@ -161,7 +190,7 @@ func BuildImageFromTar(c *gin.Context) {
 		return
 	}
 
-	response, err := docker.BuildImageFromTar(docker.Client.Client, options, file)
+	result, err := docker.BuildImageFromTar(docker.Client.Client, options, file)
 
 	if err != nil {
 		logging.Warn(err)
@@ -169,7 +198,31 @@ func BuildImageFromTar(c *gin.Context) {
 		return
 	}
 
-	appG.Response(http.StatusOK, e.SUCCESS, response)
+	user, _ := c.MustGet("user").(models.User)
+	imageService := image_service.ImageBuild{
+		RepoName: options.Tags[0],
+		UserID:   user.ID,
+		Status:   image_service.Status["OnProgress"],
+	}
+	err = imageService.RemoveRepoNameIfExist()
+
+	if err != nil {
+		logging.Warn(err)
+		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		return
+	}
+
+	image, err := imageService.CreateBuild()
+
+	if err != nil {
+		logging.Warn(err)
+		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		return
+	}
+
+	go docker.HandleResultForBuild(result.Body, image)
+
+	appG.Response(http.StatusOK, e.SUCCESS, result)
 }
 
 // @Summary Push Image
@@ -207,4 +260,67 @@ func PushImage(c *gin.Context) {
 
 	appG.Response(http.StatusOK, e.SUCCESS, result)
 	return
+}
+
+// @Summary Get image build
+// @Produce  json
+// @Security ApiKeyAuth
+// @Tags  Images
+// @Param options query image.InputGetImageBuild true "Options"
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Router /images-build [get]
+func GetImageBuild(c *gin.Context) {
+	appG := app.Gin{C: c}
+
+	var options imageType.InputGetImageBuild
+
+	err := c.ShouldBindQuery(&options)
+	if err != nil {
+		logging.Warn(err)
+		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		return
+	}
+
+	imageService := image_service.ImageBuild{
+		RepoName: options.Tag,
+		ImageID:  options.Image,
+	}
+
+	_, image, err := imageService.Get()
+
+	if err != nil {
+		logging.Warn(err)
+		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		return
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, image)
+}
+
+// @Summary Get image build by id
+// @Produce  json
+// @Security ApiKeyAuth
+// @Tags  Images
+// @Param id path int true "ID"
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Router /images-build/{id} [get]
+func GetImageBuildByID(c *gin.Context) {
+	appG := app.Gin{C: c}
+
+	id := com.StrTo(c.Param("id")).MustInt()
+
+	imageService := image_service.ImageBuild{
+		ID: id,
+	}
+	_, image, err := imageService.GetByID()
+
+	if err != nil {
+		logging.Warn(err)
+		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		return
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, image)
 }

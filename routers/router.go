@@ -46,12 +46,6 @@ func InitRouter() *gin.Engine {
 	apiv1.GET("/images", v1.GetImages)
 	//Get image
 	apiv1.GET("/images/:id", v1.GetImage)
-	//Build image
-	apiv1.POST("/images/build-from-docker-file", v1.BuildImageFromDockerFile)
-	//Build image
-	apiv1.POST("/images/build-from-tar", v1.BuildImageFromTar)
-	//Remove image
-	apiv1.DELETE("/images/:id", v1.RemoveImage)
 	//Get list container
 	apiv1.GET("/containers", v1.GetContainers)
 	//Get container
@@ -79,6 +73,16 @@ func InitRouter() *gin.Engine {
 		apiv1.GET("/users/mine", v1.GetInfo)
 		//Login Docker Hub
 		apiv1.POST("/docker/login", v1.LoginDockerHub)
+		//Remove image
+		apiv1.DELETE("/images/:id", v1.RemoveImage)
+		//Build image
+		apiv1.POST("/images/build-from-docker-file", v1.BuildImageFromDockerFile)
+		//Build image
+		apiv1.POST("/images/build-from-tar", v1.BuildImageFromTar)
+		//Get image build by id
+		apiv1.GET("/images-build/:id", v1.GetImageBuildByID)
+		//Get image build
+		apiv1.GET("/images-build", v1.GetImageBuild)
 		apiv1.Use(docker.CheckLoginDockerHub())
 		{
 			//Push image
