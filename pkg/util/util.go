@@ -1,6 +1,8 @@
 package util
 
-import "go-docker/pkg/setting"
+import (
+	"go-docker/pkg/setting"
+)
 
 // Setup Initialize the util
 func Setup() {
