@@ -9,7 +9,7 @@ import { Typography, Button } from "@material-ui/core";
 import { CardContent, Card } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 
-class ImageDockerHub extends Component {
+class ImageLocal extends Component {
   render() {
     const { classes } = this.props;
 
@@ -95,7 +95,7 @@ class ImageDockerHub extends Component {
             component="h2"
             className={classes.titlePage}
           >
-            list image in docker hub
+            list image in local
           </Typography>
           <Card>
             <CardContent>
@@ -132,4 +132,4 @@ const mapDispatchToProps = (dispatch) => {};
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps);
 
-export default compose(withStyles(styles), withConnect)(ImageDockerHub);
+export default compose(withStyles(styles), withConnect)(ImageLocal);

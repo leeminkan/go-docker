@@ -56,7 +56,7 @@ class HomePage extends Component {
                     component="h2"
                     className={classes.title}
                   >
-                    Image
+                    Image In Docker Hub
                   </Typography>
                   <Typography
                     gutterBottom
@@ -80,7 +80,7 @@ class HomePage extends Component {
                     component="h2"
                     className={classes.title}
                   >
-                    Image
+                    Image In Local
                   </Typography>
                   <Typography
                     gutterBottom
@@ -104,7 +104,7 @@ class HomePage extends Component {
                     component="h2"
                     className={classes.title}
                   >
-                    Image
+                    Account
                   </Typography>
                   <Typography
                     gutterBottom

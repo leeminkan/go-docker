@@ -18,6 +18,24 @@ const styles = (theme) => ({
   cardContent: {
     paddingBottom: "0 !important",
   },
+  button: {
+    margin: "0px 16px 10px 0px",
+    width: "100px",
+  },
+  leftIcon: {
+    marginRight: "5px",
+  },
+  iconSmall: {
+    fontSize: 20,
+  },
+  icon: {
+    margin: "0px 5px",
+  },
+  // card: {
+  //   backgroundColor: "#ccf0d6",
+  //   color: "black",
+  //   fontSize: "14px",
+  // },
 });
 
 export default styles;
