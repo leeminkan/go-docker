@@ -217,3 +217,20 @@ func ReadResult(result io.ReadCloser) {
 		fmt.Println(data)
 	}
 }
+
+func TagImage(client *client.Client, source string, target string) error {
+	ctx := context.Background()
+
+	// Push image
+	err := client.ImageTag(
+		ctx,
+		source,
+		target,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

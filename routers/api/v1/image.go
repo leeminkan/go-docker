@@ -324,3 +324,35 @@ func GetImageBuildByID(c *gin.Context) {
 
 	appG.Response(http.StatusOK, e.SUCCESS, image)
 }
+
+// @Summary Tag image
+// @Produce  json
+// @Security ApiKeyAuth
+// @Tags  Images
+// @Param body body image.InputTagImage true "body"
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Router /images/change-tag [post]
+func ChangeTagImage(c *gin.Context) {
+	var (
+		appG = app.Gin{C: c}
+		form imageType.InputTagImage
+	)
+
+	httpCode, errCode := app.BindAndValid(c, &form)
+
+	if errCode != e.SUCCESS {
+		appG.Response(httpCode, errCode, nil)
+		return
+	}
+
+	err := docker.TagImage(docker.Client.Client, form.Image, form.Tag)
+
+	if err != nil {
+		logging.Warn(err)
+		appG.Response(http.StatusInternalServerError, e.ERROR_CREATE_DEVICE_FAIL, nil)
+		return
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, nil)
+}

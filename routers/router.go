@@ -79,6 +79,8 @@ func InitRouter() *gin.Engine {
 		apiv1.POST("/images/build-from-docker-file", v1.BuildImageFromDockerFile)
 		//Build image
 		apiv1.POST("/images/build-from-tar", v1.BuildImageFromTar)
+		//Tag image
+		apiv1.POST("/images/change-tag", v1.ChangeTagImage)
 		//Get image build by id
 		apiv1.GET("/images-build/:id", v1.GetImageBuildByID)
 		//Get image build
