@@ -10,7 +10,7 @@ const styles = (theme) => ({
     textTransform: "uppercase",
   },
   card: {
-    minHeight: "calc(100vh - 150px)",
+    minHeight: "calc(100vh - 145px)",
     borderRadius: "15px",
     boxShadow:
       "0 0.125rem 9.375rem rgba(90,97,105,.1), 0 0.25rem 0.5rem rgba(90,97,105,.12), 0 0.9375rem 1.375rem rgba(90,97,105,.1), 0 0.4375rem 2.1875rem rgba(165,182,201,.1)",

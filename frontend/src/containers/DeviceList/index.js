@@ -4,42 +4,38 @@ import "react-table-6/react-table.css";
 import { withStyles } from "@material-ui/styles";
 import styles from "./styles";
 import { connect } from "react-redux";
-import { compose } from "redux";
+import { compose, bindActionCreators } from "redux";
+import * as DeviceAction from "./action";
 import { Typography, Button } from "@material-ui/core";
 import { CardContent, Card } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 
 class DeviceList extends Component {
   render() {
-    const { classes } = this.props;
-
-    const data = [
-      {
-        devicename: "Tanner Linsley",
-        os: "Jetson Nano",
-        deviceid: 1,
-      },
-      {
-        devicename: "Tanner Harry",
-        os: "Jetson Nano",
-        deviceid: 2,
-      },
-    ];
+    const { classes, device } = this.props;
 
     let columns = [
       {
-        key: "deviceid",
-        Header: "Device ID",
-        accessor: "deviceid",
+        key: "id",
+        Header: "ID",
+        accessor: "id",
+        //sortable: false,
+        //filterable: false,
+        width: 80,
+      },
+      {
+        key: "machine_id",
+        Header: "Machine ID",
+        accessor: "machine_id",
         //sortable: false,
         //filterable: false,
         width: 100,
       },
       {
-        key: "devicename",
+        key: "device_name",
         Header: "Device Name",
-        id: "devicename",
-        accessor: "devicename",
+        id: "device_name",
+        accessor: "device_name",
         //sortable: false,
         //filterable: false,
       },
@@ -102,21 +98,16 @@ class DeviceList extends Component {
               <ReactTable
                 className="-striped -highlight"
                 defaultPageSize={10}
-                data={data}
+                data={device}
                 columns={columns}
                 filterable
                 //pages={numberOfPages}
-                //loading={loading}
+                //loading={true}
                 manual
                 multiSort={false}
-                // onFetchData={(state) => {
-                //   this.props.LearnActionCreators.getListLearn(
-                //     state.page,
-                //     state.pageSize,
-                //     state.sorted,
-                //     state.filtered
-                //   );
-                // }}
+                onFetchData={(state) => {
+                  this.props.DeviceActionCreators.getListDevice();
+                }}
               />
             </CardContent>
           </Card>
@@ -126,9 +117,17 @@ class DeviceList extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({});
+const mapStateToProps = (state) => {
+  return {
+    device: state.device.listDevice,
+  };
+};
 
-const mapDispatchToProps = (dispatch) => {};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    DeviceActionCreators: bindActionCreators(DeviceAction, dispatch),
+  };
+};
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps);
 
