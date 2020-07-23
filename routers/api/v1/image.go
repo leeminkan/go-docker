@@ -2,7 +2,6 @@ package v1
 
 import (
 	"go-docker/models"
-	"go-docker/mqtt"
 	"go-docker/pkg/app"
 	"go-docker/pkg/docker"
 	"go-docker/pkg/e"
@@ -16,8 +15,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/unknwon/com"
 )
-
-var GlobalClient = mqtt.InitMQTT()
 
 // @Summary Get single image
 // @Produce  json
@@ -58,17 +55,6 @@ func GetImages(c *gin.Context) {
 
 	appG.Response(http.StatusOK, e.SUCCESS, images)
 
-	value, err := models.SetValueMessage(1, "Ahihihi")
-	if err != nil {
-		appG.Response(http.StatusInternalServerError, e.ERROR_SET_MESSAGE_MQTT, nil)
-		return
-	}
-	if value != nil {
-		// appG.Response(http.StatusOK, e.SUCCESS, nil)
-		tokenPub := GlobalClient.Publish("image/list", 0, false, value)
-		tokenPub.Wait()
-	}
-
 }
 
 // @Summary Build images from docker file
@@ -88,12 +74,12 @@ func BuildImageFromDockerFile(c *gin.Context) {
 	defer file.Close()
 
 	if err != nil {
-		logging.Warn(err)
 		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
 		return
 	}
 
 	if file == nil {
+		logging.Warn(file)
 		appG.Response(http.StatusBadRequest, e.INVALID_PARAMS, nil)
 		return
 	}
@@ -264,6 +250,13 @@ func PushImage(c *gin.Context) {
 		appG.Response(httpCode, errCode, nil)
 		return
 	}
+	check := image_service.CheckExistRepoToRefuse(form.Image)
+
+	if check {
+		logging.Warn("Repo Name existed")
+		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		return
+	}
 
 	result, err := docker.PushImage(docker.Client.Client, form.Image, user.XRegistryAuth)
 
@@ -273,8 +266,45 @@ func PushImage(c *gin.Context) {
 		return
 	}
 
-	appG.Response(http.StatusOK, e.SUCCESS, result)
+	imageService := image_service.ImagePush{
+		RepoName: form.Image,
+		UserID:   user.ID,
+		Status:   image_service.Status["OnProgress"],
+	}
+
+	image, err := imageService.CreatePush()
+
+	if err != nil {
+		logging.Warn(err)
+		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		return
+	}
+
+	go docker.HandleResultForPush(result, image)
+
+	appG.Response(http.StatusOK, e.SUCCESS, image)
 	return
+}
+
+// @Summary Get list image push
+// @Produce  json
+// @Security ApiKeyAuth
+// @Tags  Images
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Router /images-list-push [get]
+func GetListImagePush(c *gin.Context) {
+	appG := app.Gin{C: c}
+
+	images, err := image_service.GetListImagePush()
+
+	if err != nil {
+		logging.Warn(err)
+		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		return
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, images)
 }
 
 // @Summary Get image build
@@ -323,7 +353,7 @@ func GetImageBuild(c *gin.Context) {
 func GetListImageBuild(c *gin.Context) {
 	appG := app.Gin{C: c}
 
-	images, err := image_service.GetList()
+	images, err := image_service.GetListImageBuild()
 
 	if err != nil {
 		logging.Warn(err)

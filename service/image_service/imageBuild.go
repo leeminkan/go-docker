@@ -35,6 +35,6 @@ func (image *ImageBuild) Get() (bool, models.ImageBuild, error) {
 	return models.GetImageBuild(image.RepoName, image.ImageID)
 }
 
-func GetList() ([]models.ImageBuild, error) {
+func GetListImageBuild() ([]models.ImageBuild, error) {
 	return models.GetListImageBuild()
 }

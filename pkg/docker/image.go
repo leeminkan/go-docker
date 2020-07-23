@@ -183,7 +183,32 @@ func HandleResultForBuild(result io.ReadCloser, image models.ImageBuild) {
 	}
 }
 
-func PushImage(client *client.Client, image string, registryAuth string) (interface{}, error) {
+func HandleResultForPush(result io.ReadCloser, image models.ImagePush) {
+	defer result.Close()
+	scanner := bufio.NewScanner(result)
+	done := false
+	for scanner.Scan() {
+		var data map[string]interface{}
+		_ = json.Unmarshal([]byte(scanner.Text()), &data)
+		if data != nil {
+			if val, ok := data["aux"]; ok {
+				aux := val.(map[string]interface{})
+				if id, ok := aux["Digest"]; ok {
+					logging.Warn("Value: %s", id.(string))
+					done = true
+				}
+			}
+			fmt.Println(data)
+		}
+	}
+	if done == true {
+		image.UpdatePush(image.RepoName, image.UserID, image_service.Status["Done"])
+	} else {
+		image.UpdatePush(image.RepoName, image.UserID, image_service.Status["Fail"])
+	}
+}
+
+func PushImage(client *client.Client, image string, registryAuth string) (io.ReadCloser, error) {
 	ctx := context.Background()
 
 	// Define the options to use for push image
