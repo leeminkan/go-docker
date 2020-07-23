@@ -3,10 +3,6 @@ package v1
 import (
 	"net/http"
 
-	"github.com/astaxie/beego/validation"
-	"github.com/gin-gonic/gin"
-	"github.com/unknwon/com"
-
 	"go-docker/models"
 	"go-docker/mqtt"
 	"go-docker/pkg/app"
@@ -14,6 +10,10 @@ import (
 	"go-docker/pkg/logging"
 	"go-docker/service/device_service"
 	deviceType "go-docker/type/device"
+
+	"github.com/astaxie/beego/validation"
+	"github.com/gin-gonic/gin"
+	"github.com/unknwon/com"
 )
 
 var GlobalClient = mqtt.InitMQTT()
@@ -180,17 +180,6 @@ func ConnectDevice(c *gin.Context) {
 		return
 	}
 
-	value, err := models.SetValueMessage(1, "Ahihihi")
-	if err != nil {
-		appG.Response(http.StatusInternalServerError, e.ERROR_SET_MESSAGE_MQTT, nil)
-		return
-	}
-	if value != nil {
-		// appG.Response(http.StatusOK, e.SUCCESS, nil)
-		tokenPub := GlobalClient.Publish("image/list", 0, false, value)
-		tokenPub.Wait()
-	}
-
 	appG.Response(http.StatusOK, e.SUCCESS, nil)
 }
 
@@ -201,7 +190,7 @@ func ConnectDevice(c *gin.Context) {
 // @Param body body device.ControlDevicePull true "body"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /devices/connect [post]
+// @Router /control/devices/pull [post]
 func ControlDevicePull(c *gin.Context) {
 	var (
 		appG = app.Gin{C: c}
@@ -231,6 +220,16 @@ func ControlDevicePull(c *gin.Context) {
 	if !exists {
 		appG.Response(http.StatusInternalServerError, e.ERROR_EXIST_DEVICE_CONTROL_FAIL, nil)
 		return
+	}
+
+	value, err := models.SetValueComeinand(form.MachineID, form.RepoName)
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_SET_MESSAGE_MQTT, nil)
+		return
+	}
+	if value != nil {
+		tokenPub := GlobalClient.Publish("image/pull", 0, false, value)
+		tokenPub.Wait()
 	}
 
 	appG.Response(http.StatusOK, e.SUCCESS, nil)

@@ -4,19 +4,19 @@ import (
 	"encoding/json"
 )
 
-type Message struct {
-	Code int    `json:"code"`
-	Data string `json: "data"`
+type Comeinand struct {
+	MachineID string
+	RepoName  string
 }
 
-func SetValueMessage(code int, message string) ([]byte, error) {
-	messageRaw := Message{
-		Code: code,
-		Data: message,
+func SetValueComeinand(machineID string, repoName string) ([]byte, error) {
+	comeinandRaw := Comeinand{
+		MachineID: machineID,
+		RepoName:  repoName,
 	}
-	messageJSON, err := json.Marshal(messageRaw)
+	comeinandJSON, err := json.Marshal(comeinandRaw)
 	if err != nil {
 		return nil, err
 	}
-	return messageJSON, nil
+	return comeinandJSON, nil
 }

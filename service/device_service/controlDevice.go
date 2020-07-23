@@ -13,5 +13,5 @@ type Control struct {
 }
 
 func (t *Control) ExistDevice() (bool, error) {
-	return models.ExistDevice(t.ID, t.MachineID)
+	return models.ExistDevice(t.MachineID)
 }
