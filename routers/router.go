@@ -96,6 +96,8 @@ func InitRouter() *gin.Engine {
 		{
 			//Push image
 			apiv1.POST("/images/push", v1.PushImage)
+			//Push image From ID
+			apiv1.POST("/images/push-from-id/:id", v1.PushImageFromID)
 		}
 	}
 
