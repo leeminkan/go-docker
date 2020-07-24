@@ -46,6 +46,8 @@ var MsgFlags = map[int]string{
 	ERROR_DELETE_DEVICE:                    "Cannot delete image!",
 	ERROR_EXIST_DEVICE:                     "Device already exist!",
 	ERROR_CONNECT_DEVICE_FAIL:              "Device connect fail!",
+	ERROR_EXIST_DEVICE_CONTROL_FAIL:        "Request with Device donot exists",
+	ERROR_SET_MESSAGE_MQTT:                 "Error when set value to control device pull image",
 }
 
 // GetMsg get error information based on Code

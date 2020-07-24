@@ -3,16 +3,20 @@ package v1
 import (
 	"net/http"
 
-	"github.com/astaxie/beego/validation"
-	"github.com/gin-gonic/gin"
-	"github.com/unknwon/com"
-
+	"go-docker/models"
+	"go-docker/mqtt"
 	"go-docker/pkg/app"
 	"go-docker/pkg/e"
 	"go-docker/pkg/logging"
 	"go-docker/service/device_service"
 	deviceType "go-docker/type/device"
+
+	"github.com/astaxie/beego/validation"
+	"github.com/gin-gonic/gin"
+	"github.com/unknwon/com"
 )
+
+var GlobalClient = mqtt.InitMQTT()
 
 // @Summary Create devices
 // @Produce  json
@@ -174,6 +178,58 @@ func ConnectDevice(c *gin.Context) {
 		logging.Warn(err)
 		appG.Response(http.StatusInternalServerError, e.ERROR_CONNECT_DEVICE_FAIL, nil)
 		return
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, nil)
+}
+
+// @Summary Control Device pull image
+// @Produce  json
+// @Accept  application/json
+// @Tags  Devices
+// @Param body body device.ControlDevicePull true "body"
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Router /control/devices/pull [post]
+func ControlDevicePull(c *gin.Context) {
+	var (
+		appG = app.Gin{C: c}
+		form deviceType.ControlDevicePull
+	)
+
+	httpCode, errCode := app.BindAndValid(c, &form)
+
+	if errCode != e.SUCCESS {
+		appG.Response(httpCode, errCode, nil)
+		return
+	}
+
+	deviceService := device_service.Control{
+		DeviceName: form.DeviceName,
+		OS:         form.OS,
+		MachineID:  form.MachineID,
+		RepoName:   form.RepoName,
+	}
+
+	exists, err := deviceService.ExistDevice()
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_EXIST_DEVICE_FAIL, nil)
+		return
+	}
+
+	if !exists {
+		appG.Response(http.StatusInternalServerError, e.ERROR_EXIST_DEVICE_CONTROL_FAIL, nil)
+		return
+	}
+
+	value, err := models.SetValueComeinand(form.MachineID, form.RepoName)
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_SET_MESSAGE_MQTT, nil)
+		return
+	}
+	if value != nil {
+		tokenPub := GlobalClient.Publish("image/pull", 0, false, value)
+		tokenPub.Wait()
 	}
 
 	appG.Response(http.StatusOK, e.SUCCESS, nil)

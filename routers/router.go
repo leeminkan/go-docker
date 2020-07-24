@@ -62,6 +62,8 @@ func InitRouter() *gin.Engine {
 	apiv1.DELETE("/devices/:id", v1.RemoveDevice)
 	//Connect device
 	apiv1.POST("/devices/connect", v1.ConnectDevice)
+	//Control a device pull image from dockerhub
+	apiv1.POST("/control/devices/pull", v1.ControlDevicePull)
 	//Create user
 	apiv1.POST("/users", v1.CreateUser)
 	//Login user
@@ -87,6 +89,9 @@ func InitRouter() *gin.Engine {
 		apiv1.GET("/images-build", v1.GetImageBuild)
 		//Get list image build
 		apiv1.GET("/images-list-build", v1.GetListImageBuild)
+		//Get list image push
+		apiv1.GET("/images-list-push", v1.GetListImagePush)
+
 		apiv1.Use(docker.CheckLoginDockerHub())
 		{
 			//Push image

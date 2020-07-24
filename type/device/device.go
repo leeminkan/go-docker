@@ -5,3 +5,8 @@ type CreateDeviceInput struct {
 	OS         string `form:"os" valid:"Required"`
 	MachineID  string `form:"machine_id" valid:"Required"`
 }
+
+type ControlDevicePull struct {
+	CreateDeviceInput
+	RepoName string `form:"repo_name" valid:"Required"`
+}
