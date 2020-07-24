@@ -364,6 +364,33 @@ func GetListImageBuild(c *gin.Context) {
 	appG.Response(http.StatusOK, e.SUCCESS, images)
 }
 
+// @Summary Get image push by id
+// @Produce  json
+// @Security ApiKeyAuth
+// @Tags  Images
+// @Param id path int true "ID"
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Router /images-push/{id} [get]
+func GetImagePushByID(c *gin.Context) {
+	appG := app.Gin{C: c}
+
+	id := com.StrTo(c.Param("id")).MustInt()
+
+	imageService := image_service.ImagePush{
+		ID: id,
+	}
+	_, image, err := imageService.GetByID()
+
+	if err != nil {
+		logging.Warn(err)
+		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		return
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, image)
+}
+
 // @Summary Get image build by id
 // @Produce  json
 // @Security ApiKeyAuth

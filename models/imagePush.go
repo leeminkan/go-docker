@@ -64,3 +64,18 @@ func CheckExistRepoToRefuse(repo_name string) bool {
 	}
 	return true
 }
+
+func GetImagePushByID(id int) (bool, ImagePush, error) {
+	var image ImagePush
+	err := db.Where("id = ? AND deleted_on = ?", id, 0).First(&image).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		logging.Warn(err)
+		return false, image, err
+	}
+
+	if image.ID > 0 {
+		return true, image, nil
+	}
+
+	return false, image, nil
+}

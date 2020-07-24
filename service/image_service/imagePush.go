@@ -27,3 +27,7 @@ func GetListImagePush() ([]models.ImagePush, error) {
 func CheckExistRepoToRefuse(repo_name string) bool {
 	return models.CheckExistRepoToRefuse(repo_name)
 }
+
+func (image *ImagePush) GetByID() (bool, models.ImagePush, error) {
+	return models.GetImagePushByID(image.ID)
+}
