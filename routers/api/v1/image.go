@@ -455,7 +455,6 @@ func PushImageFromID(c *gin.Context) {
 	data, _ := util.DecodeBase64XRegistryAuth(user.XRegistryAuth)
 
 	err = docker.TagImage(docker.Client.Client, image.ImageID, data.Username+"/"+image.RepoName)
-
 	if err != nil {
 		logging.Warn(err)
 		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
@@ -470,6 +469,49 @@ func PushImageFromID(c *gin.Context) {
 		return
 	}
 
-	appG.Response(http.StatusOK, e.SUCCESS, result)
-	return
+	checkExists := image_service.CheckExistRepoToRefuse(data.Username + "/" + image.RepoName)
+
+	// if check {
+	// 	logging.Warn("Repo Name existed")
+	// 	appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+	// 	return
+	// }
+
+	if checkExists {
+
+		imageUpdating := image_service.ImagePush{
+			RepoName: data.Username + "/" + image.RepoName,
+			Status:   image_service.Status["OnProgress"],
+		}
+		imageUpdated, errUpdated := imageUpdating.UpdateStatusPush()
+
+		if errUpdated != nil {
+			logging.Warn(errUpdated)
+			appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+			return
+		}
+		go docker.HandleResultForPush(result, imageUpdated)
+		appG.Response(http.StatusOK, e.SUCCESS, imageUpdated)
+		return
+	} else {
+		imageServicePush := image_service.ImagePush{
+			RepoName: data.Username + "/" + image.RepoName,
+			UserID:   user.ID,
+			Status:   image_service.Status["OnProgress"],
+		}
+		imageCreate, errCreate := imageServicePush.CreatePush()
+
+		if errCreate != nil {
+			logging.Warn(errCreate)
+			appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+			return
+		}
+
+		go docker.HandleResultForPush(result, imageCreate)
+
+		appG.Response(http.StatusOK, e.SUCCESS, imageCreate)
+		return
+	}
+	// appG.Response(http.StatusOK, e.SUCCESS, result)
+	// return
 }

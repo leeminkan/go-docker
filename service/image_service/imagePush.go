@@ -16,6 +16,10 @@ func (image *ImagePush) CreatePush() (models.ImagePush, error) {
 	return models.CreateImagePush(image.RepoName, image.UserID, image.Status)
 }
 
+func (image *ImagePush) UpdateStatusPush() (models.ImagePush, error) {
+	return models.UpdateStatusImagePush(image.RepoName, image.Status)
+}
+
 func GetListImagePush() ([]models.ImagePush, error) {
 	return models.GetListImagePush()
 }
