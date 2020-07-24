@@ -6,21 +6,41 @@ import styles from "./styles";
 import { connect } from "react-redux";
 import { compose, bindActionCreators } from "redux";
 import * as LocalImageAction from "./action";
-import { Typography, Button } from "@material-ui/core";
+import { Typography, Button, Box, Grid } from "@material-ui/core";
 import { CardContent, Card } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
+import logo from "../../assets/img/pending.gif";
+import BuildImage from "../../components/Modal/BuildImage";
 
-class DeviceList extends Component {
+class LocalImage extends Component {
+  onCloseModalBuildImage = () => {
+    this.props.LocalImageActionCreators.closeModalBuildImage();
+  };
+
+  openModalBuildImage = () => {
+    this.props.LocalImageActionCreators.openModalBuildImage();
+  };
+
+  onSubmit = (data) => {
+    this.props.LocalImageActionCreators.buildImage(data);
+    this.props.LocalImageActionCreators.closeModalBuildImage();
+  };
+
+  // shouldComponentUpdate() {
+  //   if (this.props.imagePending) {
+  //     this.props.LocalImageActionCreators.getImageById(this.props.imagePending);
+  //   }
+  // }
+
   render() {
-    const { classes, localImage } = this.props;
+    const { classes, localImage, openModalBuildImage } = this.props;
 
     let columns = [
       {
         key: "id",
         Header: "ID",
+        id: "id",
         accessor: "id",
-        //sortable: false,
-        //filterable: false,
         width: 60,
       },
       {
@@ -28,16 +48,13 @@ class DeviceList extends Component {
         Header: "Repository Name",
         id: "repo_name",
         accessor: "repo_name",
-        //sortable: false,
-        //filterable: false,
-        width: 180,
+        width: 150,
       },
       {
         key: "image_id",
         Header: "Image ID",
         accessor: "image_id",
-        //sortable: false,
-        //filterable: false,
+        id: "image_id",
       },
 
       {
@@ -45,9 +62,21 @@ class DeviceList extends Component {
         Header: "Status",
         id: "status",
         accessor: "status",
-        //sortable: false,
-        //filterable: false,
-        width: 70,
+        width: 100,
+        Cell: (data) => {
+          if (data.value === "on progress") {
+            return (
+              <Fragment>
+                <div className={classes.logoImage}>
+                  <img src={logo} alt="logo" className={classes.img} />
+                </div>
+                {/* <div className={classes.status}>{data.value}</div> */}
+              </Fragment>
+            );
+          } else {
+            return <div className={classes.status}>{data.value}</div>;
+          }
+        },
       },
       {
         key: "action",
@@ -55,8 +84,6 @@ class DeviceList extends Component {
         accessor: "action",
         width: 210,
         align: "left",
-        sortable: false,
-        filterable: false,
         Cell: (data) => {
           return (
             <Fragment>
@@ -86,34 +113,65 @@ class DeviceList extends Component {
 
     return (
       <div className={classes.root}>
-        <div>
-          <Typography
-            gutterBottom
-            variant="h5"
-            component="h2"
-            className={classes.titlePage}
-          >
-            list local image
-          </Typography>
-          <Card>
-            <CardContent>
-              <ReactTable
-                className="-striped -highlight"
-                defaultPageSize={10}
-                data={localImage}
-                columns={columns}
-                filterable
-                //pages={numberOfPages}
-                //loading={true}
-                manual
-                multiSort={false}
-                onFetchData={(state) => {
-                  this.props.LocalImageActionCreators.getListLocalImage();
-                }}
-              />
-            </CardContent>
-          </Card>
-        </div>
+        <BuildImage
+          openModalBI={openModalBuildImage}
+          onCloseModalBI={this.onCloseModalBuildImage}
+          onSave={this.onSubmit}
+        />
+        <Grid container>
+          <Grid item xs={10}>
+            <Typography
+              gutterBottom
+              variant="h5"
+              component="h2"
+              className={classes.titlePage}
+            >
+              list local image
+            </Typography>
+          </Grid>
+          <Grid item xs={2}>
+            <Box flexDirection="row-reverse" display="flex">
+              <Button
+                variant="outlined"
+                size="small"
+                color="primary"
+                className={classes.button}
+                onClick={this.openModalBuildImage}
+              >
+                {/* <AddIcon className={classes.leftIcon} /> */}
+                Build Image
+              </Button>
+            </Box>
+          </Grid>
+        </Grid>
+        <Card>
+          <CardContent className={classes.center}>
+            <ReactTable
+              className="-highlight"
+              defaultPageSize={10}
+              data={localImage}
+              columns={columns}
+              //filterable
+              //pages={numberOfPages}
+              //loading={true}
+              manual
+              //multiSort={false}
+              onFetchData={(state) => {
+                this.props.LocalImageActionCreators.getListLocalImage();
+              }}
+              getTdProps={(state, rowInfo, column) => {
+                return {
+                  style: {
+                    background:
+                      rowInfo && rowInfo.original.status === "on progress"
+                        ? "#fdde53"
+                        : "",
+                  },
+                };
+              }}
+            />
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -122,6 +180,7 @@ class DeviceList extends Component {
 const mapStateToProps = (state) => {
   return {
     localImage: state.localImage.listLocalImage,
+    openModalBuildImage: state.localImage.openModalBuildImage,
   };
 };
 
@@ -133,4 +192,4 @@ const mapDispatchToProps = (dispatch) => {
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps);
 
-export default compose(withStyles(styles), withConnect)(DeviceList);
+export default compose(withStyles(styles), withConnect)(LocalImage);

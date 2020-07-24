@@ -1,7 +1,9 @@
 import * as types from "./constant";
+import { toastSuccess, toastError } from "../../helpers/toastHelper";
 
 const initialState = {
   listLocalImage: [],
+  openModalBuildImage: false,
 };
 
 const reducer = (state = initialState, action) => {
@@ -24,7 +26,49 @@ const reducer = (state = initialState, action) => {
         ...state,
       };
     }
-
+    case types.OPEN_MODAL_BUILD_IMAGE: {
+      return {
+        ...state,
+        openModalBuildImage: true,
+      };
+    }
+    case types.CLOSE_MODAL_BUILD_IMAGE: {
+      return {
+        ...state,
+        openModalBuildImage: false,
+      };
+    }
+    case types.BUILD_IMAGE: {
+      return {
+        ...state,
+      };
+    }
+    case types.BUILD_IMAGE_SUCCESS: {
+      toastSuccess("Build Image thành công");
+      let remove = state.listLocalImage.splice(0, 1);
+      let newImage = action.payload.data.data;
+      let dataNewImage = [newImage].concat(state.listLocalImage);
+      return {
+        ...state,
+        listLocalImage: dataNewImage,
+      };
+    }
+    case types.BUILD_IMAGE_PENDING: {
+      let newImage = action.payload.data.data;
+      let dataNewImage = [newImage].concat(state.listLocalImage);
+      return {
+        ...state,
+        listLocalImage: dataNewImage,
+      };
+    }
+    case types.BUILD_IMAGE_FAIL: {
+      const { data } = action.payload;
+      console.log(data);
+      toastError(data);
+      return {
+        ...state,
+      };
+    }
     default:
       return state;
   }

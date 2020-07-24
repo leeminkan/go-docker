@@ -12,3 +12,4 @@ runtime/*
 go-docker.exe
 /frontend/node_modules
 go.mod
+go.sum

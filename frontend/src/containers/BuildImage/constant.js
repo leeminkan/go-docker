@@ -1,4 +1,0 @@
-export const BUILD_IMAGE = "BUILD_IMAGE";
-export const BUILD_IMAGE_SUCCESS = "BUILD_IMAGE_SUCCESS";
-export const BUILD_IMAGE_FAIL = "BUILD_IMAGE_FAIL";
-

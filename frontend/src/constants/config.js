@@ -13,3 +13,5 @@ export const API_LOGIN_DOCKERHUB = `${HOST}/docker/login`;
 export const API_GET_LIST_DEVICE = `${HOST}/devices`;
 
 export const API_GET_LIST_LOCAL_IMAGE = `${HOST}/images-list-build`;
+
+export const API_GET_LOCAL_IMAGE_BY_ID = `${HOST}/images-build`;

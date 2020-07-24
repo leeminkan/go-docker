@@ -8,6 +8,7 @@ const styles = (theme) => ({
     color: "#3d5170",
     padding: "10px 0",
     textTransform: "uppercase",
+    display: "inline-block",
   },
   card: {
     minHeight: "calc(100vh - 150px)",
@@ -20,6 +21,20 @@ const styles = (theme) => ({
   },
   icon: {
     margin: "0px 5px",
+  },
+  logoImage: {
+    padding: "0px",
+    width: "90px",
+  },
+  // img: {
+  //   width: "160px",
+  // },
+  button: {
+    margin: "10px 10px 0 0",
+    fontSize: "18px",
+  },
+  status: {
+    textAlign: "center",
   },
 });
 

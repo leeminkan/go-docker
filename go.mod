@@ -16,6 +16,7 @@ require (
 	github.com/docker/engine v17.12.0-ce-rc1.0.20190717161051-705d9623b7c1+incompatible // indirect
 	github.com/docker/go-connections v0.4.0
 	github.com/docker/go-units v0.4.0 // indirect
+	github.com/eclipse/paho.mqtt.golang v1.2.0
 	github.com/gin-gonic/contrib v0.0.0-20191209060500-d6e26eeaa607
 	github.com/gin-gonic/gin v1.4.0
 	github.com/go-ini/ini v1.32.1-0.20180214101753-32e4be5f41bb

@@ -2,7 +2,7 @@ import HomePage from "../containers/HomePage";
 import LoginPage from "../containers/LoginPage";
 import RegisterPage from "../containers/RegisterPage";
 import ImageLocal from "../containers/ImageLocal";
-import BuildImage from "../containers/BuildImage";
+// import BuildImage from "../containers/BuildImage";
 import ReconfigNode from "../containers/ReconfigNode";
 import ImageDockerHub from "../containers/ImageDockerHub";
 import LoginDokcerHub from "../containers/LoginDokcerHub";
@@ -20,12 +20,12 @@ export const ADMIN_ROUTES = [
     component: HomePage,
     icon: "home",
   },
-  {
-    path: "/buildimage",
-    name: "Build Image",
-    component: BuildImage,
-    icon: "construction",
-  },
+  // {
+  //   path: "/buildimage",
+  //   name: "Build Image",
+  //   component: BuildImage,
+  //   icon: "construction",
+  // },
   {
     path: "/login-docker-hub",
     name: "Login Docker Hub",

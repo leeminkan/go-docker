@@ -1,8 +1,16 @@
-import { call, takeLatest, put } from "redux-saga/effects";
-import { getListLocalImageSuccess, getListLocalImageFail } from "./action";
+import { call, takeLatest, put, delay } from "redux-saga/effects";
+import {
+  getListLocalImageSuccess,
+  getListLocalImageFail,
+  buildImageFail,
+  buildImageSuccess,
+  buildImagePending,
+  getImageById,
+} from "./action";
 import * as types from "./constant";
 import * as api from "../../constants/config";
 import axios from "axios";
+import { toastSuccess } from "../../helpers/toastHelper";
 
 const CancelToken = axios.CancelToken;
 let cancel;
@@ -33,8 +41,83 @@ function* getListLocalImage({ payload }) {
   }
 }
 
+const apiBuildImage = async (image) => {
+  let token = await localStorage.getItem("JWT_TOKEN");
+  let tags = image.tag;
+
+  let formData = new FormData();
+  formData.append("file", image.file);
+
+  let urlCall =
+    image.file.type === "application/x-tar"
+      ? api.API_BUILD_TAR
+      : api.API_BUILD_DOCKERFILE;
+
+  let result = await axios({
+    method: "POST",
+    url: urlCall,
+    data: formData,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "content-type": "multipart/form-data",
+    },
+    params: {
+      tags,
+    },
+  });
+  return result;
+};
+
+function* buildImage({ payload }) {
+  try {
+    let image = payload.data;
+    const resp = yield call(apiBuildImage, image);
+    toastSuccess("Build Image is progressing. Please wait");
+    const { data, status } = resp;
+    if (status === 200) {
+      yield put(buildImagePending(data));
+      yield delay(5000);
+      yield put(getImageById(data.data.id));
+    }
+  } catch (error) {
+    yield put(buildImageFail(error));
+  }
+}
+
+const apiGetLocalImageById = async (data) => {
+  let token = await localStorage.getItem("JWT_TOKEN");
+  let result = await axios({
+    method: "GET",
+    url: `${api.API_GET_LOCAL_IMAGE_BY_ID}/${data}`,
+    headers: {
+      Authorization: `Bear ${token}`,
+    },
+  });
+  return result;
+};
+
+function* getLocalImageById({ payload }) {
+  try {
+    let id = payload.data;
+    const abc = yield call(apiGetLocalImageById, id);
+    const { data, status } = abc;
+    if (status === 200) {
+      if (abc.data.data.status === "on progress") {
+        yield delay(5000);
+        yield put(getImageById(abc.data.data.id));
+      } else {
+        yield put(buildImageSuccess(data));
+      }
+    }
+  } catch (error) {
+    yield put(buildImageFail(error));
+  }
+}
+
 function* onListLocalImageSaga() {
+  yield takeLatest(types.BUILD_IMAGE, buildImage);
   yield takeLatest(types.GET_LIST_LOCAL_IMAGE, getListLocalImage);
+  yield takeLatest(types.GET_IMAGE_BY_ID, getLocalImageById);
 }
 
 export default onListLocalImageSaga();
