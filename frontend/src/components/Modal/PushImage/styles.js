@@ -31,7 +31,7 @@ const styles = (theme) => ({
     justifyContent: "center",
   },
   modal: {
-    top: "50%",
+    top: "30%",
     left: "50%",
     transform: "translate(-50%, -50%)",
     position: "absolute",
@@ -77,6 +77,9 @@ const styles = (theme) => ({
   select: {
     display: "flex",
     flexWrap: "wrap",
+  },
+  option: {
+    height: "15px",
   },
 });
 

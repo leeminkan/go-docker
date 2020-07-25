@@ -4,52 +4,73 @@ import "react-table-6/react-table.css";
 import { withStyles } from "@material-ui/styles";
 import styles from "./styles";
 import { connect } from "react-redux";
-import { compose } from "redux";
-import { Typography, Button } from "@material-ui/core";
+import { compose, bindActionCreators } from "redux";
+import * as DockerHubImageAction from "./action";
+import * as LocalImageAction from "../ImageLocal/action";
+import { Typography, Button, Box, Grid } from "@material-ui/core";
 import { CardContent, Card } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
+import pending from "../../assets/img/pending.gif";
+import PushImage from "../../components/Modal/PushImage";
 
-class ImageDockerHub extends Component {
+class DockerHubImage extends Component {
+  onCloseModalPushImage = () => {
+    this.props.DHImageActionCreators.closeModalPushImage();
+  };
+
+  openModalPushImage = () => {
+    this.props.DHImageActionCreators.openModalPushImage();
+  };
+
+  componentDidMount() {
+    if (this.props.localImage.length === 0) {
+      this.props.LocalImageActionCreators.getListLocalImage();
+    }
+  }
+
+  onSubmit = (data) => {
+    this.props.DHImageActionCreators.pushImage(data);
+    this.props.DHImageActionCreators.closeModalPushImage();
+  };
+
   render() {
-    const { classes } = this.props;
+    const { classes, dockerHubImage, openModalPushImage } = this.props;
 
-    const data = [
-      {
-        devicename: "Tanner Linsley",
-        os: "Jetson Nano",
-        deviceid: 1,
-      },
-      {
-        devicename: "Tanner Harry",
-        os: "Jetson Nano",
-        deviceid: 2,
-      },
-    ];
-
+    let localImage = this.props.localImage;
     let columns = [
       {
-        key: "deviceid",
-        Header: "Device ID",
-        accessor: "deviceid",
-        //sortable: false,
-        //filterable: false,
-        width: 100,
+        key: "id",
+        Header: "ID",
+        id: "id",
+        accessor: "id",
+        width: 80,
       },
       {
-        key: "devicename",
-        Header: "Device Name",
-        id: "devicename",
-        accessor: "devicename",
-        //sortable: false,
-        //filterable: false,
+        key: "repo_name",
+        Header: "Repository Name",
+        id: "repo_name",
+        accessor: "repo_name",
       },
       {
-        key: "os",
-        Header: "OS",
-        id: "os",
-        accessor: "os",
-        //sortable: false,
-        //filterable: false,
+        key: "status",
+        Header: "Status",
+        id: "status",
+        accessor: "status",
+        width: 120,
+        Cell: (data) => {
+          if (data.value === "on progress") {
+            return (
+              <Fragment>
+                <div className={classes.logoImage}>
+                  <img src={pending} alt="logo" className={classes.img} />
+                </div>
+                {/* <div className={classes.status}>{data.value}</div> */}
+              </Fragment>
+            );
+          } else {
+            return <div className={classes.status}>{data.value}</div>;
+          }
+        },
       },
       {
         key: "action",
@@ -57,8 +78,6 @@ class ImageDockerHub extends Component {
         accessor: "action",
         width: 210,
         align: "left",
-        sortable: false,
-        filterable: false,
         Cell: (data) => {
           return (
             <Fragment>
@@ -88,48 +107,86 @@ class ImageDockerHub extends Component {
 
     return (
       <div className={classes.root}>
-        <div>
-          <Typography
-            gutterBottom
-            variant="h5"
-            component="h2"
-            className={classes.titlePage}
-          >
-            list image in docker hub
-          </Typography>
-          <Card>
-            <CardContent>
-              <ReactTable
-                className="-striped -highlight"
-                defaultPageSize={10}
-                data={data}
-                columns={columns}
-                filterable
-                //pages={numberOfPages}
-                //loading={loading}
-                manual
-                multiSort={false}
-                // onFetchData={(state) => {
-                //   this.props.LearnActionCreators.getListLearn(
-                //     state.page,
-                //     state.pageSize,
-                //     state.sorted,
-                //     state.filtered
-                //   );
-                // }}
-              />
-            </CardContent>
-          </Card>
-        </div>
+        <PushImage
+          openModalPI={openModalPushImage}
+          onCloseModalPI={this.onCloseModalPushImage}
+          onSave={this.onSubmit}
+          localImage={localImage}
+        />
+        <Grid container>
+          <Grid item xs={10}>
+            <Typography
+              gutterBottom
+              variant="h5"
+              component="h2"
+              className={classes.titlePage}
+            >
+              list docker hub image
+            </Typography>
+          </Grid>
+          <Grid item xs={2}>
+            <Box flexDirection="row-reverse" display="flex">
+              <Button
+                variant="outlined"
+                size="small"
+                color="primary"
+                className={classes.button}
+                onClick={this.openModalPushImage}
+              >
+                {/* <AddIcon className={classes.leftIcon} /> */}
+                Push Image
+              </Button>
+            </Box>
+          </Grid>
+        </Grid>
+        <Card>
+          <CardContent className={classes.center}>
+            <ReactTable
+              className="-highlight"
+              defaultPageSize={10}
+              data={dockerHubImage}
+              columns={columns}
+              //filterable
+              //pages={numberOfPages}
+              //loading={true}
+              manual
+              //multiSort={false}
+              onFetchData={(state) => {
+                this.props.DHImageActionCreators.getListDockerHubImage();
+              }}
+              getTdProps={(state, rowInfo, column) => {
+                return {
+                  style: {
+                    background:
+                      rowInfo && rowInfo.original.status === "on progress"
+                        ? "#fdde53"
+                        : "",
+                  },
+                };
+              }}
+            />
+          </CardContent>
+        </Card>
       </div>
     );
   }
 }
 
-const mapStateToProps = (state) => ({});
+const mapStateToProps = (state) => {
+  return {
+    dockerHubImage: state.DHImage.listDHImage,
+    openModalPushImage: state.DHImage.openModalPushImage,
+    localImage: state.localImage.listLocalImage,
+  };
+};
 
-const mapDispatchToProps = (dispatch) => {};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    DHImageActionCreators: bindActionCreators(DockerHubImageAction, dispatch),
+    LocalImageActionCreators: bindActionCreators(LocalImageAction, dispatch),
+  };
+};
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps);
 
-export default compose(withStyles(styles), withConnect)(ImageDockerHub);
+export default compose(withStyles(styles), withConnect)(DockerHubImage);

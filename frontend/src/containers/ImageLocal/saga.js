@@ -17,11 +17,12 @@ let cancel;
 
 const apiGetListLocalImage = async (data) => {
   if (cancel !== undefined) cancel();
+  let token = await localStorage.getItem("JWT_TOKEN");
   let result = await axios({
     method: "GET",
     url: `${api.API_GET_LIST_LOCAL_IMAGE}`,
     headers: {
-      Authorization: `Bear ${data.token}`,
+      Authorization: `Bear ${token}`,
     },
     cancelToken: new CancelToken((c) => (cancel = c)),
   });
@@ -30,8 +31,7 @@ const apiGetListLocalImage = async (data) => {
 
 function* getListLocalImage({ payload }) {
   try {
-    let token = yield localStorage.getItem("JWT_TOKEN");
-    const resp = yield call(apiGetListLocalImage, { token, payload });
+    const resp = yield call(apiGetListLocalImage, { payload });
     const { data, status } = resp;
     if (status === 200) {
       yield put(getListLocalImageSuccess(data.data));

@@ -12,12 +12,16 @@ let cancel;
 const apiLoginDockerHub = async (data) => {
   if (cancel !== undefined) cancel();
 
+  let token = await localStorage.getItem("JWT_TOKEN");
   let result = await axios({
     method: "POST",
     url: `${api.API_LOGIN_DOCKERHUB}`,
     data: {
       username: data.username,
       password: data.password,
+    },
+    headers: {
+      Authorization: `Bearer ${token}`,
     },
     cancelToken: new CancelToken((c) => (cancel = c)),
   });

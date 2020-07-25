@@ -6,6 +6,7 @@ import registerReducer from "../containers/RegisterPage/reducer";
 import loginDockerHubReducer from "../containers/LoginDokcerHub/reducer";
 import ListDevice from "../containers/DeviceList/reducer";
 import ListLocalImage from "../containers/ImageLocal/reducer";
+import ListDockerHubImage from "../containers/ImageDockerHub/reducer";
 import UiReducer from "./ui";
 
 export default (history) =>
@@ -15,6 +16,7 @@ export default (history) =>
     loginDockerHub: loginDockerHubReducer,
     device: ListDevice,
     localImage: ListLocalImage,
+    DHImage: ListDockerHubImage,
     ui: UiReducer,
     form: formReducer,
     router: connectRouter(history),
