@@ -52,10 +52,6 @@ func InitRouter() *gin.Engine {
 	{
 		//Remove image
 		apiImage.DELETE("/images/:id", v1.RemoveImage)
-		//Build image
-		apiImage.POST("/images/build-from-docker-file", v1.BuildImageFromDockerFile)
-		//Build image
-		apiImage.POST("/images/build-from-tar", v1.BuildImageFromTar)
 		//Tag image
 		apiImage.POST("/images/change-tag", v1.ChangeTagImage)
 	}
@@ -77,6 +73,10 @@ func InitRouter() *gin.Engine {
 		apiImageBuild.GET("/images-build", v1.GetImageBuild)
 		//Get list image build
 		apiImageBuild.GET("/images-list-build", v1.GetListImageBuild)
+		//Build image
+		apiImageBuild.POST("/images-build/from-docker-file", v1.BuildImageFromDockerFile)
+		//Build image
+		apiImageBuild.POST("/images-build/from-tar", v1.BuildImageFromTar)
 	}
 
 	////////////////////////////////////////////////////////////////////
@@ -101,7 +101,7 @@ func InitRouter() *gin.Engine {
 			//Push image
 			apiImagePush.POST("/images/push", v1.PushImage)
 			//Push image From ID
-			apiImagePush.POST("/images/push-from-id/:id", v1.PushImageFromID)
+			apiImagePush.POST("/images-push/from-build-id/:id", v1.PushImageFromID)
 		}
 	}
 

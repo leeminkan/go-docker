@@ -13,8 +13,8 @@ type InputPushImage struct {
 }
 
 type InputGetImageBuild struct {
-	Image string `form:"image"`
-	Tag   string `form:"tag"`
+	ImageID string `form:"imageId"`
+	Tag     string `form:"tag"`
 }
 
 type InputTagImage struct {
