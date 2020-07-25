@@ -12,16 +12,17 @@ type ImageBuild struct {
 	RepoName    string `json:"repo_name"`
 	ImageID     string `json:"image_id"`
 	UserID      int    `json:"user_id"`
-	Status      string `json:"status"`
+	Status      string `json:"status" gorm:"type:enum('on progress', 'done', 'fail');default:'on progress'"`
 	OldRepoName string `json:"old_repo_name"`
 }
 
-func CreateImageBuild(repo_name string, image_id string, user_id int, status string) (ImageBuild, error) {
+func CreateImageBuild(repo_name string, image_id string, user_id int, status string, old_repo_name string) (ImageBuild, error) {
 	imageBuild := ImageBuild{
-		RepoName: repo_name,
-		ImageID:  image_id,
-		UserID:   user_id,
-		Status:   status,
+		RepoName:    repo_name,
+		ImageID:     image_id,
+		UserID:      user_id,
+		Status:      status,
+		OldRepoName: old_repo_name,
 	}
 
 	if err := db.Create(&imageBuild).Error; err != nil {

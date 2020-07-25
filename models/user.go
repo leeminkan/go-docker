@@ -14,16 +14,18 @@ type User struct {
 
 	Username         string `json:"username"`
 	Password         string `json:"password"`
-	IsAdmin          bool   `json:"is_admin"`
-	XRegistryAuth    string `json:"x_registry_auth"`
-	IsLoginDockerHub bool   `json:"is_login_docker_hub"`
+	IsAdmin          bool   `json:"is_admin" gorm:"not null;default:0"`
+	XRegistryAuth    string `json:"x_registry_auth" gorm:"type:varchar(500)"`
+	IsLoginDockerHub bool   `json:"is_login_docker_hub" gorm:"not null;default:0"`
 }
 
-func CreateUser(username string, password string, is_admin bool) error {
+func CreateUser(username string, password string, is_admin bool, x_registry_auth string, is_login_docker_hub bool) error {
 	user := User{
-		Username: username,
-		Password: password,
-		IsAdmin:  is_admin,
+		Username:         username,
+		Password:         password,
+		IsAdmin:          is_admin,
+		XRegistryAuth:    x_registry_auth,
+		IsLoginDockerHub: is_login_docker_hub,
 	}
 	if err := db.Create(&user).Error; err != nil {
 		logging.Warn(err)

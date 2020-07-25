@@ -8,5 +8,5 @@ type CreateDeviceInput struct {
 
 type ControlDevicePull struct {
 	CreateDeviceInput
-	RepoName string `form:"repo_name" valid:"Required"`
+	RepoID int `form:"repo_id" valid:"Required"`
 }
