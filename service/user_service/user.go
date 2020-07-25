@@ -4,6 +4,8 @@ import (
 	"go-docker/models"
 	"go-docker/pkg/logging"
 	"go-docker/pkg/util"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
@@ -16,7 +18,14 @@ type User struct {
 }
 
 func (u *User) Create() error {
-	return models.CreateUser(u.Username, u.Password, u.IsAdmin, u.XRegistryAuth, u.IsLoginDockerHub)
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
+
+	if err != nil {
+		return err
+	}
+
+	return models.CreateUser(u.Username, string(hashedPassword), u.IsAdmin, u.XRegistryAuth, u.IsLoginDockerHub)
 }
 
 func (u *User) ExistByUserName() (bool, error) {

@@ -2,8 +2,6 @@ package seed
 
 import (
 	"go-docker/service/user_service"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
 func SeedForUser() {
@@ -17,11 +15,10 @@ func CreateAdmin() {
 		return
 	}
 
-	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("123456"), bcrypt.DefaultCost)
 	users := []user_service.User{
 		{
 			Username: "admin",
-			Password: string(hashedPassword),
+			Password: "123456",
 			IsAdmin:  true,
 		},
 	}
