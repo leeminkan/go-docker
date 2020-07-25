@@ -208,7 +208,7 @@ func ControlDevicePull(c *gin.Context) {
 		DeviceName: form.DeviceName,
 		OS:         form.OS,
 		MachineID:  form.MachineID,
-		RepoName:   form.RepoName,
+		RepoID:     form.RepoID,
 	}
 
 	exists, err := deviceService.ExistDevice()
@@ -222,7 +222,13 @@ func ControlDevicePull(c *gin.Context) {
 		return
 	}
 
-	value, err := models.SetValueComeinand(form.MachineID, form.RepoName)
+	repoName, err := deviceService.GetRepoNameFromID()
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_NOT_EXIST_REPONAME_CONTROL, nil)
+		return
+	}
+
+	value, err := models.SetValueComeinand(form.MachineID, repoName)
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_SET_MESSAGE_MQTT, nil)
 		return

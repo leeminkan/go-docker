@@ -48,6 +48,7 @@ var MsgFlags = map[int]string{
 	ERROR_CONNECT_DEVICE_FAIL:              "Device connect fail!",
 	ERROR_EXIST_DEVICE_CONTROL_FAIL:        "Request with Device donot exists",
 	ERROR_SET_MESSAGE_MQTT:                 "Error when set value to control device pull image",
+	ERROR_NOT_EXIST_REPONAME_CONTROL:       "Get repo name from repo id fail",
 }
 
 // GetMsg get error information based on Code
