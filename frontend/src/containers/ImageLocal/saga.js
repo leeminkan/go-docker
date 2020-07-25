@@ -105,6 +105,8 @@ function* getLocalImageById({ payload }) {
       if (abc.data.data.status === "on progress") {
         yield delay(5000);
         yield put(getImageById(abc.data.data.id));
+      } else if (abc.data.data.status === "fail") {
+        yield put(buildImageFail("Build image lỗi"));
       } else {
         yield put(buildImageSuccess(data));
       }

@@ -92,6 +92,8 @@ function* getDockerHubImageById({ payload }) {
       if (abc.data.data.status === "on progress") {
         yield delay(15000);
         yield put(getDHImageById(abc.data.data.id));
+      } else if (abc.data.data.status === "fail") {
+        yield put(pushImageFail("Push image lỗi"));
       } else {
         yield put(pushImageSuccess(data));
       }

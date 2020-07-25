@@ -45,13 +45,22 @@ const reducer = (state = initialState, action) => {
     }
     case types.PUSH_IMAGE_SUCCESS: {
       toastSuccess("Push Image To Docker Hub thành công");
-      // eslint-disable-next-line
-      let remove = state.listDHImage.splice(0, 1);
       let newImage = action.payload.data.data;
-      let dataNewImage = [newImage].concat(state.listDHImage);
+      const { listDHImage } = state;
+      const index = listDHImage.findIndex((item) => item.id === newImage.id);
+      if (index !== -1) {
+        const newList = [
+          ...listDHImage.slice(0, index),
+          newImage,
+          ...listDHImage.slice(index + 1),
+        ];
+        return {
+          ...state,
+          listDHImage: newList,
+        };
+      }
       return {
         ...state,
-        listDHImage: dataNewImage,
       };
     }
     case types.PUSH_IMAGE_PENDING: {

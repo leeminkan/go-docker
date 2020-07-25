@@ -45,13 +45,22 @@ const reducer = (state = initialState, action) => {
     }
     case types.BUILD_IMAGE_SUCCESS: {
       toastSuccess("Build Image thành công");
-      // eslint-disable-next-line
-      let remove = state.listLocalImage.splice(0, 1);
       let newImage = action.payload.data.data;
-      let dataNewImage = [newImage].concat(state.listLocalImage);
+      const { listLocalImage } = state;
+      const index = listLocalImage.findIndex((item) => item.id === newImage.id);
+      if (index !== -1) {
+        const newList = [
+          ...listLocalImage.slice(0, index),
+          newImage,
+          ...listLocalImage.slice(index + 1),
+        ];
+        return {
+          ...state,
+          listLocalImage: newList,
+        };
+      }
       return {
         ...state,
-        listLocalImage: dataNewImage,
       };
     }
     case types.BUILD_IMAGE_PENDING: {
