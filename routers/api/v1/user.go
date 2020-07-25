@@ -23,6 +23,7 @@ type CreateUserInput struct {
 // @Summary Create users
 // @Produce  json
 // @Accept  multipart/form-data
+// @Security ApiKeyAuth
 // @Tags  Users
 // @Param username formData string true "userName"
 // @Param password formData string true "password"
