@@ -112,3 +112,7 @@ func addExtraSpaceIfExist(str string) string {
 	}
 	return ""
 }
+
+func GetDB() *gorm.DB {
+	return db
+}

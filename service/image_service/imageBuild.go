@@ -13,14 +13,15 @@ var Status = map[string]string{
 type ImageBuild struct {
 	ID int
 
-	RepoName string
-	ImageID  string
-	UserID   int
-	Status   string
+	RepoName    string
+	ImageID     string
+	UserID      int
+	Status      string
+	OldRepoName string
 }
 
 func (image *ImageBuild) CreateBuild() (models.ImageBuild, error) {
-	return models.CreateImageBuild(image.RepoName, image.ImageID, image.UserID, image.Status)
+	return models.CreateImageBuild(image.RepoName, image.ImageID, image.UserID, image.Status, image.OldRepoName)
 }
 
 func (image *ImageBuild) RemoveRepoNameIfExist() error {

@@ -7,6 +7,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"go-docker/database/migration"
+	"go-docker/database/seed"
 	"go-docker/models"
 	"go-docker/pkg/docker"
 	"go-docker/pkg/gredis"
@@ -23,6 +25,8 @@ func init() {
 	gredis.Setup()
 	util.Setup()
 	docker.Setup()
+	migration.Migrate()
+	seed.Run()
 }
 
 // @title Go Project
