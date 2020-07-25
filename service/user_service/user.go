@@ -7,14 +7,16 @@ import (
 )
 
 type User struct {
-	ID       int
-	Username string
-	Password string
-	IsAdmin  bool
+	ID               int
+	Username         string
+	Password         string
+	IsAdmin          bool
+	XRegistryAuth    string
+	IsLoginDockerHub bool
 }
 
 func (u *User) Create() error {
-	return models.CreateUser(u.Username, u.Password, u.IsAdmin)
+	return models.CreateUser(u.Username, u.Password, u.IsAdmin, u.XRegistryAuth, u.IsLoginDockerHub)
 }
 
 func (u *User) ExistByUserName() (bool, error) {
