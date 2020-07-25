@@ -10,6 +10,7 @@ import (
 	"go-docker/service/image_service"
 	imageType "go-docker/type/image"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/unknwon/com"
@@ -143,12 +144,21 @@ func BuildImageFromDockerFile(c *gin.Context) {
 	}
 
 	user, _ := c.MustGet("user").(models.User)
+
+	mTags := strings.Split(options.Tags[0], ":")
+	mTag := "latest"
+
+	if len(mTags[1]) > 0 {
+		mTag = mTags[1]
+	}
+
 	imageService := image_service.ImageBuild{
-		RepoName: options.Tags[0],
+		RepoName: mTags[0],
+		Tag:      mTag,
 		UserID:   user.ID,
 		Status:   image_service.Status["OnProgress"],
 	}
-	err = imageService.RemoveRepoNameIfExist()
+	err = imageService.RemoveRepoNameAndTagIfExist()
 
 	if err != nil {
 		logging.Warn(err)
@@ -220,12 +230,21 @@ func BuildImageFromTar(c *gin.Context) {
 	}
 
 	user, _ := c.MustGet("user").(models.User)
+
+	mTags := strings.Split(options.Tags[0], ":")
+	mTag := "latest"
+
+	if len(mTags[1]) > 0 {
+		mTag = mTags[1]
+	}
+
 	imageService := image_service.ImageBuild{
-		RepoName: options.Tags[0],
+		RepoName: mTags[0],
+		Tag:      mTag,
 		UserID:   user.ID,
 		Status:   image_service.Status["OnProgress"],
 	}
-	err = imageService.RemoveRepoNameIfExist()
+	err = imageService.RemoveRepoNameAndTagIfExist()
 
 	if err != nil {
 		logging.Warn(err)
