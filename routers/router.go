@@ -13,6 +13,7 @@ import (
 	"go-docker/middleware/cors"
 	"go-docker/middleware/docker"
 	"go-docker/middleware/jwt"
+	"go-docker/middleware/role"
 	"go-docker/pkg/export"
 	"go-docker/pkg/qrcode"
 	"go-docker/pkg/upload"
@@ -39,73 +40,151 @@ func InitRouter() *gin.Engine {
 
 	apiv1 := r.Group("/api/v1")
 	////////////////////////////////////////////////////////////////////
-	///////						Start							////////
+	///////						Image							////////
 	////////////////////////////////////////////////////////////////////
 
+	apiImage := apiv1.Group("/")
 	//Get list images
-	apiv1.GET("/images", v1.GetImages)
+	apiImage.GET("/images", v1.GetImages)
 	//Get image
-	apiv1.GET("/images/:id", v1.GetImage)
-	//Get list container
-	apiv1.GET("/containers", v1.GetContainers)
-	//Get container
-	apiv1.GET("/containers/:id", v1.GetContainer)
-	//Create a container
-	apiv1.POST("/containers", v1.CreateContainer)
-	//Remove container
-	apiv1.DELETE("/containers/:id", v1.RemoveContainer)
-	//Get list devices
-	apiv1.GET("/devices", v1.GetListDevices)
-	//Create device
-	apiv1.POST("/devices", v1.CreateDevice)
-	//Remove device
-	apiv1.DELETE("/devices/:id", v1.RemoveDevice)
-	//Connect device
-	apiv1.POST("/devices/connect", v1.ConnectDevice)
-	//Control a device pull image from dockerhub
-	apiv1.POST("/control/devices/pull", v1.ControlDevicePull)
-	//Create user
-	apiv1.POST("/users", v1.CreateUser)
-	//Login user
-	apiv1.POST("/users/login", v1.Login)
-
-	apiv1.Use(jwt.JWTCustom())
+	apiImage.GET("/images/:id", v1.GetImage)
+	apiImage.Use(jwt.JWTCustom())
 	{
-		//Login user
-		apiv1.GET("/users/mine", v1.GetInfo)
-		//Login Docker Hub
-		apiv1.POST("/docker/login", v1.LoginDockerHub)
 		//Remove image
-		apiv1.DELETE("/images/:id", v1.RemoveImage)
+		apiImage.DELETE("/images/:id", v1.RemoveImage)
 		//Build image
-		apiv1.POST("/images/build-from-docker-file", v1.BuildImageFromDockerFile)
+		apiImage.POST("/images/build-from-docker-file", v1.BuildImageFromDockerFile)
 		//Build image
-		apiv1.POST("/images/build-from-tar", v1.BuildImageFromTar)
+		apiImage.POST("/images/build-from-tar", v1.BuildImageFromTar)
 		//Tag image
-		apiv1.POST("/images/change-tag", v1.ChangeTagImage)
+		apiImage.POST("/images/change-tag", v1.ChangeTagImage)
+	}
+
+	////////////////////////////////////////////////////////////////////
+	///////						End-Image						////////
+	////////////////////////////////////////////////////////////////////
+
+	////////////////////////////////////////////////////////////////////
+	///////						ImageBuild						////////
+	////////////////////////////////////////////////////////////////////
+
+	apiImageBuild := apiv1.Group("/")
+	apiImageBuild.Use(jwt.JWTCustom())
+	{
 		//Get image build by id
-		apiv1.GET("/images-build/:id", v1.GetImageBuildByID)
+		apiImageBuild.GET("/images-build/:id", v1.GetImageBuildByID)
 		//Get image build
-		apiv1.GET("/images-build", v1.GetImageBuild)
+		apiImageBuild.GET("/images-build", v1.GetImageBuild)
 		//Get list image build
-		apiv1.GET("/images-list-build", v1.GetListImageBuild)
+		apiImageBuild.GET("/images-list-build", v1.GetListImageBuild)
+	}
+
+	////////////////////////////////////////////////////////////////////
+	///////						End-ImageBuild					////////
+	////////////////////////////////////////////////////////////////////
+
+	////////////////////////////////////////////////////////////////////
+	///////						Image-Push						////////
+	////////////////////////////////////////////////////////////////////
+
+	apiImagePush := apiv1.Group("/")
+	apiImagePush.Use(jwt.JWTCustom())
+	{
 		//Get list image push
-		apiv1.GET("/images-list-push", v1.GetListImagePush)
+		apiImagePush.GET("/images-list-push", v1.GetListImagePush)
 
 		//Get image push by id
-		apiv1.GET("/images-push/:id", v1.GetImagePushByID)
+		apiImagePush.GET("/images-push/:id", v1.GetImagePushByID)
 
-		apiv1.Use(docker.CheckLoginDockerHub())
+		apiImagePush.Use(docker.CheckLoginDockerHub())
 		{
 			//Push image
-			apiv1.POST("/images/push", v1.PushImage)
+			apiImagePush.POST("/images/push", v1.PushImage)
 			//Push image From ID
-			apiv1.POST("/images/push-from-id/:id", v1.PushImageFromID)
+			apiImagePush.POST("/images/push-from-id/:id", v1.PushImageFromID)
 		}
 	}
 
 	////////////////////////////////////////////////////////////////////
-	///////						End								////////
+	///////						End-ImagePush					////////
+	////////////////////////////////////////////////////////////////////
+
+	////////////////////////////////////////////////////////////////////
+	///////						Container						////////
+	////////////////////////////////////////////////////////////////////
+
+	apiContainer := apiv1.Group("/")
+	//Get list container
+	apiContainer.GET("/containers", v1.GetContainers)
+	//Get container
+	apiContainer.GET("/containers/:id", v1.GetContainer)
+	//Create a container
+	apiContainer.POST("/containers", v1.CreateContainer)
+	//Remove container
+	apiContainer.DELETE("/containers/:id", v1.RemoveContainer)
+
+	////////////////////////////////////////////////////////////////////
+	///////						End-Container					////////
+	////////////////////////////////////////////////////////////////////
+
+	////////////////////////////////////////////////////////////////////
+	///////						Device							////////
+	////////////////////////////////////////////////////////////////////
+
+	apiDevice := apiv1.Group("/")
+
+	//Get list devices
+	apiDevice.GET("/devices", v1.GetListDevices)
+	//Create device
+	apiDevice.POST("/devices", v1.CreateDevice)
+	//Remove device
+	apiDevice.DELETE("/devices/:id", v1.RemoveDevice)
+	//Connect device
+	apiDevice.POST("/devices/connect", v1.ConnectDevice)
+	//Control a device pull image from dockerhub
+	apiDevice.POST("/control/devices/pull", v1.ControlDevicePull)
+
+	////////////////////////////////////////////////////////////////////
+	///////						End-Device						////////
+	////////////////////////////////////////////////////////////////////
+
+	////////////////////////////////////////////////////////////////////
+	///////						User							////////
+	////////////////////////////////////////////////////////////////////
+
+	apiUser := apiv1.Group("/")
+	//Login user
+	apiUser.POST("/users/login", v1.Login)
+
+	apiUser.Use(jwt.JWTCustom())
+	{
+		apiUser.Use(role.IsAdmin())
+		{
+			//Create user
+			apiUser.POST("/users", v1.CreateUser)
+		}
+		//Login user
+		apiUser.GET("/users/mine", v1.GetInfo)
+
+	}
+
+	////////////////////////////////////////////////////////////////////
+	///////						End-User						////////
+	////////////////////////////////////////////////////////////////////
+
+	////////////////////////////////////////////////////////////////////
+	///////						Docker							////////
+	////////////////////////////////////////////////////////////////////
+
+	apiDocker := apiv1.Group("/")
+	apiDocker.Use(jwt.JWTCustom())
+	{
+		//Login Docker Hub
+		apiDocker.POST("/docker/login", v1.LoginDockerHub)
+	}
+
+	////////////////////////////////////////////////////////////////////
+	///////						End-Docker						////////
 	////////////////////////////////////////////////////////////////////
 
 	return r
