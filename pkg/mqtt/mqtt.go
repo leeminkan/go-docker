@@ -1,4 +1,4 @@
-package models
+package mqtt
 
 import (
 	"encoding/json"

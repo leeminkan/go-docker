@@ -11,8 +11,6 @@ import (
 	"go-docker/pkg/logging"
 	"go-docker/pkg/util"
 	"go-docker/service/user_service"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
 type CreateUserInput struct {
@@ -51,16 +49,9 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(form.Password), bcrypt.DefaultCost)
-	if err != nil {
-		logging.Warn(err)
-		appG.Response(http.StatusInternalServerError, e.ERROR_CREATE_USER_FAIL, nil)
-		return
-	}
-
 	userService := user_service.User{
 		Username: form.Username,
-		Password: string(hashedPassword),
+		Password: form.Password,
 		IsAdmin:  form.IsAdmin,
 	}
 
