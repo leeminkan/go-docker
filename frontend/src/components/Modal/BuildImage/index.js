@@ -30,7 +30,7 @@ class BuildImage extends Component {
     if (this.state.file != "") {
       let payload = {
         file: this.state.file,
-        tag: data.tag,
+        tag: data.tag.toLowerCase(),
       };
       this.props.onSave(payload);
     } else {

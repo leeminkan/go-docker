@@ -40,6 +40,7 @@ const styles = (theme) => ({
     backgroundColor: "white",
     boxShadow: "#000000",
     outline: "none",
+    borderRadius: "5px",
   },
   header: {
     backgroundColor: "#20c997",
@@ -47,6 +48,7 @@ const styles = (theme) => ({
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
+    borderRadius: "5px 5px 0 0",
   },
   title: {
     color: "white",

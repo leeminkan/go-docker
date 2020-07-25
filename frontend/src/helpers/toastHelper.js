@@ -6,6 +6,12 @@ export function toastSuccess(message) {
   }
 }
 
+export function toastWarning(message) {
+  if (message) {
+    toast.warning(message);
+  }
+}
+
 export function toastError(error) {
   let toastData = "";
   if (typeof error === "string") {

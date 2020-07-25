@@ -10,7 +10,7 @@ import {
 import * as types from "./constant";
 import * as api from "../../constants/config";
 import axios from "axios";
-import { toastSuccess } from "../../helpers/toastHelper";
+import { toastWarning } from "../../helpers/toastHelper";
 
 const CancelToken = axios.CancelToken;
 let cancel;
@@ -72,7 +72,7 @@ function* buildImage({ payload }) {
   try {
     let image = payload.data;
     const resp = yield call(apiBuildImage, image);
-    toastSuccess("Build Image is progressing. Please wait");
+    toastWarning("Build Image is progressing. Please wait");
     const { data, status } = resp;
     if (status === 200) {
       yield put(buildImagePending(data));
