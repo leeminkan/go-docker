@@ -43,6 +43,7 @@ class Sidebar extends Component {
               </NavLink>
             );
           }
+          return "";
         })}
       </List>
     );

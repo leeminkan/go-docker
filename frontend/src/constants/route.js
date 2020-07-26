@@ -22,13 +22,7 @@ export const ADMIN_ROUTES = [
     icon: "home",
     hidden: false,
   },
-  {
-    path: "/login-docker-hub",
-    name: "Login Docker Hub",
-    component: LoginDokcerHub,
-    icon: "lock",
-    hidden: false,
-  },
+
   {
     path: "/imagelist",
     name: "List Image",
@@ -83,5 +77,10 @@ export const ROUTES = [
     path: "/register",
     name: "Đăng Ký",
     component: RegisterPage,
+  },
+  {
+    path: "/login-docker-hub",
+    name: "Login Docker Hub",
+    component: LoginDokcerHub,
   },
 ];

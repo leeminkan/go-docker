@@ -1,12 +1,7 @@
 import * as constRegister from "./constants";
 import { toastSuccess } from "../../helpers/toastHelper";
 
-const initialState = {
-  username: "",
-  password: "",
-  rePassword: "",
-  isAdmin: false,
-};
+const initialState = {};
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {

@@ -5,6 +5,7 @@ import { loginDockerHubSuccess } from "./action";
 import axios from "axios";
 //import { push } from "connected-react-router";
 import { toastError } from "../../helpers/toastHelper";
+import { push } from "connected-react-router";
 
 const CancelToken = axios.CancelToken;
 let cancel;
@@ -44,8 +45,7 @@ function* onLoginDockerHub({ payload }) {
 function* onLoginDockerHubSuccess({ payload }) {
   const { data } = payload.data;
   console.log(data);
-  yield localStorage.setItem("DOCKERHUB", "abcxyz");
-  //yield put(push("/"));
+  yield put(push("/"));
 }
 
 function* onLoginDockerHubSaga() {

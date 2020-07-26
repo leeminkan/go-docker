@@ -6,9 +6,8 @@ import styles from "./styles";
 import { connect } from "react-redux";
 import { compose, bindActionCreators } from "redux";
 import * as DeviceAction from "./action";
-import { Typography, Button } from "@material-ui/core";
+import { Typography } from "@material-ui/core";
 import { CardContent, Card } from "@material-ui/core";
-import DeleteIcon from "@material-ui/icons/Delete";
 
 class DeviceList extends Component {
   render() {

@@ -126,7 +126,9 @@ class HomePage extends Component {
 
 const mapStateToProps = (state) => ({});
 
-const mapDispatchToProps = (dispatch) => {};
+const mapDispatchToProps = (dispatch) => {
+  return {};
+};
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps);
 

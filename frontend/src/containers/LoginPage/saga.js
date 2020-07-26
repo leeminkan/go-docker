@@ -42,7 +42,11 @@ function* onLoginSuccess({ payload }) {
   const { data } = payload.data;
   console.log(data);
   yield localStorage.setItem("JWT_TOKEN", data.token);
-  yield put(push("/"));
+  if (data.user.is_login_docker_hub) {
+    yield put(push("/"));
+  } else {
+    yield put(push("/login-docker-hub"));
+  }
 }
 
 function* onLoginSaga() {

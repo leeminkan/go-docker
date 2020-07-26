@@ -9,7 +9,7 @@ import * as DockerHubImageAction from "./action";
 import * as LocalImageAction from "../ImageLocal/action";
 import { Typography, Button, Box, Grid } from "@material-ui/core";
 import { CardContent, Card } from "@material-ui/core";
-import DeleteIcon from "@material-ui/icons/Delete";
+import ConvertTime from "../../helpers/convertTime";
 import pending from "../../assets/img/pending.gif";
 import PushImage from "../../components/Modal/PushImage";
 
@@ -58,6 +58,27 @@ class DockerHubImage extends Component {
         Header: "Repository Name",
         id: "repo_name",
         accessor: "repo_name",
+        Cell: (data) => {
+          if (data.original.TagDockerHub) {
+            return data.original.TagDockerHub.RepoDockerHub.repo_name;
+          }
+        },
+      },
+      {
+        key: "tag",
+        Header: "Tag",
+        id: "tag",
+        accessor: "tag",
+        width: 120,
+        Cell: (data) => {
+          if (data.original.TagDockerHub) {
+            return (
+              <div className={classes.status}>
+                {data.original.TagDockerHub.tag}
+              </div>
+            );
+          }
+        },
       },
       {
         key: "status",
@@ -72,7 +93,6 @@ class DockerHubImage extends Component {
                 <div className={classes.logoImage}>
                   <img src={pending} alt="logo" className={classes.img} />
                 </div>
-                {/* <div className={classes.status}>{data.value}</div> */}
               </Fragment>
             );
           } else {
@@ -85,34 +105,31 @@ class DockerHubImage extends Component {
         },
       },
       {
-        key: "action",
-        Header: "Action",
-        accessor: "action",
-        width: 210,
-        align: "left",
+        key: "username",
+        Header: "Created User",
+        id: "username",
+        accessor: "username",
+        width: 120,
         Cell: (data) => {
-          return (
-            <Fragment>
-              {/* <Button
-                variant="outlined"
-                color="primary"
-                className={classes.icon}
-                startIcon={<DeleteIcon />}
-                onClick={() => this.openModalEditLearn(data.original)}
-              >
-                Edit
-              </Button> */}
-              {/* <Button
-                variant="outlined"
-                color="secondary"
-                className={classes.icon}
-                startIcon={<DeleteIcon />}
-                onClick={() => this.openModalEditLearn(data.original)}
-              >
-                Delete
-              </Button> */}
-            </Fragment>
-          );
+          if (data.original.User) {
+            return (
+              <div className={classes.status}>
+                {data.original.User.username}
+              </div>
+            );
+          }
+        },
+      },
+      {
+        key: "created_on",
+        Header: "Created Time",
+        id: "created_on",
+        accessor: "created_on",
+        width: 160,
+        Cell: (data) => {
+          if (data) {
+            return ConvertTime(data.value);
+          }
         },
       },
     ];

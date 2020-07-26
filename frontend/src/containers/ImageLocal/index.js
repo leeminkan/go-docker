@@ -8,9 +8,9 @@ import { compose, bindActionCreators } from "redux";
 import * as LocalImageAction from "./action";
 import { Typography, Button, Box, Grid } from "@material-ui/core";
 import { CardContent, Card } from "@material-ui/core";
-import DeleteIcon from "@material-ui/icons/Delete";
 import logo from "../../assets/img/pending.gif";
 import BuildImage from "../../components/Modal/BuildImage";
+import ConvertTime from "../../helpers/convertTime";
 
 class LocalImage extends Component {
   onCloseModalBuildImage = () => {
@@ -50,7 +50,18 @@ class LocalImage extends Component {
         accessor: "image_id",
         id: "image_id",
       },
-
+      {
+        key: "tag",
+        Header: "Tag",
+        accessor: "tag",
+        id: "tag",
+        width: 100,
+        Cell: (data) => {
+          if (data.value) {
+            return <div className={classes.status}>{data.value}</div>;
+          }
+        },
+      },
       {
         key: "status",
         Header: "Status",
@@ -64,7 +75,6 @@ class LocalImage extends Component {
                 <div className={classes.logoImage}>
                   <img src={logo} alt="logo" className={classes.img} />
                 </div>
-                {/* <div className={classes.status}>{data.value}</div> */}
               </Fragment>
             );
           } else {
@@ -77,34 +87,15 @@ class LocalImage extends Component {
         },
       },
       {
-        key: "action",
-        Header: "Action",
-        accessor: "action",
-        width: 210,
-        align: "left",
+        key: "created_on",
+        Header: "Create Time",
+        id: "created_on",
+        accessor: "created_on",
+        width: 160,
         Cell: (data) => {
-          return (
-            <Fragment>
-              {/* <Button
-                variant="outlined"
-                color="primary"
-                className={classes.icon}
-                startIcon={<DeleteIcon />}
-                onClick={() => this.openModalEditLearn(data.original)}
-              >
-                Edit
-              </Button> */}
-              {/* <Button
-                variant="outlined"
-                color="secondary"
-                className={classes.icon}
-                startIcon={<DeleteIcon />}
-                onClick={() => this.openModalEditLearn(data.original)}
-              >
-                Delete
-              </Button> */}
-            </Fragment>
-          );
+          if (data) {
+            return ConvertTime(data.value);
+          }
         },
       },
     ];

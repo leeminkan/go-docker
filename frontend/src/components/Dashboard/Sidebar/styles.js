@@ -3,8 +3,9 @@ const styles = (theme) => ({
     padding: "0",
   },
   drawerPaper: {
-    position: "inherit",
+    position: "fixed",
     width: 240,
+    marginTop: "64px",
     marginRight: 10,
     maxWidth: 240,
     minHeight: "100%",

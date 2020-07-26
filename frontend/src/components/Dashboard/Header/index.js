@@ -68,7 +68,7 @@ class Header extends Component {
     const { classes } = this.props;
     return (
       <>
-        <AppBar position="static">
+        <AppBar position="fixed">
           <Toolbar>
             <IconButton
               edge="start"
