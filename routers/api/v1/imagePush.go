@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"fmt"
 	"go-docker/models"
 	"go-docker/pkg/app"
 	"go-docker/pkg/docker"
@@ -8,6 +9,8 @@ import (
 	"go-docker/pkg/logging"
 	"go-docker/pkg/util"
 	"go-docker/service/image_service"
+	"go-docker/service/repo_service"
+	"go-docker/service/tag_service"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -28,7 +31,7 @@ func GetListImagePush(c *gin.Context) {
 
 	if err != nil {
 		logging.Warn(err)
-		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		appG.Response(http.StatusInternalServerError, e.ERROR_GET_LIST_IMAGE_PUSH, nil)
 		return
 	}
 
@@ -55,7 +58,7 @@ func GetImagePushByID(c *gin.Context) {
 
 	if err != nil {
 		logging.Warn(err)
-		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		appG.Response(http.StatusInternalServerError, e.ERROR_GET_IMAGE_PUSH_BY_ID, nil)
 		return
 	}
 
@@ -85,7 +88,7 @@ func PushImageFromID(c *gin.Context) {
 
 	if err != nil {
 		logging.Warn(err)
-		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		appG.Response(http.StatusBadRequest, e.ERROR_IMAGE_BUILD_NOT_FOUND, nil)
 		return
 	}
 
@@ -93,64 +96,107 @@ func PushImageFromID(c *gin.Context) {
 
 	data, _ := util.DecodeBase64XRegistryAuth(user.XRegistryAuth)
 
-	err = docker.TagImage(docker.Client.Client, image.ImageID, data.Username+"/"+image.RepoName)
-	if err != nil {
-		logging.Warn(err)
-		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
-		return
-	}
+	fullRepoName := data.Username + "/" + image.RepoName + ":" + image.Tag
 
-	result, err := docker.PushImage(docker.Client.Client, data.Username+"/"+image.RepoName, user.XRegistryAuth)
+	err = docker.TagImage(docker.Client.Client, image.ImageID, fullRepoName)
 
 	if err != nil {
 		logging.Warn(err)
-		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		appG.Response(http.StatusInternalServerError, e.ERROR_TAG_IMAGE, nil)
 		return
 	}
 
-	checkExists := image_service.CheckExistRepoToRefuse(data.Username + "/" + image.RepoName)
+	result, err := docker.PushImage(docker.Client.Client, fullRepoName, user.XRegistryAuth)
 
-	// if check {
-	// 	logging.Warn("Repo Name existed")
-	// 	appG.Response(http.StatusInternalServerError, e.ERROR, nil)
-	// 	return
-	// }
-
-	if checkExists {
-
-		imageUpdating := image_service.ImagePush{
-			RepoName: data.Username + "/" + image.RepoName,
-			Status:   image_service.Status["OnProgress"],
-		}
-		imageUpdated, errUpdated := imageUpdating.UpdateStatusPush()
-
-		if errUpdated != nil {
-			logging.Warn(errUpdated)
-			appG.Response(http.StatusInternalServerError, e.ERROR, nil)
-			return
-		}
-		go docker.HandleResultForPush(result, imageUpdated)
-		appG.Response(http.StatusOK, e.SUCCESS, imageUpdated)
+	if err != nil {
+		logging.Warn(err)
+		appG.Response(http.StatusInternalServerError, e.ERROR_PUSH_IMAGE_FAIL, nil)
 		return
+	}
+	var repo models.RepoDockerHub
+	var tag models.TagDockerHub
+	var imageCreate models.ImagePush
+
+	repoService := repo_service.RepoDockerHub{
+		RepoName: data.Username + "/" + image.RepoName,
+	}
+
+	exist, repo := repoService.CheckRepoDockerHubExist()
+
+	if exist == true {
+		tagService := tag_service.TagDockerHub{
+			Tag:    image.Tag,
+			RepoID: repo.ID,
+		}
+
+		exist, tag = tagService.CheckTagDockerHubExist()
+
+		if exist != true {
+			tag, err = tagService.CreateTagDockerHub()
+
+			if err != nil {
+				logging.Warn(err)
+				appG.Response(http.StatusInternalServerError, e.ERROR_TAG_CREATE, nil)
+				return
+			}
+		} else {
+			imageServicePush := image_service.ImagePush{
+				TagID:        tag.ID,
+				UserID:       user.ID,
+				BuildID:      image.ID,
+				FullRepoName: fullRepoName,
+				Status:       image_service.Status["OnProgress"],
+			}
+
+			exist, _ := imageServicePush.CheckImagePushExist()
+
+			if exist == true {
+				logging.Warn("Image already push done or on progress")
+				appG.Response(http.StatusBadRequest, e.ERROR_PUSH_IMAGE_EXISTED, nil)
+				return
+			}
+		}
 	} else {
-		imageServicePush := image_service.ImagePush{
-			RepoName: data.Username + "/" + image.RepoName,
-			UserID:   user.ID,
-			Status:   image_service.Status["OnProgress"],
-		}
-		imageCreate, errCreate := imageServicePush.CreatePush()
+		repo, err = repoService.CreateRepoDockerHub()
 
-		if errCreate != nil {
-			logging.Warn(errCreate)
-			appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		if err != nil {
+			logging.Warn(err)
+			appG.Response(http.StatusInternalServerError, e.ERROR_REPO_CREATE, nil)
 			return
 		}
 
-		go docker.HandleResultForPush(result, imageCreate)
+		tagService := tag_service.TagDockerHub{
+			Tag:    image.Tag,
+			RepoID: repo.ID,
+		}
+		tag, err = tagService.CreateTagDockerHub()
 
-		appG.Response(http.StatusOK, e.SUCCESS, imageCreate)
+		if err != nil {
+			logging.Warn(err)
+			appG.Response(http.StatusInternalServerError, e.ERROR_TAG_CREATE, nil)
+			return
+		}
+	}
+
+	imageServicePush := image_service.ImagePush{
+		TagID:        tag.ID,
+		UserID:       user.ID,
+		BuildID:      image.ID,
+		FullRepoName: fullRepoName,
+		Status:       image_service.Status["OnProgress"],
+	}
+	imageCreate, err = imageServicePush.CreatePush()
+
+	if err != nil {
+		logging.Warn(err)
+		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
 		return
 	}
-	// appG.Response(http.StatusOK, e.SUCCESS, result)
-	// return
+
+	fmt.Println("Van tiep tuc a???")
+
+	go docker.HandleResultForPush(result, imageCreate)
+
+	appG.Response(http.StatusOK, e.SUCCESS, imageCreate)
+	return
 }

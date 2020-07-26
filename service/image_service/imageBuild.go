@@ -14,6 +14,7 @@ type ImageBuild struct {
 	ID int
 
 	RepoName    string
+	Tag         string
 	ImageID     string
 	UserID      int
 	Status      string
@@ -21,11 +22,11 @@ type ImageBuild struct {
 }
 
 func (image *ImageBuild) CreateBuild() (models.ImageBuild, error) {
-	return models.CreateImageBuild(image.RepoName, image.ImageID, image.UserID, image.Status, image.OldRepoName)
+	return models.CreateImageBuild(image.RepoName, image.Tag, image.ImageID, image.UserID, image.Status, image.OldRepoName)
 }
 
-func (image *ImageBuild) RemoveRepoNameIfExist() error {
-	return models.RemoveRepoNameIfExist(image.RepoName)
+func (image *ImageBuild) RemoveRepoNameAndTagIfExist() error {
+	return models.RemoveRepoNameAndTagIfExist(image.RepoName, image.Tag)
 }
 
 func (image *ImageBuild) GetByID() (bool, models.ImageBuild, error) {

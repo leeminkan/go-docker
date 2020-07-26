@@ -9,17 +9,26 @@ import (
 type ImagePush struct {
 	Model
 
-	RepoName    string `json:"repo_name"`
-	UserID      int    `json:"user_id"`
-	Status      string `json:"status" gorm:"type:enum('on progress', 'done', 'fail');default:'on progress'"`
-	OldRepoName string `json:"old_repo_name"`
+	TagID        int    `json:"tag_id"`
+	UserID       int    `json:"user_id"`
+	BuildID      int    `json:"build_id"`
+	FullRepoName string `json:"full_repo_name"`
+	Digest       string `json:"digest"`
+	Status       string `json:"status" gorm:"type:enum('on progress', 'done', 'fail');default:'on progress'"`
+
+	TagDockerHub TagDockerHub `gorm:"foreignkey:TagID"`
+	User         User
+	ImageBuild   ImageBuild `gorm:"foreignkey:BuildID"`
 }
 
-func CreateImagePush(repo_name string, user_id int, status string) (ImagePush, error) {
+func CreateImagePush(tag_id int, user_id int, build_id int, full_repo_name string, digest string, status string) (ImagePush, error) {
 	imagePush := ImagePush{
-		RepoName: repo_name,
-		UserID:   user_id,
-		Status:   status,
+		TagID:        tag_id,
+		UserID:       user_id,
+		BuildID:      build_id,
+		FullRepoName: full_repo_name,
+		Digest:       digest,
+		Status:       status,
 	}
 
 	if err := db.Create(&imagePush).Error; err != nil {
@@ -27,27 +36,14 @@ func CreateImagePush(repo_name string, user_id int, status string) (ImagePush, e
 		return imagePush, err
 	}
 
-	return imagePush, nil
-}
-
-func UpdateStatusImagePush(repo_name string, status string) (ImagePush, error) {
-	imagePush := ImagePush{
-		RepoName: repo_name,
-		Status:   status,
-	}
-	db.Table("image_push").Where("repo_name = ? AND deleted_on = ? ", repo_name, 0).Update("status", status)
-	err := db.Where("deleted_on = ?", 0).Find(&imagePush).Error
-	if err != nil {
-		logging.Warn(err)
-		return imagePush, err
-	}
+	db.Preload("TagDockerHub").Preload("TagDockerHub.RepoDockerHub").Preload("User").Preload("ImageBuild").Find(&imagePush)
 
 	return imagePush, nil
 }
 
 func GetListImagePush() ([]ImagePush, error) {
 	var images []ImagePush
-	err := db.Where("deleted_on = ?", 0).Find(&images).Error
+	err := db.Where("deleted_on = ?", 0).Preload("TagDockerHub").Preload("TagDockerHub.RepoDockerHub").Preload("User").Preload("ImageBuild").Find(&images).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		logging.Warn(err)
 		return images, err
@@ -56,18 +52,9 @@ func GetListImagePush() ([]ImagePush, error) {
 	return images, nil
 }
 
-func CheckExistRepoToRefuse(repo_name string) bool {
-	var image ImagePush
-	db.Where("repo_name = ? AND deleted_on = ? ", repo_name, 0).Find(&image)
-	if image == (ImagePush{}) {
-		return false
-	}
-	return true
-}
-
 func GetImagePushByID(id int) (bool, ImagePush, error) {
 	var image ImagePush
-	err := db.Where("id = ? AND deleted_on = ?", id, 0).First(&image).Error
+	err := db.Where("id = ? AND deleted_on = ?", id, 0).Preload("TagDockerHub").Preload("TagDockerHub.RepoDockerHub").Preload("User").Preload("ImageBuild").First(&image).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		logging.Warn(err)
 		return false, image, err
@@ -80,15 +67,44 @@ func GetImagePushByID(id int) (bool, ImagePush, error) {
 	return false, image, nil
 }
 
-func GetRepoName(repoID int) (string, error) {
+func (image ImagePush) UpdatePush(digest string, status string) error {
+	err := db.Model(&image).Updates(ImagePush{
+		Digest: digest,
+		Status: status}).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func GetFullRepoName(pushID int) (string, error) {
 	var imagePush ImagePush
-	err := db.Select("repo_name").Where("deleted_on = ? AND id = ? ", 0, repoID).First(&imagePush).Error
+
+	err := db.Select("full_repo_name").Where("deleted_on = ? AND id = ? ", 0, pushID).First(&imagePush).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return "", err
 	}
-	if imagePush.RepoName != "" {
-		return imagePush.RepoName, nil
+
+	if imagePush.FullRepoName != "" {
+		return imagePush.FullRepoName, nil
 	}
 
 	return "", nil
+}
+
+func CheckImagePushExist(tag_id int, build_id int, statusDone string, statusOnProgress string) (bool, ImagePush) {
+	var image ImagePush
+	err := db.Where("tag_id = ? AND build_id = ? AND (status = ? OR status = ?) AND deleted_on = ? ", tag_id, build_id, statusDone, statusOnProgress, 0).First(&image).Error
+
+	if err != nil && err != gorm.ErrRecordNotFound {
+		logging.Warn(err)
+		return false, image
+	}
+
+	if image.ID > 0 {
+		return true, image
+	}
+
+	return false, image
 }

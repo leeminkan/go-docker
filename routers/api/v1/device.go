@@ -221,7 +221,7 @@ func ControlDevicePull(c *gin.Context) {
 		return
 	}
 
-	repoName, err := deviceService.GetRepoNameFromID()
+	repoName, err := deviceService.GetFullRepoNameFromID()
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_NOT_EXIST_REPONAME_CONTROL, nil)
 		return

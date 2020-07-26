@@ -10,15 +10,17 @@ type ImageBuild struct {
 	Model
 
 	RepoName    string `json:"repo_name"`
+	Tag         string `json:"tag" gorm:"default:'latest'"`
 	ImageID     string `json:"image_id"`
 	UserID      int    `json:"user_id"`
 	Status      string `json:"status" gorm:"type:enum('on progress', 'done', 'fail');default:'on progress'"`
 	OldRepoName string `json:"old_repo_name"`
 }
 
-func CreateImageBuild(repo_name string, image_id string, user_id int, status string, old_repo_name string) (ImageBuild, error) {
+func CreateImageBuild(repo_name string, tag string, image_id string, user_id int, status string, old_repo_name string) (ImageBuild, error) {
 	imageBuild := ImageBuild{
 		RepoName:    repo_name,
+		Tag:         tag,
 		ImageID:     image_id,
 		UserID:      user_id,
 		Status:      status,
@@ -33,9 +35,9 @@ func CreateImageBuild(repo_name string, image_id string, user_id int, status str
 	return imageBuild, nil
 }
 
-func RemoveRepoNameIfExist(repo_name string) error {
+func RemoveRepoNameAndTagIfExist(repo_name string, tag string) error {
 	var image ImageBuild
-	err := db.Model(&image).Where("repo_name = ? AND deleted_on = ? ", repo_name, 0).Updates(map[string]interface{}{"repo_name": "", "old_repo_name": repo_name}).Error
+	err := db.Model(&image).Where("repo_name = ? AND tag = ? AND deleted_on = ? ", repo_name, tag, 0).Updates(map[string]interface{}{"repo_name": "", "tag": "", "old_repo_name": repo_name + ":" + tag}).Error
 
 	if err != nil {
 		logging.Warn(err)
@@ -49,18 +51,6 @@ func (image ImageBuild) Update(repo_name string, image_id string, user_id int, s
 	err := db.Model(&image).Updates(ImageBuild{
 		RepoName: repo_name,
 		ImageID:  image_id,
-		UserID:   user_id,
-		Status:   status}).Error
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (image ImagePush) UpdatePush(repo_name string, user_id int, status string) error {
-	err := db.Model(&image).Updates(ImagePush{
-		RepoName: repo_name,
 		UserID:   user_id,
 		Status:   status}).Error
 	if err != nil {

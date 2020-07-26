@@ -43,7 +43,7 @@ func LoginDockerHub(c *gin.Context) {
 
 	if err != nil {
 		logging.Warn(err)
-		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		appG.Response(http.StatusUnauthorized, e.ERROR_DOCKER_LOGIN_FAIL, nil)
 		return
 	}
 
