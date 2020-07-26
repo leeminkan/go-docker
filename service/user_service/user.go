@@ -48,6 +48,10 @@ func (u *User) Login() (string, error) {
 	return token, nil
 }
 
+func (u *User) GetUserByUserName() (models.User, error) {
+	return models.GetUserByUserName(u.Username)
+}
+
 func GetUserByUserName(username string) (models.User, error) {
 	user, err := models.GetUserByUserName(username)
 	if err != nil {

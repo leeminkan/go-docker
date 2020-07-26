@@ -120,8 +120,17 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	appG.Response(http.StatusOK, e.SUCCESS, map[string]string{
+	user, err := userService.GetUserByUserName()
+
+	if err != nil {
+		logging.Warn(err)
+		appG.Response(http.StatusInternalServerError, e.ERROR_USER_LOGIN_FAIL, nil)
+		return
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, map[string]interface{}{
 		"token": token,
+		"user":  user,
 	})
 	return
 }
