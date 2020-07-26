@@ -197,12 +197,12 @@ func BuildImageFromTar(c *gin.Context) {
 
 	if err != nil {
 		logging.Warn(err)
-		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		appG.Response(http.StatusBadRequest, e.ERROR_IMAGE_BUILD_FILE_INVALID, nil)
 		return
 	}
 
 	if file == nil {
-		appG.Response(http.StatusBadRequest, e.INVALID_PARAMS, nil)
+		appG.Response(http.StatusBadRequest, e.ERROR_IMAGE_BUILD_FILE_INVALID, nil)
 		return
 	}
 	_, success := util.Find(fileHeader.Header["Content-Type"], "application/x-tar")
@@ -217,7 +217,7 @@ func BuildImageFromTar(c *gin.Context) {
 	err = c.ShouldBindQuery(&options)
 	if err != nil {
 		logging.Warn(err)
-		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		appG.Response(http.StatusInternalServerError, e.ERROR_IMAGE_BUILD_PARSE_QUERY, nil)
 		return
 	}
 
@@ -225,7 +225,7 @@ func BuildImageFromTar(c *gin.Context) {
 
 	if err != nil {
 		logging.Warn(err)
-		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		appG.Response(http.StatusInternalServerError, e.ERROR_BUILD_IMAGE_FAIL, nil)
 		return
 	}
 
@@ -263,4 +263,5 @@ func BuildImageFromTar(c *gin.Context) {
 	go docker.HandleResultForBuild(result.Body, image)
 
 	appG.Response(http.StatusOK, e.SUCCESS, image)
+	return
 }

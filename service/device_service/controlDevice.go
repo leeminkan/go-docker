@@ -16,6 +16,6 @@ func (t *Control) ExistDevice() (bool, error) {
 	return models.ExistDevice(t.MachineID)
 }
 
-func (t *Control) GetRepoNameFromID() (string, error) {
-	return models.GetRepoName(t.RepoID)
+func (t *Control) GetFullRepoNameFromID() (string, error) {
+	return models.GetFullRepoName(t.RepoID)
 }

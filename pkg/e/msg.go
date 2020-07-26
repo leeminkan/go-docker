@@ -49,6 +49,18 @@ var MsgFlags = map[int]string{
 	ERROR_EXIST_DEVICE_CONTROL_FAIL:        "Request with Device donot exists",
 	ERROR_SET_MESSAGE_MQTT:                 "Error when set value to control device pull image",
 	ERROR_NOT_EXIST_REPONAME_CONTROL:       "Get repo name from repo id fail",
+
+	ERROR_IMAGE_BUILD_NOT_FOUND:    "Image Build not found!",
+	ERROR_IMAGE_BUILD_FILE_INVALID: "Image Build File invalid!",
+	ERROR_IMAGE_BUILD_PARSE_QUERY:  "Cannot parse query of image build",
+	ERROR_BUILD_IMAGE_FAIL:         "Build image fail",
+	ERROR_TAG_IMAGE:                "Cannot change tag an image!",
+	ERROR_PUSH_IMAGE_FAIL:          "Push image fail",
+	ERROR_PUSH_IMAGE_EXISTED:       "An image push is existed with status done or on progress",
+	ERROR_GET_LIST_IMAGE_PUSH:      "Cannot get list image push",
+	ERROR_GET_IMAGE_PUSH_BY_ID:     "Cannot get image push by id",
+	ERROR_REPO_CREATE:              "Cannot create an repo for push image!",
+	ERROR_TAG_CREATE:               "Cannot create an tag for repo when push image!",
 }
 
 // GetMsg get error information based on Code

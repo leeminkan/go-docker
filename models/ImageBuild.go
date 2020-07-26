@@ -60,18 +60,6 @@ func (image ImageBuild) Update(repo_name string, image_id string, user_id int, s
 	return nil
 }
 
-func (image ImagePush) UpdatePush(repo_name string, user_id int, status string) error {
-	err := db.Model(&image).Updates(ImagePush{
-		RepoName: repo_name,
-		UserID:   user_id,
-		Status:   status}).Error
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func GetImageBuildByID(id int) (bool, ImageBuild, error) {
 	var image ImageBuild
 	err := db.Where("id = ? AND deleted_on = ?", id, 0).First(&image).Error

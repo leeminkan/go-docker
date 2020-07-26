@@ -186,6 +186,7 @@ func HandleResultForBuild(result io.ReadCloser, image models.ImageBuild) {
 func HandleResultForPush(result io.ReadCloser, image models.ImagePush) {
 	defer result.Close()
 	scanner := bufio.NewScanner(result)
+	digest := ""
 	done := false
 	for scanner.Scan() {
 		var data map[string]interface{}
@@ -195,6 +196,7 @@ func HandleResultForPush(result io.ReadCloser, image models.ImagePush) {
 				aux := val.(map[string]interface{})
 				if id, ok := aux["Digest"]; ok {
 					logging.Warn("Value: %s", id.(string))
+					digest = id.(string)
 					done = true
 				}
 			}
@@ -202,9 +204,9 @@ func HandleResultForPush(result io.ReadCloser, image models.ImagePush) {
 		}
 	}
 	if done == true {
-		image.UpdatePush(image.RepoName, image.UserID, image_service.Status["Done"])
+		image.UpdatePush(digest, image_service.Status["Done"])
 	} else {
-		image.UpdatePush(image.RepoName, image.UserID, image_service.Status["Fail"])
+		image.UpdatePush(digest, image_service.Status["Fail"])
 	}
 }
 
@@ -228,19 +230,7 @@ func PushImage(client *client.Client, image string, registryAuth string) (io.Rea
 		return nil, err
 	}
 
-	go ReadResult(result)
-
 	return result, err
-}
-
-func ReadResult(result io.ReadCloser) {
-	defer result.Close()
-	scanner := bufio.NewScanner(result)
-	for scanner.Scan() {
-		var data map[string]interface{}
-		_ = json.Unmarshal([]byte(scanner.Text()), &data)
-		fmt.Println(data)
-	}
 }
 
 func TagImage(client *client.Client, source string, target string) error {
