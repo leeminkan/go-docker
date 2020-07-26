@@ -148,7 +148,7 @@ func BuildImageFromDockerFile(c *gin.Context) {
 	mTags := strings.Split(options.Tags[0], ":")
 	mTag := "latest"
 
-	if len(mTags[1]) > 0 {
+	if len(mTags) == 2 {
 		mTag = mTags[1]
 	}
 
@@ -188,7 +188,7 @@ func BuildImageFromDockerFile(c *gin.Context) {
 // @Param options query image.OptionsBuildImage true "Options"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /image-build/from-tar [post]
+// @Router /images-build/from-tar [post]
 func BuildImageFromTar(c *gin.Context) {
 	appG := app.Gin{C: c}
 
@@ -234,7 +234,7 @@ func BuildImageFromTar(c *gin.Context) {
 	mTags := strings.Split(options.Tags[0], ":")
 	mTag := "latest"
 
-	if len(mTags[1]) > 0 {
+	if len(mTags) == 2 {
 		mTag = mTags[1]
 	}
 

@@ -60,7 +60,10 @@ var MsgFlags = map[int]string{
 	ERROR_GET_LIST_IMAGE_PUSH:      "Cannot get list image push",
 	ERROR_GET_IMAGE_PUSH_BY_ID:     "Cannot get image push by id",
 	ERROR_REPO_CREATE:              "Cannot create an repo for push image!",
+	ERROR_GET_LIST_REPO:            "Cannot get list repo",
+	ERROR_REPO_NOT_FOUND:           "Repo not found",
 	ERROR_TAG_CREATE:               "Cannot create an tag for repo when push image!",
+	ERROR_GET_LIST_TAG_BY_REPO_ID:  "Cannot get list tag by repo id!",
 }
 
 // GetMsg get error information based on Code

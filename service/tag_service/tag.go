@@ -18,3 +18,7 @@ func (tag *TagDockerHub) CreateTagDockerHub() (models.TagDockerHub, error) {
 func (tag *TagDockerHub) CheckTagDockerHubExist() (bool, models.TagDockerHub) {
 	return models.CheckTagDockerHubExist(tag.Tag, tag.RepoID)
 }
+
+func GetListTagByRepoID(repo_id int) ([]models.TagDockerHub, error) {
+	return models.GetListTagDockerHubByRepoID(repo_id)
+}
