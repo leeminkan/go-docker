@@ -6,7 +6,6 @@ import (
 	"go-docker/pkg/docker"
 	"go-docker/pkg/e"
 	"go-docker/pkg/logging"
-	"go-docker/service/image_service"
 	imageType "go-docker/type/image"
 	"net/http"
 
@@ -100,13 +99,6 @@ func PushImage(c *gin.Context) {
 		appG.Response(httpCode, errCode, nil)
 		return
 	}
-	check := image_service.CheckExistRepoToRefuse(form.Image)
-
-	if check {
-		logging.Warn("Repo Name existed")
-		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
-		return
-	}
 
 	result, err := docker.PushImage(docker.Client.Client, form.Image, user.XRegistryAuth)
 
@@ -116,23 +108,7 @@ func PushImage(c *gin.Context) {
 		return
 	}
 
-	imageService := image_service.ImagePush{
-		RepoName: form.Image,
-		UserID:   user.ID,
-		Status:   image_service.Status["OnProgress"],
-	}
-
-	image, err := imageService.CreatePush()
-
-	if err != nil {
-		logging.Warn(err)
-		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
-		return
-	}
-
-	go docker.HandleResultForPush(result, image)
-
-	appG.Response(http.StatusOK, e.SUCCESS, image)
+	appG.Response(http.StatusOK, e.SUCCESS, result)
 	return
 }
 

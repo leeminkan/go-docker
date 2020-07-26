@@ -13,7 +13,7 @@ type User struct {
 	Model
 
 	Username         string `json:"username"`
-	Password         string `json:"password"`
+	Password         string `json:"-"`
 	IsAdmin          bool   `json:"is_admin" gorm:"not null;default:0"`
 	XRegistryAuth    string `json:"x_registry_auth" gorm:"type:varchar(500)"`
 	IsLoginDockerHub bool   `json:"is_login_docker_hub" gorm:"not null;default:0"`

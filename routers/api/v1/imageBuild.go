@@ -10,6 +10,7 @@ import (
 	"go-docker/service/image_service"
 	imageType "go-docker/type/image"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/unknwon/com"
@@ -143,12 +144,21 @@ func BuildImageFromDockerFile(c *gin.Context) {
 	}
 
 	user, _ := c.MustGet("user").(models.User)
+
+	mTags := strings.Split(options.Tags[0], ":")
+	mTag := "latest"
+
+	if len(mTags) == 2 {
+		mTag = mTags[1]
+	}
+
 	imageService := image_service.ImageBuild{
-		RepoName: options.Tags[0],
+		RepoName: mTags[0],
+		Tag:      mTag,
 		UserID:   user.ID,
 		Status:   image_service.Status["OnProgress"],
 	}
-	err = imageService.RemoveRepoNameIfExist()
+	err = imageService.RemoveRepoNameAndTagIfExist()
 
 	if err != nil {
 		logging.Warn(err)
@@ -178,7 +188,7 @@ func BuildImageFromDockerFile(c *gin.Context) {
 // @Param options query image.OptionsBuildImage true "Options"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /image-build/from-tar [post]
+// @Router /images-build/from-tar [post]
 func BuildImageFromTar(c *gin.Context) {
 	appG := app.Gin{C: c}
 
@@ -187,12 +197,12 @@ func BuildImageFromTar(c *gin.Context) {
 
 	if err != nil {
 		logging.Warn(err)
-		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		appG.Response(http.StatusBadRequest, e.ERROR_IMAGE_BUILD_FILE_INVALID, nil)
 		return
 	}
 
 	if file == nil {
-		appG.Response(http.StatusBadRequest, e.INVALID_PARAMS, nil)
+		appG.Response(http.StatusBadRequest, e.ERROR_IMAGE_BUILD_FILE_INVALID, nil)
 		return
 	}
 	_, success := util.Find(fileHeader.Header["Content-Type"], "application/x-tar")
@@ -207,7 +217,7 @@ func BuildImageFromTar(c *gin.Context) {
 	err = c.ShouldBindQuery(&options)
 	if err != nil {
 		logging.Warn(err)
-		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		appG.Response(http.StatusInternalServerError, e.ERROR_IMAGE_BUILD_PARSE_QUERY, nil)
 		return
 	}
 
@@ -215,17 +225,26 @@ func BuildImageFromTar(c *gin.Context) {
 
 	if err != nil {
 		logging.Warn(err)
-		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		appG.Response(http.StatusInternalServerError, e.ERROR_BUILD_IMAGE_FAIL, nil)
 		return
 	}
 
 	user, _ := c.MustGet("user").(models.User)
+
+	mTags := strings.Split(options.Tags[0], ":")
+	mTag := "latest"
+
+	if len(mTags) == 2 {
+		mTag = mTags[1]
+	}
+
 	imageService := image_service.ImageBuild{
-		RepoName: options.Tags[0],
+		RepoName: mTags[0],
+		Tag:      mTag,
 		UserID:   user.ID,
 		Status:   image_service.Status["OnProgress"],
 	}
-	err = imageService.RemoveRepoNameIfExist()
+	err = imageService.RemoveRepoNameAndTagIfExist()
 
 	if err != nil {
 		logging.Warn(err)
@@ -244,4 +263,5 @@ func BuildImageFromTar(c *gin.Context) {
 	go docker.HandleResultForBuild(result.Body, image)
 
 	appG.Response(http.StatusOK, e.SUCCESS, image)
+	return
 }
