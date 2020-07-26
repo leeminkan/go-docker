@@ -5,7 +5,7 @@ import { Grid, Card, CardContent, Typography } from "@material-ui/core";
 import { connect } from "react-redux";
 import { compose } from "redux";
 
-class ReconfigNode extends Component {
+class DeviceDetail extends Component {
   render() {
     const { classes } = this.props;
 
@@ -18,7 +18,7 @@ class ReconfigNode extends Component {
             component="h2"
             className={classes.titlePage}
           >
-            Reconfig Node
+            Device Detail
           </Typography>
         </div>
         <Grid container>
@@ -41,4 +41,4 @@ const mapDispatchToProps = (dispatch) => {
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps);
 
-export default compose(withStyles(styles), withConnect)(ReconfigNode);
+export default compose(withStyles(styles), withConnect)(DeviceDetail);

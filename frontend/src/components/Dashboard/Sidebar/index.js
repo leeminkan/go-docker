@@ -21,26 +21,28 @@ class Sidebar extends Component {
     xhtml = (
       <List component={classes.list}>
         {ADMIN_ROUTES.map((item, index) => {
-          return (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              exact={item.exact}
-              className={classes.menuLink}
-              activeClassName={classes.menuLinkActive}
-            >
-              <ListItem className={classes.menuItem} button>
-                <Toolbar className={classes.tool}>
-                  <div className={classes.icon}>
-                    <span className="material-icons">{item.icon}</span>
-                  </div>
-                  <Typography className={classes.menuTitle}>
-                    {item.name}
-                  </Typography>
-                </Toolbar>
-              </ListItem>
-            </NavLink>
-          );
+          if (!item.hidden) {
+            return (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                exact={item.exact}
+                className={classes.menuLink}
+                activeClassName={classes.menuLinkActive}
+              >
+                <ListItem className={classes.menuItem} button>
+                  <Toolbar className={classes.tool}>
+                    <div className={classes.icon}>
+                      <span className="material-icons">{item.icon}</span>
+                    </div>
+                    <Typography className={classes.menuTitle}>
+                      {item.name}
+                    </Typography>
+                  </Toolbar>
+                </ListItem>
+              </NavLink>
+            );
+          }
         })}
       </List>
     );

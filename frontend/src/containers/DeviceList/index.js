@@ -13,22 +13,19 @@ import DeleteIcon from "@material-ui/icons/Delete";
 class DeviceList extends Component {
   render() {
     const { classes, device } = this.props;
+    let numberOfPages = device ? Math.floor(device.length / 10) + 1 : 1;
 
     let columns = [
       {
         key: "id",
         Header: "ID",
         accessor: "id",
-        //sortable: false,
-        //filterable: false,
         width: 80,
       },
       {
         key: "machine_id",
         Header: "Machine ID",
         accessor: "machine_id",
-        //sortable: false,
-        //filterable: false,
         width: 100,
       },
       {
@@ -36,16 +33,12 @@ class DeviceList extends Component {
         Header: "Device Name",
         id: "device_name",
         accessor: "device_name",
-        //sortable: false,
-        //filterable: false,
       },
       {
         key: "os",
         Header: "OS",
         id: "os",
         accessor: "os",
-        //sortable: false,
-        //filterable: false,
       },
       {
         key: "action",
@@ -58,12 +51,12 @@ class DeviceList extends Component {
         Cell: (data) => {
           return (
             <Fragment>
-              <Button
+              {/* <Button
                 variant="outlined"
                 color="primary"
                 className={classes.icon}
                 startIcon={<DeleteIcon />}
-                //onClick={() => this.openModalEditLearn(data.original)}
+                onClick={() => this.openModalEditLearn(data.original)}
               >
                 Edit
               </Button>
@@ -72,10 +65,10 @@ class DeviceList extends Component {
                 color="secondary"
                 className={classes.icon}
                 startIcon={<DeleteIcon />}
-                //onClick={() => this.openModalEditLearn(data.original)}
+                onClick={() => this.openModalEditLearn(data.original)}
               >
                 Delete
-              </Button>
+              </Button> */}
             </Fragment>
           );
         },
@@ -100,13 +93,23 @@ class DeviceList extends Component {
                 defaultPageSize={10}
                 data={device}
                 columns={columns}
-                filterable
-                //pages={numberOfPages}
-                //loading={true}
+                pages={numberOfPages}
                 manual
-                multiSort={false}
                 onFetchData={(state) => {
                   this.props.DeviceActionCreators.getListDevice();
+                }}
+                getTdProps={(state, rowInfo, column) => {
+                  if (rowInfo) {
+                    return {
+                      onClick: (e, handleOriginal) => {
+                        this.props.history.push("/device-detail/1");
+                      },
+                      style: {
+                        cursor: "pointer",
+                      },
+                    };
+                  }
+                  return {};
                 }}
               />
             </CardContent>

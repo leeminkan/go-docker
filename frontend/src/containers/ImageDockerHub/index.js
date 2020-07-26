@@ -34,9 +34,17 @@ class DockerHubImage extends Component {
   };
 
   render() {
-    const { classes, dockerHubImage, openModalPushImage } = this.props;
+    const {
+      classes,
+      dockerHubImage,
+      openModalPushImage,
+      localImage,
+    } = this.props;
 
-    let localImage = this.props.localImage;
+    let numberOfPages = dockerHubImage
+      ? Math.floor(dockerHubImage.length / 10) + 1
+      : 1;
+
     let columns = [
       {
         key: "id",
@@ -68,7 +76,11 @@ class DockerHubImage extends Component {
               </Fragment>
             );
           } else {
-            return <div className={classes.status}>{data.value}</div>;
+            return (
+              <div className={classes.status}>
+                {data.value.charAt(0).toUpperCase() + data.value.slice(1)}
+              </div>
+            );
           }
         },
       },
@@ -81,24 +93,24 @@ class DockerHubImage extends Component {
         Cell: (data) => {
           return (
             <Fragment>
-              <Button
+              {/* <Button
                 variant="outlined"
                 color="primary"
                 className={classes.icon}
                 startIcon={<DeleteIcon />}
-                //onClick={() => this.openModalEditLearn(data.original)}
+                onClick={() => this.openModalEditLearn(data.original)}
               >
                 Edit
-              </Button>
-              <Button
+              </Button> */}
+              {/* <Button
                 variant="outlined"
                 color="secondary"
                 className={classes.icon}
                 startIcon={<DeleteIcon />}
-                //onClick={() => this.openModalEditLearn(data.original)}
+                onClick={() => this.openModalEditLearn(data.original)}
               >
                 Delete
-              </Button>
+              </Button> */}
             </Fragment>
           );
         },
@@ -142,15 +154,12 @@ class DockerHubImage extends Component {
         <Card>
           <CardContent className={classes.center}>
             <ReactTable
-              className="-highlight"
+              className="-highlight -striped"
               defaultPageSize={10}
               data={dockerHubImage}
               columns={columns}
-              //filterable
-              //pages={numberOfPages}
-              //loading={true}
+              pages={numberOfPages}
               manual
-              //multiSort={false}
               onFetchData={(state) => {
                 this.props.DHImageActionCreators.getListDockerHubImage();
               }}

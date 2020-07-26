@@ -8,6 +8,7 @@ import ImageDockerHub from "../containers/ImageDockerHub";
 import LoginDokcerHub from "../containers/LoginDokcerHub";
 import DeviceList from "../containers/DeviceList";
 import UserInfo from "../containers/UserInfo";
+import DeviceDetail from "../containers/DeviceDetail";
 
 // eslint-disable-next-line
 const AuthDockerHub = localStorage.getItem("DOCKERHUB");
@@ -19,48 +20,56 @@ export const ADMIN_ROUTES = [
     exact: true,
     component: HomePage,
     icon: "home",
+    hidden: false,
   },
-  // {
-  //   path: "/buildimage",
-  //   name: "Build Image",
-  //   component: BuildImage,
-  //   icon: "construction",
-  // },
   {
     path: "/login-docker-hub",
     name: "Login Docker Hub",
     component: LoginDokcerHub,
     icon: "lock",
+    hidden: false,
   },
   {
     path: "/imagelist",
     name: "List Image",
     component: ImageLocal,
     icon: "dynamic_feed",
+    hidden: false,
   },
   {
     path: "/image-dockerhub",
     name: "List Image Docker Hub",
     component: ImageDockerHub,
     icon: "content_copy",
+    hidden: false,
   },
   {
     path: "/device-list",
     name: "List Device",
     component: DeviceList,
     icon: "developer_board",
+    hidden: false,
   },
   {
     path: "/reconfig-node",
     name: "Reconfig Edge Node",
     component: ReconfigNode,
     icon: "cached",
+    hidden: false,
   },
   {
     path: "/user-info",
     name: "User Info",
     component: UserInfo,
     icon: "perm_identity",
+    hidden: false,
+  },
+  {
+    path: "/device-detail/:id",
+    //name: "Device Detail",
+    component: DeviceDetail,
+    //icon: "perm_identity",
+    hidden: true,
   },
 ];
 

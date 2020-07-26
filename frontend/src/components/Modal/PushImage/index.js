@@ -52,6 +52,7 @@ class PushImage extends Component {
                 fullWidth
                 label="Image"
               >
+                <option value={""}></option>
                 {this.onrenderSelect()}
               </Field>
               <div className={classes.button}>
