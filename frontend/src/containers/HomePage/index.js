@@ -3,11 +3,20 @@ import { withStyles } from "@material-ui/styles";
 import styles from "./styles";
 import { Grid, Card, CardContent, Typography } from "@material-ui/core";
 import { connect } from "react-redux";
-import { compose } from "redux";
+import { compose, bindActionCreators } from "redux";
+import * as DeviceAction from "../DeviceList/action";
+import * as ImageLocalAction from "../ImageLocal/action";
+import * as ImageDHAction from "../ImageDockerHub/action";
 
 class HomePage extends Component {
+  componentDidMount() {
+    this.props.ImageLocalActionCreators.getListLocalImage();
+    this.props.ImageDHActionCreators.getListDockerHubImage();
+    this.props.DeviceActionCreators.getListDevice();
+  }
+
   render() {
-    const { classes } = this.props;
+    const { classes, localImage, device, dockerHubImage } = this.props;
 
     return (
       <div className={classes.root}>
@@ -32,7 +41,7 @@ class HomePage extends Component {
                     component="h2"
                     className={classes.title}
                   >
-                    Edge Node
+                    Image In Server
                   </Typography>
                   <Typography
                     gutterBottom
@@ -40,7 +49,7 @@ class HomePage extends Component {
                     component="h1"
                     className={classes.number}
                   >
-                    1
+                    {localImage ? localImage.length : 0}
                   </Typography>
                 </div>
               </CardContent>
@@ -56,7 +65,7 @@ class HomePage extends Component {
                     component="h2"
                     className={classes.title}
                   >
-                    Image In Docker Hub
+                    Repository Docker Hub
                   </Typography>
                   <Typography
                     gutterBottom
@@ -64,7 +73,7 @@ class HomePage extends Component {
                     component="h1"
                     className={classes.number}
                   >
-                    5
+                    {dockerHubImage ? dockerHubImage.length : 0}
                   </Typography>
                 </div>
               </CardContent>
@@ -80,7 +89,7 @@ class HomePage extends Component {
                     component="h2"
                     className={classes.title}
                   >
-                    Image In Local
+                    Edge Node Device
                   </Typography>
                   <Typography
                     gutterBottom
@@ -88,7 +97,7 @@ class HomePage extends Component {
                     component="h1"
                     className={classes.number}
                   >
-                    5
+                    {device ? device.length : 0}
                   </Typography>
                 </div>
               </CardContent>
@@ -124,10 +133,20 @@ class HomePage extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({});
+const mapStateToProps = (state) => {
+  return {
+    device: state.device.listDevice,
+    localImage: state.localImage.listLocalImage,
+    dockerHubImage: state.DHImage.listDHImage,
+  };
+};
 
 const mapDispatchToProps = (dispatch) => {
-  return {};
+  return {
+    DeviceActionCreators: bindActionCreators(DeviceAction, dispatch),
+    ImageLocalActionCreators: bindActionCreators(ImageLocalAction, dispatch),
+    ImageDHActionCreators: bindActionCreators(ImageDHAction, dispatch),
+  };
 };
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps);

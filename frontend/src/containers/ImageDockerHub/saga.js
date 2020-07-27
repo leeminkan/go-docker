@@ -11,6 +11,7 @@ import * as types from "./constant";
 import * as api from "../../constants/config";
 import axios from "axios";
 import { toastWarning } from "../../helpers/toastHelper";
+import { push } from "connected-react-router";
 
 const CancelToken = axios.CancelToken;
 let cancel;
@@ -36,6 +37,8 @@ function* getListDockerHubImage({ payload }) {
     const { data, status } = resp;
     if (status === 200) {
       yield put(getListDockerHubImageSuccess(data.data));
+    } else if (status === 20002) {
+      yield put(push("/login"));
     }
   } catch (error) {
     yield put(getListDockerHubImageFail(error));

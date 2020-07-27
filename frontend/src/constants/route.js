@@ -32,14 +32,14 @@ export const ADMIN_ROUTES = [
   },
   {
     path: "/image-dockerhub",
-    name: "List Image Docker Hub",
+    name: "List Repository Docker Hub",
     component: ImageDockerHub,
     icon: "content_copy",
     hidden: false,
   },
   {
     path: "/device-list",
-    name: "List Device",
+    name: "List Edge Node Device",
     component: DeviceList,
     icon: "developer_board",
     hidden: false,
@@ -60,9 +60,7 @@ export const ADMIN_ROUTES = [
   },
   {
     path: "/device-detail/:id",
-    //name: "Device Detail",
     component: DeviceDetail,
-    //icon: "perm_identity",
     hidden: true,
   },
 ];

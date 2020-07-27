@@ -5,6 +5,7 @@ import { Card, CardContent, Typography, Divider } from "@material-ui/core";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import ReactTable from "react-table-6";
+import "react-table-6/react-table.css";
 
 class DeviceDetail extends Component {
   render() {
