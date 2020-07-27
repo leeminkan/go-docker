@@ -21,6 +21,10 @@ const styles = () => ({
   divider: {
     margin: "30px 0 0 0",
   },
+  button: {
+    margin: "10px 10px 0 0",
+    fontSize: "18px",
+  },
 });
 
 export default styles;

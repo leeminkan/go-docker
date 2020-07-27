@@ -7,6 +7,7 @@ import loginDockerHubReducer from "../containers/LoginDokcerHub/reducer";
 import ListDevice from "../containers/DeviceList/reducer";
 import ListLocalImage from "../containers/ImageLocal/reducer";
 import ListDockerHubImage from "../containers/ImageDockerHub/reducer";
+import DeviceDetail from "../containers/DeviceDetail/reducer";
 import UiReducer from "./ui";
 
 export default (history) =>
@@ -18,6 +19,7 @@ export default (history) =>
     localImage: ListLocalImage,
     DHImage: ListDockerHubImage,
     ui: UiReducer,
+    deviceDetail: DeviceDetail,
     form: formReducer,
     router: connectRouter(history),
   });

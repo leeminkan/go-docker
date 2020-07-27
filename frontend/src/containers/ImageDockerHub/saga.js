@@ -37,11 +37,10 @@ function* getListDockerHubImage({ payload }) {
     const { data, status } = resp;
     if (status === 200) {
       yield put(getListDockerHubImageSuccess(data.data));
-    } else if (status === 20002) {
-      yield put(push("/login"));
     }
   } catch (error) {
     yield put(getListDockerHubImageFail(error));
+    yield put(push("/login"));
   }
 }
 

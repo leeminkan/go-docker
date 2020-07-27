@@ -34,13 +34,13 @@ function* getListLocalImage({ payload }) {
   try {
     const resp = yield call(apiGetListLocalImage, { payload });
     const { data, status } = resp;
+    console.log(resp);
     if (status === 200) {
       yield put(getListLocalImageSuccess(data.data));
-    } else if (status === 20002) {
-      yield put(push("/login"));
     }
   } catch (error) {
     yield put(getListLocalImageFail(error));
+    yield put(push("/login"));
   }
 }
 

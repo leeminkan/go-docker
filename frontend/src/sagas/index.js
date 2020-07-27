@@ -5,6 +5,7 @@ import onLoginDockerHubSaga from "../containers/LoginDokcerHub/saga";
 import onListDevice from "../containers/DeviceList/saga";
 import onListLocalImage from "../containers/ImageLocal/saga";
 import onListDockerHubImage from "../containers/ImageDockerHub/saga";
+import onDeviceDetail from "../containers/DeviceDetail/saga";
 
 function* rootSaga() {
   yield all([
@@ -14,6 +15,7 @@ function* rootSaga() {
     onListDevice,
     onListLocalImage,
     onListDockerHubImage,
+    onDeviceDetail,
   ]);
 }
 
