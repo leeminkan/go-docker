@@ -204,13 +204,11 @@ func ControlDevicePull(c *gin.Context) {
 	}
 
 	deviceService := device_service.Control{
-		DeviceName: form.DeviceName,
-		OS:         form.OS,
-		MachineID:  form.MachineID,
-		RepoID:     form.RepoID,
+		DeviceID: form.DeviceID,
+		RepoID:   form.RepoID,
 	}
 
-	exists, err := deviceService.ExistDevice()
+	machineId, exists, err := deviceService.CheckDevice()
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_EXIST_DEVICE_FAIL, nil)
 		return
@@ -227,7 +225,7 @@ func ControlDevicePull(c *gin.Context) {
 		return
 	}
 
-	value, err := mqtt.SetValueComeinand(form.MachineID, repoName)
+	value, err := mqtt.SetValueComeinandPull(machineId, repoName)
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_SET_MESSAGE_MQTT, nil)
 		return
@@ -238,4 +236,376 @@ func ControlDevicePull(c *gin.Context) {
 	}
 
 	appG.Response(http.StatusOK, e.SUCCESS, nil)
+}
+
+// @Summary Update status image pull from devices
+// @Produce  json
+// @Accept  application/json
+// @Tags  Devices
+// @Param body body device.UpdateStatusDevicePull true "body"
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Router /update/devices/pull/status [post]
+func UpdateStatusImagePull(c *gin.Context) {
+	var (
+		appG = app.Gin{C: c}
+		form deviceType.UpdateStatusDevicePull
+	)
+
+	httpCode, errCode := app.BindAndValid(c, &form)
+
+	if errCode != e.SUCCESS {
+		appG.Response(httpCode, errCode, nil)
+		return
+	}
+
+	updateDeviceService := device_service.Update{
+		FullRepoName: form.FullRepoName,
+		MachineID:    form.MachineID,
+		Status:       form.Status,
+	}
+
+	err := updateDeviceService.UpdateImagePullStatus()
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_DEVICE_UPDATE_STATUS_IMAGE_PULL, nil)
+		return
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, nil)
+}
+
+// @Summary Control Device run image as a container
+// @Produce  json
+// @Accept  application/json
+// @Tags  Devices
+// @Param body body device.ControlDeviceRun true "body"
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Router /control/devices/run [post]
+func ControlDeviceRun(c *gin.Context) {
+	var (
+		appG = app.Gin{C: c}
+		form deviceType.ControlDeviceRun
+	)
+
+	httpCode, errCode := app.BindAndValid(c, &form)
+
+	if errCode != e.SUCCESS {
+		appG.Response(httpCode, errCode, nil)
+		return
+	}
+
+	deviceService := device_service.ControlRun{
+		ImagePullID:   form.ImagePullID,
+		ContainerName: form.ContainerName,
+	}
+
+	deviceImage, exists, err := deviceService.CheckValueRun()
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_EXIST_DEVICE_FAIL, nil)
+		return
+	}
+
+	if !exists {
+		appG.Response(http.StatusInternalServerError, e.ERROR_EXIST_DEVICE_CONTROL_FAIL, nil)
+		return
+	}
+
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_NOT_EXIST_REPONAME_CONTROL, nil)
+		return
+	}
+
+	machineID, err := device_service.GetMachineIDFromID(deviceImage.ID)
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_DEVICE_GET_MACHINE_ID_FROM_ID, nil)
+		return
+	}
+
+	value, err := mqtt.SetValueComeinandRun(form.ContainerName, machineID, deviceImage.FullRepoName, form.ImagePullID)
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_SET_MESSAGE_MQTT, nil)
+		return
+	}
+	if value != nil {
+		tokenPub := GlobalClient.Publish("container/run", 0, false, value)
+		tokenPub.Wait()
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, nil)
+}
+
+// @Summary Update status container run from devices
+// @Produce  json
+// @Accept  application/json
+// @Tags  Devices
+// @Param body body device.UpdateStatusDeviceRun true "body"
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Router /update/devices/run [post]
+func UpdateStatusContainerRun(c *gin.Context) {
+	var (
+		appG = app.Gin{C: c}
+		form deviceType.UpdateStatusDeviceRun
+	)
+
+	httpCode, errCode := app.BindAndValid(c, &form)
+
+	if errCode != e.SUCCESS {
+		appG.Response(httpCode, errCode, nil)
+		return
+	}
+
+	updateDeviceService := device_service.UpdateRun{
+		ContainerName: form.ContainerName,
+		ImagePullID:   form.ImagePullID,
+		Status:        form.Status,
+		Active:        form.Active,
+	}
+
+	err := updateDeviceService.UpdateContainerRunStatus()
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_DEVICE_UPDATE_STATUS_IMAGE_PULL, nil)
+		return
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, nil)
+}
+
+// @Summary Get List Image in device
+// @Produce  json
+// @Tags  Devices
+// @Param id path string true "ID"
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Router /device/images/{id} [get]
+func GetImagesDeviceByID(c *gin.Context) {
+	var (
+		appG = app.Gin{C: c}
+	)
+
+	id := c.Param("id")
+
+	deviceService := device_service.Device{
+		MachineID: id,
+	}
+
+	listImages, err := deviceService.GetListImagesByID()
+
+	if err != nil {
+		appG.Response(http.StatusBadRequest, e.ERROR_DEVICE_GET_LIST_IMAGES, nil)
+		return
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, listImages)
+	return
+}
+
+// @Summary Get List Container Running in device
+// @Produce  json
+// @Tags  Devices
+// @Param id path string true "ID"
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Router /device/containers/{id} [get]
+func GetContainersDeviceByID(c *gin.Context) {
+	var (
+		appG = app.Gin{C: c}
+	)
+
+	id := c.Param("id")
+
+	deviceService := device_service.Device{
+		MachineID: id,
+	}
+
+	listImages, err := deviceService.GetListContainersByID()
+
+	if err != nil {
+		appG.Response(http.StatusBadRequest, e.ERROR_DEVICE_GET_LIST_IMAGES, nil)
+		return
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, listImages)
+	return
+}
+
+// @Summary Get Image Pulling to watch status in device
+// @Produce  json
+// @Tags  Devices
+// @Param id path int true "ID"
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Router /device/image/{id} [get]
+func GetImageDeviceByID(c *gin.Context) {
+	var (
+		appG = app.Gin{C: c}
+	)
+
+	id := com.StrTo(c.Param("id")).MustInt()
+
+	deviceService := device_service.StatusPull{
+		ImagePullID: id,
+	}
+
+	image, err := deviceService.GetImagePull()
+
+	if err != nil {
+		appG.Response(http.StatusBadRequest, e.ERROR_DEVICE_GET_IMAGE_STATUS, nil)
+		return
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, image)
+	return
+}
+
+// @Summary Get Container to watch status in device
+// @Produce  json
+// @Tags  Devices
+// @Param id path int true "ID"
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Router /device/container/{id} [get]
+func GetContainerDeviceByID(c *gin.Context) {
+	var (
+		appG = app.Gin{C: c}
+	)
+
+	id := com.StrTo(c.Param("id")).MustInt()
+
+	deviceService := device_service.StatusRun{
+		ContainerID: id,
+	}
+
+	container, err := deviceService.GetContainerRun()
+
+	if err != nil {
+		appG.Response(http.StatusBadRequest, e.ERROR_DEVICE_GET_CONTAINER_STATUS, nil)
+		return
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, container)
+	return
+}
+
+// @Summary Stop a Container
+// @Produce  json
+// @Accept  application/json
+// @Tags  Devices
+// @Param body body device.StopContainer true "body"
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Router /device/stop/container [post]
+func StopContainer(c *gin.Context) {
+	var (
+		appG = app.Gin{C: c}
+		form deviceType.StopContainer
+	)
+
+	httpCode, errCode := app.BindAndValid(c, &form)
+
+	if errCode != e.SUCCESS {
+		appG.Response(httpCode, errCode, nil)
+		return
+	}
+
+	deviceService := device_service.StopContainer{
+		ContainerID: form.ContainerID,
+	}
+
+	err := deviceService.StopContainerByID()
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_DEVICE_STOP_CONTAINER, nil)
+		return
+	}
+
+	machineID, err := deviceService.GetMachineIDByContainerID()
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_DEVICE_GET_MACHINE_ID_FROM_CONTAINER_ID, nil)
+		return
+	}
+
+	//control device stop container throw mqtt
+	// deviceServiceContainer := device_service.StatusRun{
+	// 	ContainerID: form.ContainerID,
+	// }
+	// container, err := deviceServiceContainer.GetContainerRun()
+
+	// if err != nil {
+	// 	appG.Response(http.StatusBadRequest, e.ERROR_DEVICE_GET_CONTAINER_STATUS, nil)
+	// 	return
+	// }
+
+	// value, err := mqtt.SetValueComeinandStopContainer()
+	// if err != nil {
+	// 	appG.Response(http.StatusInternalServerError, e.ERROR_SET_MESSAGE_MQTT, nil)
+	// 	return
+	// }
+	// if value != nil {
+	// 	tokenPub := GlobalClient.Publish("container/run", 0, false, value)
+	// 	tokenPub.Wait()
+	// }
+
+	appG.Response(http.StatusOK, e.SUCCESS, machineID)
+}
+
+// @Summary Stop all Container
+// @Produce  json
+// @Accept  application/json
+// @Tags  Devices
+// @Param body body device.StopAllContainer true "body"
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Router /device/stop/container/all [post]
+func StopAllContainer(c *gin.Context) {
+	var (
+		appG = app.Gin{C: c}
+		form deviceType.StopAllContainer
+	)
+
+	httpCode, errCode := app.BindAndValid(c, &form)
+
+	if errCode != e.SUCCESS {
+		appG.Response(httpCode, errCode, nil)
+		return
+	}
+
+	deviceService := device_service.StopContainer{
+		DeviceID: form.DeviceID,
+	}
+
+	err := deviceService.StopContainerByID()
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_DEVICE_STOP_CONTAINER, nil)
+		return
+	}
+
+	machineID, err := deviceService.GetMachineIDByContainerID()
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_DEVICE_GET_MACHINE_ID_FROM_CONTAINER_ID, nil)
+		return
+	}
+
+	//control device stop container throw mqtt
+	// deviceServiceContainer := device_service.StatusRun{
+	// 	ContainerID: form.ContainerID,
+	// }
+	// container, err := deviceServiceContainer.GetContainerRun()
+
+	// if err != nil {
+	// 	appG.Response(http.StatusBadRequest, e.ERROR_DEVICE_GET_CONTAINER_STATUS, nil)
+	// 	return
+	// }
+
+	// value, err := mqtt.SetValueComeinandStopContainer()
+	// if err != nil {
+	// 	appG.Response(http.StatusInternalServerError, e.ERROR_SET_MESSAGE_MQTT, nil)
+	// 	return
+	// }
+	// if value != nil {
+	// 	tokenPub := GlobalClient.Publish("container/run", 0, false, value)
+	// 	tokenPub.Wait()
+	// }
+
+	appG.Response(http.StatusOK, e.SUCCESS, machineID)
 }

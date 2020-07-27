@@ -5,15 +5,12 @@ import (
 )
 
 type Control struct {
-	ID         int
-	DeviceName string
-	OS         string
-	MachineID  string
-	RepoID     int
+	DeviceID int
+	RepoID   int
 }
 
-func (t *Control) ExistDevice() (bool, error) {
-	return models.ExistDevice(t.MachineID)
+func (t *Control) CheckDevice() (string, bool, error) {
+	return models.CheckDevice(t.DeviceID)
 }
 
 func (t *Control) GetFullRepoNameFromID() (string, error) {

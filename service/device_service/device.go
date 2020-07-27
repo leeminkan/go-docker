@@ -34,6 +34,18 @@ func (t *Device) ExistByID() (bool, error) {
 	return models.ExistDeviceByID(t.ID)
 }
 
+func GetMachineIDFromID(id int) (string, error) {
+	return models.GetMachineID(id)
+}
+
 func (t *Device) FindByMachineID() (bool, models.Device, error) {
 	return models.FindDeviceByMachineID(t.MachineID)
+}
+
+func (t *Device) GetListImagesByID() ([]models.DeviceImage, error) {
+	return models.GetListImages(t.MachineID)
+}
+
+func (t *Device) GetListContainersByID() ([]models.DeviceContainer, error) {
+	return models.GetListContainers(t.MachineID)
 }

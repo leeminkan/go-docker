@@ -10,7 +10,7 @@ import (
 
 func Migrate() {
 	db := models.GetDB()
-	db.AutoMigrate(&models.User{}, &models.Device{}, &models.ImageBuild{}, &models.Seed{}, &models.Migration{}, &models.ImagePush{}, &models.RepoDockerHub{}, &models.TagDockerHub{})
+	db.AutoMigrate(&models.User{}, &models.Device{}, &models.ImageBuild{}, &models.Seed{}, &models.Migration{}, &models.ImagePush{}, &models.RepoDockerHub{}, &models.TagDockerHub{}, &models.DeviceImage{}, &models.DeviceContainer{})
 	MigrateForUser()
 }
 

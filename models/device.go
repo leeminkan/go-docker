@@ -62,6 +62,15 @@ func ExistDeviceByID(id int) (bool, error) {
 	return false, nil
 }
 
+func GetMachineID(id int) (string, error) {
+	var device Device
+	err := db.Select("machine_id").Where("id = ? AND deleted_on = ? ", id, 0).First(&device).Error
+	if err != nil && err == gorm.ErrRecordNotFound {
+		return "", err
+	}
+	return device.MachineID, nil
+}
+
 func FindDeviceByMachineID(id string) (bool, Device, error) {
 	var device Device
 	err := db.Select("id").Where("machine_id = ? AND deleted_on = ? ", id, 0).First(&device).Error
@@ -85,15 +94,15 @@ func (d *Device) Update(device_name string, os string, machine_id string) error 
 	return nil
 }
 
-func ExistDevice(machineID string) (bool, error) {
+func CheckDevice(deviceId int) (string, bool, error) {
 	var device Device
-	err := db.Select("id").Where("deleted_on = ? AND machine_id = ? ", 0, machineID).First(&device).Error
+	err := db.Where("deleted_on = ? AND id = ? ", 0, deviceId).First(&device).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
-		return false, err
+		return "", false, err
 	}
 	if device.ID > 0 {
-		return true, nil
+		return device.MachineID, true, nil
 	}
 
-	return false, nil
+	return "", false, nil
 }
