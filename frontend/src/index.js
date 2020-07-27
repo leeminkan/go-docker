@@ -4,6 +4,7 @@ import { Provider } from "react-redux";
 import configureStore, { history } from "./redux";
 import { ConnectedRouter } from "connected-react-router";
 import App from "./App";
+import Loading from "./components/Loading";
 
 import * as serviceWorker from "./serviceWorker";
 
@@ -12,7 +13,9 @@ const store = configureStore();
 ReactDOM.render(
   <Provider store={store}>
     <ConnectedRouter history={history}>
-      <App />
+      <Loading>
+        <App />
+      </Loading>
     </ConnectedRouter>
   </Provider>,
   document.getElementById("root")

@@ -12,6 +12,7 @@ import { CardContent, Card } from "@material-ui/core";
 import ConvertTime from "../../helpers/convertTime";
 import pending from "../../assets/img/pending.gif";
 import PushImage from "../../components/Modal/PushImage";
+import { showLoading } from "../../helpers/loading";
 
 class DockerHubImage extends Component {
   onCloseModalPushImage = () => {
@@ -31,6 +32,7 @@ class DockerHubImage extends Component {
   onSubmit = (data) => {
     this.props.DHImageActionCreators.pushImage(data);
     this.props.DHImageActionCreators.closeModalPushImage();
+    showLoading(true);
   };
 
   render() {

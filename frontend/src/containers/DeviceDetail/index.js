@@ -19,6 +19,7 @@ import * as DeviceDetailAction from "./action";
 import * as DockerHubImageAction from "../ImageDockerHub/action";
 import logo from "../../assets/img/pending.gif";
 import ConvertTime from "../../helpers/convertTime";
+import { showLoading } from "../../helpers/loading";
 
 class DeviceDetail extends Component {
   componentDidMount() {
@@ -36,6 +37,7 @@ class DeviceDetail extends Component {
   };
 
   onSubmit = (data) => {
+    showLoading(true);
     this.props.DeviceDetailActionCreators.pullImage(data);
     this.props.DeviceDetailActionCreators.closeModalPullImage();
   };

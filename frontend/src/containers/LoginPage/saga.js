@@ -1,10 +1,11 @@
-import { call, takeLatest, put } from "redux-saga/effects";
+import { call, takeLatest, put, delay } from "redux-saga/effects";
 import * as types from "./constants";
 import * as api from "../../constants/config";
 import { loginSuccess } from "./action";
 import axios from "axios";
 import { push } from "connected-react-router";
 import { toastError } from "../../helpers/toastHelper";
+import { showLoading } from "../../helpers/loading";
 
 const CancelToken = axios.CancelToken;
 let cancel;
@@ -29,6 +30,8 @@ function* onLogin({ payload }) {
   try {
     const result = payload.data;
     const resp = yield call(apiLogin, result);
+    yield delay(1000);
+    showLoading(false);
     const { data, status } = resp;
     if (status === 200) {
       yield put(loginSuccess(data));

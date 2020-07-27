@@ -10,12 +10,14 @@ import validate from "./validate";
 import * as loginDockerHubAction from "./action";
 import { Container } from "@material-ui/core";
 import logo from "../../assets/img/docker_logo.png";
+import { showLoading } from "../../helpers/loading";
 
 class LoginDockerHub extends Component {
   onLoginDockerHub = (data) => {
+    showLoading(true);
     this.props.loginDockerHubAC.loginDockerHub(data);
   };
-  
+
   render() {
     const { classes, handleSubmit, submitting } = this.props;
     return (

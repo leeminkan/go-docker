@@ -18,6 +18,7 @@ import * as api from "../../constants/config";
 import axios from "axios";
 import { toastWarning } from "../../helpers/toastHelper";
 import { push } from "connected-react-router";
+import { showLoading } from "../../helpers/loading";
 
 const CancelToken = axios.CancelToken;
 let cancel;
@@ -95,6 +96,8 @@ function* pullImage({ payload }) {
   try {
     let image = payload.data;
     const resp = yield call(apiPullImage, image);
+    yield delay(1000);
+    showLoading(false);
     toastWarning("Pull Image is progressing. Please wait");
     const { data, status } = resp;
     if (status === 200) {

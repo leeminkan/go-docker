@@ -6,6 +6,7 @@ import axios from "axios";
 //import { push } from "connected-react-router";
 import { toastError } from "../../helpers/toastHelper";
 import { push } from "connected-react-router";
+import { showLoading } from "../../helpers/loading";
 
 const CancelToken = axios.CancelToken;
 let cancel;
@@ -33,24 +34,20 @@ function* onLoginDockerHub({ payload }) {
   try {
     const result = payload.data;
     const resp = yield call(apiLoginDockerHub, result);
+    showLoading(false);
+
     const { data, status } = resp;
     if (status === 200) {
       yield put(loginDockerHubSuccess(data));
+      yield put(push("/"));
     }
   } catch (error) {
     toastError(error);
   }
 }
 
-function* onLoginDockerHubSuccess({ payload }) {
-  const { data } = payload.data;
-  console.log(data);
-  yield put(push("/"));
-}
-
 function* onLoginDockerHubSaga() {
   yield takeLatest(types.LOGIN_DOCKERHUB, onLoginDockerHub);
-  yield takeLatest(types.LOGIN_DOCKERHUB_SUCCESS, onLoginDockerHubSuccess);
 }
 
 export default onLoginDockerHubSaga();

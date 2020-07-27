@@ -28,7 +28,7 @@ const styles = (theme) => ({
     color: "#3d5170",
   },
   menuItem: {
-    height: "50px",
+    height: "60px",
   },
   menuTitle: {
     fontWeight: "420",

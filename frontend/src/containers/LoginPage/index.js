@@ -10,9 +10,11 @@ import styles from "./styles";
 import validate from "./validate";
 import * as loginAction from "./action";
 import { Container, Grid, Link } from "@material-ui/core";
+import { showLoading } from "../../helpers/loading";
 
 class LoginPage extends Component {
   onLogin = (data) => {
+    showLoading(true);
     this.props.loginActionCreators.login(data);
   };
 

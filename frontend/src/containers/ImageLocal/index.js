@@ -11,6 +11,7 @@ import { CardContent, Card } from "@material-ui/core";
 import logo from "../../assets/img/pending.gif";
 import BuildImage from "../../components/Modal/BuildImage";
 import ConvertTime from "../../helpers/convertTime";
+import { showLoading } from "../../helpers/loading";
 
 class LocalImage extends Component {
   onCloseModalBuildImage = () => {
@@ -24,6 +25,7 @@ class LocalImage extends Component {
   onSubmit = (data) => {
     this.props.LocalImageActionCreators.buildImage(data);
     this.props.LocalImageActionCreators.closeModalBuildImage();
+    showLoading(true);
   };
 
   render() {

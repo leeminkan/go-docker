@@ -13,7 +13,7 @@ const styles = (theme) => ({
     fontSize: "30px",
   },
   paper: {
-    marginTop: theme.spacing(15),
+    paddingTop: theme.spacing(15),
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
