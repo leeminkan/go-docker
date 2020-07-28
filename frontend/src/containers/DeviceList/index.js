@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import ReactTable from "react-table-6";
 import "react-table-6/react-table.css";
 import { withStyles } from "@material-ui/styles";
@@ -25,51 +25,31 @@ class DeviceList extends Component {
         key: "machine_id",
         Header: "Machine ID",
         accessor: "machine_id",
-        width: 100,
       },
       {
         key: "device_name",
         Header: "Device Name",
         id: "device_name",
         accessor: "device_name",
+        width: 200,
+        Cell: (data) => {
+          if (data.original.device_name) {
+            return (
+              <div className={classes.status}>{data.original.device_name}</div>
+            );
+          }
+        },
       },
       {
         key: "os",
         Header: "OS",
         id: "os",
         accessor: "os",
-      },
-      {
-        key: "action",
-        Header: "Action",
-        accessor: "action",
-        width: 210,
-        align: "left",
-        sortable: false,
-        filterable: false,
+        width: 100,
         Cell: (data) => {
-          return (
-            <Fragment>
-              {/* <Button
-                variant="outlined"
-                color="primary"
-                className={classes.icon}
-                startIcon={<DeleteIcon />}
-                onClick={() => this.openModalEditLearn(data.original)}
-              >
-                Edit
-              </Button>
-              <Button
-                variant="outlined"
-                color="secondary"
-                className={classes.icon}
-                startIcon={<DeleteIcon />}
-                onClick={() => this.openModalEditLearn(data.original)}
-              >
-                Delete
-              </Button> */}
-            </Fragment>
-          );
+          if (data.original) {
+            return <div className={classes.status}>{data.original.os}</div>;
+          }
         },
       },
     ];
@@ -101,10 +81,13 @@ class DeviceList extends Component {
                   if (rowInfo) {
                     return {
                       onClick: (e, handleOriginal) => {
-                        this.props.history.push("/device-detail/1");
+                        this.props.history.push(
+                          `/device-detail/${rowInfo.original.id}`
+                        );
                       },
                       style: {
                         cursor: "pointer",
+                        padding: "12px 9px 9px 9px",
                       },
                     };
                   }

@@ -35,7 +35,6 @@ function* getListLocalImage({ payload }) {
   try {
     const resp = yield call(apiGetListLocalImage, { payload });
     const { data, status } = resp;
-    console.log(resp);
     if (status === 200) {
       yield put(getListLocalImageSuccess(data.data));
     }

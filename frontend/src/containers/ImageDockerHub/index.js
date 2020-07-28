@@ -185,6 +185,7 @@ class DockerHubImage extends Component {
               getTdProps={(state, rowInfo, column) => {
                 return {
                   style: {
+                    padding: "12px 9px 9px 9px",
                     background:
                       rowInfo && rowInfo.original.status === "on progress"
                         ? "#fdde53"

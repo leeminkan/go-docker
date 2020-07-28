@@ -251,7 +251,10 @@ class DeviceDetail extends Component {
                 pages={numberOfPagesImage}
                 manual
                 onFetchData={(state) => {
-                  this.props.DeviceDetailActionCreators.getListImageInDevice();
+                  let id = this.props.match.params.id;
+                  this.props.DeviceDetailActionCreators.getListImageInDevice(
+                    id
+                  );
                 }}
               />
             </CardContent>
@@ -276,7 +279,10 @@ class DeviceDetail extends Component {
                 pages={numberOfPagesContainer}
                 manual
                 onFetchData={(state) => {
-                  this.props.DeviceDetailActionCreators.getListContainerInDevice();
+                  let id = this.props.match.params.id;
+                  this.props.DeviceDetailActionCreators.getListContainerInDevice(
+                    id
+                  );
                 }}
               />
             </CardContent>

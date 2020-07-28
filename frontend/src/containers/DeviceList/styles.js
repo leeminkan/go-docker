@@ -31,11 +31,9 @@ const styles = (theme) => ({
   icon: {
     margin: "0px 5px",
   },
-  // card: {
-  //   backgroundColor: "#ccf0d6",
-  //   color: "black",
-  //   fontSize: "14px",
-  // },
+  status: {
+    textAlign: "center",
+  },
 });
 
 export default styles;

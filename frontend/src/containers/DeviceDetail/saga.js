@@ -28,7 +28,7 @@ const apiGetListImageInDevice = async (data) => {
   let token = await localStorage.getItem("JWT_TOKEN");
   let result = await axios({
     method: "GET",
-    url: `${api.API_GET_LIST_IMAGE_IN_DEVICE}`,
+    url: `${api.API_GET_LIST_IMAGE_IN_DEVICE}/${data.id}`,
     headers: {
       Authorization: `Bear ${token}`,
     },
@@ -56,7 +56,7 @@ const apiGetListContainerInDevice = async (data) => {
   let token = await localStorage.getItem("JWT_TOKEN");
   let result = await axios({
     method: "GET",
-    url: `${api.API_GET_LIST_CONTAINER_IN_DEVICE}`,
+    url: `${api.API_GET_LIST_CONTAINER_IN_DEVICE}/${data.id}`,
     headers: {
       Authorization: `Bear ${token}`,
     },

@@ -30,7 +30,6 @@ class LocalImage extends Component {
 
   render() {
     const { classes, localImage, openModalBuildImage } = this.props;
-    console.log("a", localImage);
     let numberOfPages = localImage ? Math.floor(localImage.length / 10) + 1 : 1;
     let columns = [
       {
@@ -151,6 +150,7 @@ class LocalImage extends Component {
               getTdProps={(state, rowInfo, column) => {
                 return {
                   style: {
+                    padding: "12px 9px 9px 9px",
                     background:
                       rowInfo && rowInfo.original.status === "on progress"
                         ? "#fdde53"
