@@ -23,7 +23,7 @@ type ImageBuildCustom struct {
 }
 
 func GetListImageBuildCustom(user_id int) ([]ImageBuildCustom, error) {
-	var images []ImageBuildCustom
+	images := []ImageBuildCustom{}
 	rows, err := db.Model(&ImageBuild{}).Where("image_build.deleted_on = ?", 0).Joins("left join (select * from image_push where image_push.deleted_on = ? and image_push.status = ? and image_push.user_id = ?) as image_push on image_push.build_id = image_build.id", 0, "done", user_id).Select("image_build.*, COUNT(image_push.id) is_pushed").Group("image_build.id").Rows()
 	if err != nil {
 		logging.Warn(err)
