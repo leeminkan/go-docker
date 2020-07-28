@@ -28,7 +28,7 @@ const apiGetListImageInDevice = async (data) => {
   let token = await localStorage.getItem("JWT_TOKEN");
   let result = await axios({
     method: "GET",
-    url: `${api.API_GET_LIST_IMAGE_IN_DEVICE}/${data.id}`,
+    url: `${api.API_GET_LIST_IMAGE_IN_DEVICE}/${data.payload.data}`,
     headers: {
       Authorization: `Bear ${token}`,
     },
@@ -56,7 +56,7 @@ const apiGetListContainerInDevice = async (data) => {
   let token = await localStorage.getItem("JWT_TOKEN");
   let result = await axios({
     method: "GET",
-    url: `${api.API_GET_LIST_CONTAINER_IN_DEVICE}/${data.id}`,
+    url: `${api.API_GET_LIST_CONTAINER_IN_DEVICE}/${data.payload.data}`,
     headers: {
       Authorization: `Bear ${token}`,
     },
@@ -80,14 +80,10 @@ function* getListContainerInDevice({ payload }) {
 }
 
 const apiPullImage = async (data) => {
-  let token = await localStorage.getItem("JWT_TOKEN");
-
   let result = await axios({
     method: "POST",
-    url: `${api.API_PULL_IMAGE}/${data.id}`,
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    url: `${api.API_PULL_IMAGE}`,
+    data,
   });
   return result;
 };
@@ -100,6 +96,7 @@ function* pullImage({ payload }) {
     showLoading(false);
     toastWarning("Pull Image is progressing. Please wait");
     const { data, status } = resp;
+    console.log(resp);
     if (status === 200) {
       yield put(pullImagePending(data));
       yield delay(15000);
@@ -111,13 +108,9 @@ function* pullImage({ payload }) {
 }
 
 const apiGetDeviceImageById = async (data) => {
-  let token = await localStorage.getItem("JWT_TOKEN");
   let result = await axios({
     method: "GET",
     url: `${api.API_GET_IMAGE_DEVICE_BY_ID}/${data}`,
-    headers: {
-      Authorization: `Bear ${token}`,
-    },
   });
   return result;
 };
@@ -132,7 +125,7 @@ function* getDeviceImageByIdSaga({ payload }) {
         yield delay(15000);
         yield put(getDeviceImageById(abc.data.data.id));
       } else if (abc.data.data.status === "fail") {
-        yield put(pullImageFail("Push image lỗi"));
+        yield put(pullImageFail("Pull image lỗi"));
       } else {
         yield put(pullImageSuccess(data));
       }

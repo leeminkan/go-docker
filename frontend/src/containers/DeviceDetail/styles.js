@@ -25,6 +25,9 @@ const styles = () => ({
     margin: "10px 10px 0 0",
     fontSize: "18px",
   },
+  status: {
+    textAlign: "center",
+  },
 });
 
 export default styles;

@@ -38,7 +38,12 @@ class DeviceDetail extends Component {
 
   onSubmit = (data) => {
     showLoading(true);
-    this.props.DeviceDetailActionCreators.pullImage(data);
+    let id = this.props.match.params.id;
+    let payload = {
+      repoID: parseInt(data.id),
+      deviceID: parseInt(id),
+    };
+    this.props.DeviceDetailActionCreators.pullImage(payload);
     this.props.DeviceDetailActionCreators.closeModalPullImage();
   };
 
@@ -72,10 +77,10 @@ class DeviceDetail extends Component {
         width: 60,
       },
       {
-        key: "repo_name",
+        key: "full_repo_name",
         Header: "Repository Name",
-        id: "repo_name",
-        accessor: "repo_name",
+        id: "full_repo_name",
+        accessor: "full_repo_name",
         width: 150,
       },
       {
@@ -83,18 +88,6 @@ class DeviceDetail extends Component {
         Header: "Image ID",
         accessor: "image_id",
         id: "image_id",
-      },
-      {
-        key: "tag",
-        Header: "Tag",
-        accessor: "tag",
-        id: "tag",
-        width: 100,
-        Cell: (data) => {
-          if (data.value) {
-            return <div className={classes.status}>{data.value}</div>;
-          }
-        },
       },
       {
         key: "status",
