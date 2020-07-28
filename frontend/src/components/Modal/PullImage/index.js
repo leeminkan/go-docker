@@ -23,13 +23,15 @@ class PullImage extends Component {
 
   onrenderSelect = () => {
     let xml = null;
-    xml = this.props.dockerHubImage.map((item, index) => {
-      return (
-        <option key={index} value={item.id}>
-          {item.full_repo_name}
-        </option>
-      );
-    });
+    if (this.props.dockerHubImage) {
+      xml = this.props.dockerHubImage.map((item, index) => {
+        return (
+          <option key={index} value={item.id}>
+            {item.full_repo_name}
+          </option>
+        );
+      });
+    }
     return xml;
   };
 

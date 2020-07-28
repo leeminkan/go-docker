@@ -23,13 +23,15 @@ class PushImage extends Component {
 
   onrenderSelect = () => {
     let xml = null;
-    xml = this.props.localImage.map((item, index) => {
-      return (
-        <option key={index} value={item.id}>
-          {item.repo_name}
-        </option>
-      );
-    });
+    if (this.props.localImage) {
+      xml = this.props.localImage.map((item, index) => {
+        return (
+          <option key={index} value={item.id}>
+            {item.repo_name}
+          </option>
+        );
+      });
+    }
     return xml;
   };
 

@@ -30,6 +30,7 @@ class LocalImage extends Component {
 
   render() {
     const { classes, localImage, openModalBuildImage } = this.props;
+    console.log("a", localImage);
     let numberOfPages = localImage ? Math.floor(localImage.length / 10) + 1 : 1;
     let columns = [
       {

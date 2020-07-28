@@ -3,7 +3,7 @@ module go-docker
 go 1.13
 
 require (
-	github.com/360EntSecGroup-Skylar/excelize v1.3.1-0.20180527032555-9e463b461434
+	github.com/360EntSecGroup-Skylar/excelize v1.3.1-0.20180527032555-9e463b461434 // indirect
 	github.com/EDDYCJY/go-gin-example v0.0.0-20200505102242-63963976dee0 // indirect
 	github.com/Microsoft/go-winio v0.4.14 // indirect
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
@@ -23,7 +23,7 @@ require (
 	github.com/go-openapi/spec v0.19.8 // indirect
 	github.com/go-openapi/swag v0.19.9 // indirect
 	github.com/gogo/protobuf v1.3.1 // indirect
-	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
+	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/gomodule/redigo v2.0.1-0.20180401191855-9352ab68be13+incompatible
 	github.com/gorilla/mux v1.7.4 // indirect
 	github.com/jinzhu/gorm v0.0.0-20180213101209-6e1387b44c64
@@ -35,7 +35,7 @@ require (
 	github.com/skanehira/docui v0.0.0-20191016134616-dba36160b2e3 // indirect
 	github.com/swaggo/gin-swagger v1.2.0
 	github.com/swaggo/swag v1.6.7
-	github.com/tealeg/xlsx v1.0.4-0.20180419195153-f36fa3be8893
+	github.com/tealeg/xlsx v1.0.4-0.20180419195153-f36fa3be8893 // indirect
 	github.com/unknwon/com v1.0.1
 	github.com/urfave/cli v1.22.4 // indirect
 	github.com/urfave/cli/v2 v2.2.0 // indirect
