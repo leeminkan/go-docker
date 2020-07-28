@@ -43,9 +43,9 @@ func (t *Device) FindByMachineID() (bool, models.Device, error) {
 }
 
 func (t *Device) GetListImagesByID() ([]models.DeviceImage, error) {
-	return models.GetListImages(t.MachineID)
+	return models.GetListImages(t.ID)
 }
 
 func (t *Device) GetListContainersByID() ([]models.DeviceContainer, error) {
-	return models.GetListContainers(t.MachineID)
+	return models.GetListContainers(t.ID)
 }

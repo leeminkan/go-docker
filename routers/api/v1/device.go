@@ -382,7 +382,7 @@ func UpdateStatusContainerRun(c *gin.Context) {
 // @Summary Get List Image in device
 // @Produce  json
 // @Tags  Devices
-// @Param id path string true "ID"
+// @Param id path int true "ID"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
 // @Router /device/images/{id} [get]
@@ -391,10 +391,10 @@ func GetImagesDeviceByID(c *gin.Context) {
 		appG = app.Gin{C: c}
 	)
 
-	id := c.Param("id")
+	id := com.StrTo(c.Param("id")).MustInt()
 
 	deviceService := device_service.Device{
-		MachineID: id,
+		ID: id,
 	}
 
 	listImages, err := deviceService.GetListImagesByID()
@@ -411,7 +411,7 @@ func GetImagesDeviceByID(c *gin.Context) {
 // @Summary Get List Container Running in device
 // @Produce  json
 // @Tags  Devices
-// @Param id path string true "ID"
+// @Param id path int true "ID"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
 // @Router /device/containers/{id} [get]
@@ -420,10 +420,10 @@ func GetContainersDeviceByID(c *gin.Context) {
 		appG = app.Gin{C: c}
 	)
 
-	id := c.Param("id")
+	id := com.StrTo(c.Param("id")).MustInt()
 
 	deviceService := device_service.Device{
-		MachineID: id,
+		ID: id,
 	}
 
 	listImages, err := deviceService.GetListContainersByID()

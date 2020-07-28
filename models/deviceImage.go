@@ -51,10 +51,10 @@ func UpdatePull(repoName string, machineID string, imageID string, status string
 	return deviceImage, nil
 }
 
-func GetListImages(machineID string) ([]DeviceImage, error) {
+func GetListImages(id int) ([]DeviceImage, error) {
 	var listImages []DeviceImage
 	var device Device
-	db.Where("machine_id = ? AND deleted_on = ?", machineID, 0).First(&device)
+	db.Where("id = ? AND deleted_on = ?", id, 0).First(&device)
 	err := db.Where("device_id = ? AND deleted_on = ? AND status = ?", device.ID, 0, "done").Find(&listImages).Error
 	if err != nil && err == gorm.ErrRecordNotFound {
 		logging.Warn(err)
@@ -99,7 +99,6 @@ func CreatePull(deviceID int, repoID int) (DeviceImage, error) {
 	}
 
 	deviceImageResult, err := UpdatePull(imagePush.FullRepoName, device.MachineID, "", "on progress")
-	logging.Warn(deviceImageResult)
 	if err != nil {
 		logging.Warn(err)
 		return deviceImageResult, err

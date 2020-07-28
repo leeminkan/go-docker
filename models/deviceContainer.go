@@ -56,10 +56,10 @@ func UpdateRun(containerName string, imagePullId int, status string, active stri
 	return nil
 }
 
-func GetListContainers(machineID string) ([]DeviceContainer, error) {
+func GetListContainers(id int) ([]DeviceContainer, error) {
 	var listContainers []DeviceContainer
 	var device Device
-	db.Where("machine_id = ? AND deleted_on = ?", machineID, 0).First(&device)
+	db.Where("id = ? AND deleted_on = ?", id, 0).First(&device)
 	err := db.Table("device_image").Select("device_container.id, device_container.created_on, device_container.modified_on, device_container.deleted_on, device_container.container_name, device_container.image_id, device_container.status, device_container.active").Joins("left join device_container on device_image.id = device_container.image_id").Where("device_image.device_id = ? AND device_image.deleted_on = ? AND device_container.deleted_on = ?", device.ID, 0, 0).Scan(&listContainers).Error
 	if err != nil {
 		logging.Warn(err)
