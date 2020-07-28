@@ -16,3 +16,7 @@ func (t *Control) CheckDevice() (string, bool, error) {
 func (t *Control) GetFullRepoNameFromID() (string, error) {
 	return models.GetFullRepoName(t.RepoID)
 }
+
+func (t *Control) CreateDevicePull() (models.DeviceImage, error) {
+	return models.CreatePull(t.DeviceID, t.RepoID)
+}

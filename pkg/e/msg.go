@@ -72,6 +72,7 @@ var MsgFlags = map[int]string{
 	ERROR_DEVICE_GET_CONTAINER_STATUS:             "Cannot get container to watch status in device",
 	ERROR_DEVICE_STOP_CONTAINER:                   "Cannot stop container in device",
 	ERROR_DEVICE_GET_MACHINE_ID_FROM_CONTAINER_ID: "Cannot get machine id from container",
+	ERROR_DEVICE_UPDATE_STATUS_PULL_FIRST:         "Cannot update status device pull on progress in the first time",
 }
 
 // GetMsg get error information based on Code

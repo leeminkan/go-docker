@@ -14,6 +14,7 @@ type ControlDevicePull struct {
 type UpdateStatusDevicePull struct {
 	FullRepoName string `form:"full_repo_name" valid:"Required"`
 	MachineID    string `form:"machine_id" valid:"Required"`
+	ImageID      string `form:"image_id"`
 	Status       string `form:"status" valid:"Required"`
 }
 

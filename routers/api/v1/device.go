@@ -225,6 +225,12 @@ func ControlDevicePull(c *gin.Context) {
 		return
 	}
 
+	deviceImage, errCreatePull := deviceService.CreateDevicePull()
+	if errCreatePull != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_DEVICE_UPDATE_STATUS_PULL_FIRST, nil)
+		return
+	}
+
 	value, err := mqtt.SetValueComeinandPull(machineId, repoName)
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_SET_MESSAGE_MQTT, nil)
@@ -235,7 +241,7 @@ func ControlDevicePull(c *gin.Context) {
 		tokenPub.Wait()
 	}
 
-	appG.Response(http.StatusOK, e.SUCCESS, nil)
+	appG.Response(http.StatusOK, e.SUCCESS, deviceImage)
 }
 
 // @Summary Update status image pull from devices
@@ -262,16 +268,17 @@ func UpdateStatusImagePull(c *gin.Context) {
 	updateDeviceService := device_service.Update{
 		FullRepoName: form.FullRepoName,
 		MachineID:    form.MachineID,
+		ImageID:      form.ImageID,
 		Status:       form.Status,
 	}
 
-	err := updateDeviceService.UpdateImagePullStatus()
+	deviceImage, err := updateDeviceService.UpdateImagePullStatus()
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_DEVICE_UPDATE_STATUS_IMAGE_PULL, nil)
 		return
 	}
 
-	appG.Response(http.StatusOK, e.SUCCESS, nil)
+	appG.Response(http.StatusOK, e.SUCCESS, deviceImage)
 }
 
 // @Summary Control Device run image as a container

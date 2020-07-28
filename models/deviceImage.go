@@ -11,10 +11,11 @@ type DeviceImage struct {
 
 	FullRepoName string `json:"full_repo_name"`
 	DeviceID     int    `json:"device_id"`
+	ImageID      string `json:"image_id"`
 	Status       string `json:"status" gorm:"type:enum('on progress', 'done', 'fail');default:'on progress'"`
 }
 
-func UpdatePull(repoName string, machineID string, status string) error {
+func UpdatePull(repoName string, machineID string, imageID string, status string) (DeviceImage, error) {
 	var deviceImage DeviceImage
 
 	type SelectData struct {
@@ -29,23 +30,25 @@ func UpdatePull(repoName string, machineID string, status string) error {
 		deviceImageCreate := DeviceImage{
 			FullRepoName: repoName,
 			DeviceID:     device.ID,
+			ImageID:      imageID,
 			Status:       status,
 		}
 		errCreate := db.Create(&deviceImageCreate).Error
 		if errCreate != nil {
 			logging.Warn(errCreate)
-			return errCreate
+			return deviceImageCreate, errCreate
 		}
-		return nil
+		return deviceImageCreate, nil
 	}
-	errUpdate := db.Model(&deviceImage).Where("full_repo_name = ? AND device_id = ? AND deleted_on = ? ", repoName, results[0].DeviceID, 0).Updates(DeviceImage{FullRepoName: repoName, DeviceID: results[0].DeviceID, Status: status}).Error
 
+	errUpdate := db.Model(&deviceImage).Where("full_repo_name = ? AND device_id = ? AND deleted_on = ? ", repoName, results[0].DeviceID, 0).Updates(DeviceImage{FullRepoName: repoName, DeviceID: results[0].DeviceID, ImageID: imageID, Status: status}).Error
+	db.Where("full_repo_name = ? AND device_id = ? AND deleted_on = ? ", repoName, results[0].DeviceID, 0).First(&deviceImage)
 	if errUpdate != nil {
 		logging.Warn(errUpdate)
-		return errUpdate
+		return deviceImage, errUpdate
 	}
 
-	return nil
+	return deviceImage, nil
 }
 
 func GetListImages(machineID string) ([]DeviceImage, error) {
@@ -78,4 +81,28 @@ func GetContainer(id int) (DeviceContainer, error) {
 		return deviceContainer, err
 	}
 	return deviceContainer, nil
+}
+
+func CreatePull(deviceID int, repoID int) (DeviceImage, error) {
+	var deviceImage DeviceImage
+	var imagePush ImagePush
+	errImage := db.Select("full_repo_name").Where("deleted_on = ? AND id = ? ", 0, repoID).First(&imagePush).Error
+	if errImage != nil {
+		logging.Warn(errImage)
+		return deviceImage, errImage
+	}
+	var device Device
+	errDevice := db.Where("deleted_on = ? AND id = ? ", 0, deviceID).First(&device).Error
+	if errDevice != nil {
+		logging.Warn(errDevice)
+		return deviceImage, errDevice
+	}
+
+	deviceImageResult, err := UpdatePull(imagePush.FullRepoName, device.MachineID, "", "on progress")
+	logging.Warn(deviceImageResult)
+	if err != nil {
+		logging.Warn(err)
+		return deviceImageResult, err
+	}
+	return deviceImageResult, nil
 }
