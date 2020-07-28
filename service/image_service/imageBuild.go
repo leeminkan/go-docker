@@ -40,3 +40,7 @@ func (image *ImageBuild) Get() (bool, models.ImageBuild, error) {
 func GetListImageBuild() ([]models.ImageBuild, error) {
 	return models.GetListImageBuild()
 }
+
+func GetListImageBuildCustom(user_id int) ([]models.ImageBuildCustom, error) {
+	return models.GetListImageBuildCustom(user_id)
+}
