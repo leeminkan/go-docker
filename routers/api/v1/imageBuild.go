@@ -62,7 +62,9 @@ func GetImageBuild(c *gin.Context) {
 func GetListImageBuild(c *gin.Context) {
 	appG := app.Gin{C: c}
 
-	images, err := image_service.GetListImageBuild()
+	user, _ := c.MustGet("user").(models.User)
+
+	images, err := image_service.GetListImageBuildCustom(user.ID)
 
 	if err != nil {
 		logging.Warn(err)
