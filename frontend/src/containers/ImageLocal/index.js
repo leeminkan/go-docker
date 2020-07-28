@@ -129,7 +129,6 @@ class LocalImage extends Component {
                 className={classes.button}
                 onClick={this.openModalBuildImage}
               >
-                {/* <AddIcon className={classes.leftIcon} /> */}
                 Build Image
               </Button>
             </Box>

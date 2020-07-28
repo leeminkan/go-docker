@@ -81,7 +81,7 @@ class DeviceDetail extends Component {
         Header: "Repository Name",
         id: "full_repo_name",
         accessor: "full_repo_name",
-        width: 150,
+        width: 200,
       },
       {
         key: "image_id",
@@ -123,6 +123,35 @@ class DeviceDetail extends Component {
           if (data) {
             return ConvertTime(data.value);
           }
+        },
+      },
+      {
+        key: "action",
+        Header: "Action",
+        accessor: "action",
+        width: 174,
+        align: "left",
+        Cell: (data) => {
+          return (
+            <Fragment>
+              <Button
+                variant="outlined"
+                color="primary"
+                className={classes.icon}
+                //onClick={() => this.openModalEditLearn(data.original)}
+              >
+                Edit
+              </Button>
+              <Button
+                variant="outlined"
+                color="secondary"
+                className={classes.icon}
+                //onClick={() => this.openModalEditLearn(data.original)}
+              >
+                Delete
+              </Button>
+            </Fragment>
+          );
         },
       },
     ];
@@ -227,7 +256,6 @@ class DeviceDetail extends Component {
                   className={classes.button}
                   onClick={this.openModalPullImage}
                 >
-                  {/* <AddIcon className={classes.leftIcon} /> */}
                   Pull Image
                 </Button>
               </Box>
@@ -248,6 +276,17 @@ class DeviceDetail extends Component {
                   this.props.DeviceDetailActionCreators.getListImageInDevice(
                     id
                   );
+                }}
+                getTdProps={(state, rowInfo, column) => {
+                  return {
+                    style: {
+                      padding: "12px 9px 9px 9px",
+                      background:
+                        rowInfo && rowInfo.original.status === "on progress"
+                          ? "#fdde53"
+                          : "",
+                    },
+                  };
                 }}
               />
             </CardContent>

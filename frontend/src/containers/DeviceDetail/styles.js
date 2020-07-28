@@ -28,6 +28,10 @@ const styles = () => ({
   status: {
     textAlign: "center",
   },
+  icon: {
+    margin: "2px 5px",
+    padding: "0 2px",
+  },
 });
 
 export default styles;

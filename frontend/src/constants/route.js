@@ -2,12 +2,10 @@ import HomePage from "../containers/HomePage";
 import LoginPage from "../containers/LoginPage";
 import RegisterPage from "../containers/RegisterPage";
 import ImageLocal from "../containers/ImageLocal";
-// import BuildImage from "../containers/BuildImage";
-// import ReconfigNode from "../containers/ReconfigNode";
 import ImageDockerHub from "../containers/ImageDockerHub";
 import LoginDokcerHub from "../containers/LoginDokcerHub";
 import DeviceList from "../containers/DeviceList";
-import UserInfo from "../containers/UserInfo";
+// import UserInfo from "../containers/UserInfo";
 import DeviceDetail from "../containers/DeviceDetail";
 
 export const ADMIN_ROUTES = [
@@ -48,13 +46,13 @@ export const ADMIN_ROUTES = [
   //   icon: "cached",
   //   hidden: false,
   // },
-  {
-    path: "/user-info",
-    name: "User Info",
-    component: UserInfo,
-    icon: "perm_identity",
-    hidden: false,
-  },
+  // {
+  //   path: "/user-info",
+  //   name: "User Info",
+  //   component: UserInfo,
+  //   icon: "perm_identity",
+  //   hidden: false,
+  // },
   {
     path: "/device-detail/:id",
     component: DeviceDetail,
