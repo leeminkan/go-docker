@@ -17,6 +17,27 @@ type ImageBuild struct {
 	OldRepoName string `json:"old_repo_name"`
 }
 
+type ImageBuildCustom struct {
+	ImageBuild
+	IsPushed int `json:"is_pushed"`
+}
+
+func GetListImageBuildCustom(user_id int) ([]ImageBuildCustom, error) {
+	var images []ImageBuildCustom
+	rows, err := db.Model(&ImageBuild{}).Where("image_build.deleted_on = ?", 0).Joins("left join (select * from image_push where image_push.deleted_on = ? and image_push.status = ? and image_push.user_id = ?) as image_push on image_push.build_id = image_build.id", 0, "done", user_id).Select("image_build.*, COUNT(image_push.id) is_pushed").Group("image_build.id").Rows()
+	if err != nil {
+		logging.Warn(err)
+		return images, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var image ImageBuildCustom
+		db.ScanRows(rows, &image)
+		images = append(images, image)
+	}
+	return images, nil
+}
+
 func CreateImageBuild(repo_name string, tag string, image_id string, user_id int, status string, old_repo_name string) (ImageBuild, error) {
 	imageBuild := ImageBuild{
 		RepoName:    repo_name,
@@ -97,6 +118,5 @@ func GetListImageBuild() ([]ImageBuild, error) {
 		logging.Warn(err)
 		return images, err
 	}
-
 	return images, nil
 }
