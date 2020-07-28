@@ -143,7 +143,24 @@ func InitRouter() *gin.Engine {
 	apiDevice.POST("/devices/connect", v1.ConnectDevice)
 	//Control a device pull image from dockerhub
 	apiDevice.POST("/control/devices/pull", v1.ControlDevicePull)
-
+	//Update status image pull from devices
+	apiDevice.POST("/update/devices/pull/status", v1.UpdateStatusImagePull)
+	//Control a device run image as a container
+	apiDevice.POST("/control/devices/run", v1.ControlDeviceRun)
+	//Update status container run from devices
+	apiDevice.POST("/update/devices/run", v1.UpdateStatusContainerRun)
+	//Get list image in device by machine id
+	apiDevice.GET("/device/images/:id", v1.GetImagesDeviceByID)
+	//Get list container running in device by machine id
+	apiDevice.GET("/device/containers/:id", v1.GetContainersDeviceByID)
+	//Get a image pull to watch status in device
+	apiDevice.GET("/device/image/:id", v1.GetImageDeviceByID)
+	//Get a container to watch status in device
+	apiDevice.GET("/device/container/:id", v1.GetContainerDeviceByID)
+	//Stop a container in device
+	apiDevice.POST("/device/stop/container", v1.StopContainer)
+	//Stop all container in device
+	apiDevice.POST("/device/stop/container/all", v1.StopAllContainer)
 	////////////////////////////////////////////////////////////////////
 	///////						End-Device						////////
 	////////////////////////////////////////////////////////////////////
