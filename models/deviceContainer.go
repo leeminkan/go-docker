@@ -14,7 +14,7 @@ type DeviceContainer struct {
 	ContainerName string `json:"container_name"`
 	ImageID       int    `json:"image_id"`
 	Status        string `json:"status" gorm:"type:enum('on progress', 'done', 'fail');default:'on progress'"`
-	Active        string `json:"status" gorm:"type:enum('start', 'starting', 'stop', 'stopping');default:'stop'"`
+	Active        string `json:"active" gorm:"type:enum('start', 'starting', 'stop', 'stopping');default:'stop'"`
 }
 
 func CheckValueRun(imagePullID int, containerName string) (DeviceImage, bool, error) {

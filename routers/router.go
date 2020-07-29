@@ -114,6 +114,7 @@ func InitRouter() *gin.Engine {
 	////////////////////////////////////////////////////////////////////
 
 	apiContainer := apiv1.Group("/")
+
 	//Get list container
 	apiContainer.GET("/containers", v1.GetContainers)
 	//Get container
@@ -132,37 +133,40 @@ func InitRouter() *gin.Engine {
 	////////////////////////////////////////////////////////////////////
 
 	apiDevice := apiv1.Group("/")
+	apiDevice.Use(jwt.JWTCustom())
+	{
+		//Control a device pull image from dockerhub
+		apiDevice.POST("/control/devices/pull", v1.ControlDevicePull)
+		//Control a device run image as a container
+		apiDevice.POST("/control/devices/run", v1.ControlDeviceRun)
+		//Stop a container in device
+		apiDevice.POST("/device/stop/container", v1.StopContainer)
+		//Start a container in device
+		apiDevice.POST("/device/start/container", v1.StartContainer)
+		//Stop all container in device
+		apiDevice.POST("/device/stop/container/all", v1.StopAllContainer)
+		//Get list image in device by machine id
+		apiDevice.GET("/device/images/:id", v1.GetImagesDeviceByID)
+		//Get list container running in device by machine id
+		apiDevice.GET("/device/containers/:id", v1.GetContainersDeviceByID)
+		//Get a image pull to watch status in device
+		apiDevice.GET("/device/image/:id", v1.GetImageDeviceByID)
+		//Get a container to watch status in device
+		apiDevice.GET("/device/container/:id", v1.GetContainerDeviceByID)
+		//Get list devices
+		apiDevice.GET("/devices", v1.GetListDevices)
+	}
 
-	//Get list devices
-	apiDevice.GET("/devices", v1.GetListDevices)
 	//Create device
 	apiDevice.POST("/devices", v1.CreateDevice)
 	//Remove device
 	apiDevice.DELETE("/devices/:id", v1.RemoveDevice)
 	//Connect device
 	apiDevice.POST("/devices/connect", v1.ConnectDevice)
-	//Control a device pull image from dockerhub
-	apiDevice.POST("/control/devices/pull", v1.ControlDevicePull)
 	//Update status image pull from devices
 	apiDevice.POST("/update/devices/pull/status", v1.UpdateStatusImagePull)
-	//Control a device run image as a container
-	apiDevice.POST("/control/devices/run", v1.ControlDeviceRun)
 	//Update status container run from devices
 	apiDevice.POST("/update/devices/run", v1.UpdateStatusContainerRun)
-	//Get list image in device by machine id
-	apiDevice.GET("/device/images/:id", v1.GetImagesDeviceByID)
-	//Get list container running in device by machine id
-	apiDevice.GET("/device/containers/:id", v1.GetContainersDeviceByID)
-	//Get a image pull to watch status in device
-	apiDevice.GET("/device/image/:id", v1.GetImageDeviceByID)
-	//Get a container to watch status in device
-	apiDevice.GET("/device/container/:id", v1.GetContainerDeviceByID)
-	//Stop a container in device
-	apiDevice.POST("/device/stop/container", v1.StopContainer)
-	//Start a container in device
-	apiDevice.POST("/device/start/container", v1.StartContainer)
-	//Stop all container in device
-	apiDevice.POST("/device/stop/container/all", v1.StopAllContainer)
 	//Update status start stop container in device
 	apiDevice.POST("/device/update/container/status", v1.UpdateStatusContainer)
 

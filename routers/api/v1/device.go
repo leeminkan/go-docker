@@ -69,6 +69,7 @@ func CreateDevice(c *gin.Context) {
 
 // @Summary Get list devices
 // @Produce  json
+// @Security ApiKeyAuth
 // @Tags  Devices
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
@@ -185,6 +186,7 @@ func ConnectDevice(c *gin.Context) {
 
 // @Summary Control Device pull image
 // @Produce  json
+// @Security ApiKeyAuth
 // @Accept  application/json
 // @Tags  Devices
 // @Param body body device.ControlDevicePull true "body"
@@ -284,6 +286,7 @@ func UpdateStatusImagePull(c *gin.Context) {
 
 // @Summary Control Device run image as a container
 // @Produce  json
+// @Security ApiKeyAuth
 // @Accept  application/json
 // @Tags  Devices
 // @Param body body device.ControlDeviceRun true "body"
@@ -388,6 +391,7 @@ func UpdateStatusContainerRun(c *gin.Context) {
 
 // @Summary Get List Image in device
 // @Produce  json
+// @Security ApiKeyAuth
 // @Tags  Devices
 // @Param id path int true "ID"
 // @Success 200 {object} app.Response
@@ -417,6 +421,7 @@ func GetImagesDeviceByID(c *gin.Context) {
 
 // @Summary Get List Container Running in device
 // @Produce  json
+// @Security ApiKeyAuth
 // @Tags  Devices
 // @Param id path int true "ID"
 // @Success 200 {object} app.Response
@@ -446,6 +451,7 @@ func GetContainersDeviceByID(c *gin.Context) {
 
 // @Summary Get Image Pulling to watch status in device
 // @Produce  json
+// @Security ApiKeyAuth
 // @Tags  Devices
 // @Param id path int true "ID"
 // @Success 200 {object} app.Response
@@ -475,6 +481,7 @@ func GetImageDeviceByID(c *gin.Context) {
 
 // @Summary Get Container to watch status in device
 // @Produce  json
+// @Security ApiKeyAuth
 // @Tags  Devices
 // @Param id path int true "ID"
 // @Success 200 {object} app.Response
@@ -504,6 +511,7 @@ func GetContainerDeviceByID(c *gin.Context) {
 
 // @Summary Stop a Container
 // @Produce  json
+// @Security ApiKeyAuth
 // @Accept  application/json
 // @Tags  Devices
 // @Param body body device.StopContainer true "body"
@@ -568,6 +576,7 @@ func StopContainer(c *gin.Context) {
 
 // @Summary Start a Container
 // @Produce  json
+// @Security ApiKeyAuth
 // @Accept  application/json
 // @Tags  Devices
 // @Param body body device.StartContainer true "body"
@@ -632,6 +641,7 @@ func StartContainer(c *gin.Context) {
 
 // @Summary Stop all Container
 // @Produce  json
+// @Security ApiKeyAuth
 // @Accept  application/json
 // @Tags  Devices
 // @Param body body device.StopAllContainer true "body"
