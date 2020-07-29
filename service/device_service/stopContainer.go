@@ -13,6 +13,10 @@ func (t *StopContainer) StopContainerByID() error {
 	return models.StopContainer(t.ContainerID)
 }
 
+func GetContainer(containerID int) (models.DeviceContainer, error) {
+	return models.GetContainerStop(containerID)
+}
+
 func (t *StopContainer) GetMachineIDByContainerID() (string, error) {
 	return models.GetMachineIDByContainerID(t.ContainerID)
 }

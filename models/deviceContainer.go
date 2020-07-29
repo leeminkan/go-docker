@@ -1,7 +1,9 @@
 package models
 
 import (
+	"errors"
 	"go-docker/pkg/logging"
+	"strconv"
 
 	"github.com/jinzhu/gorm"
 )
@@ -26,34 +28,47 @@ func CheckValueRun(imagePullID int, containerName string) (DeviceImage, bool, er
 	return deviceImage, true, nil
 }
 
-func UpdateRun(containerName string, imagePullId int, status string, active string) error {
+func CreateRun(imagePullID string, containerName string) (DeviceContainer, error) {
+	deviceContainer, err := UpdateRun(containerName, imagePullID, "on progress", "starting")
+	if err != nil {
+		logging.Warn(err)
+		return deviceContainer, err
+	}
+	return deviceContainer, nil
+}
+
+func UpdateRun(containerName string, imagePullID string, status string, active string) (DeviceContainer, error) {
 	var deviceContainer DeviceContainer
-	err := db.Where("image_id = ? AND container_name = ? AND deleted_on = ? ", imagePullId, containerName, 0).First(&deviceContainer).Error
+	err := db.Where("image_id = ? AND container_name = ? AND deleted_on = ? ", imagePullID, containerName, 0).First(&deviceContainer).Error
 	if err != nil && err == gorm.ErrRecordNotFound {
+		cvtInt, _ := strconv.Atoi(imagePullID)
 		deviceContainerCreate := DeviceContainer{
 			ContainerName: containerName,
-			ImageID:       imagePullId,
+			ImageID:       cvtInt,
 			Status:        status,
 			Active:        active,
 		}
 		errCreate := db.Create(&deviceContainerCreate).Error
+		db.Where("image_id = ? AND container_name = ? AND deleted_on = ? ", imagePullID, containerName, 0).First(&deviceContainer)
+
 		if errCreate != nil {
 			logging.Warn(errCreate)
-			return errCreate
+			return deviceContainer, errCreate
 		}
-		return nil
+		return deviceContainer, nil
 	}
-	errUpdate := db.Model(&deviceContainer).Where("image_id = ? AND container_name = ? AND deleted_on = ? ", imagePullId, containerName, 0).Updates(
+	errUpdate := db.Model(&deviceContainer).Where("image_id = ? AND container_name = ? AND deleted_on = ? ", imagePullID, containerName, 0).Updates(
 		DeviceContainer{
 			Status: status,
 			Active: active,
 		}).Error
+	db.Where("image_id = ? AND container_name = ? AND deleted_on = ? ", imagePullID, containerName, 0).First(&deviceContainer)
 
 	if errUpdate != nil {
 		logging.Warn(errUpdate)
-		return errUpdate
+		return deviceContainer, errUpdate
 	}
-	return nil
+	return deviceContainer, nil
 }
 
 func GetListContainers(id int) ([]DeviceContainer, error) {
@@ -73,6 +88,19 @@ func StopContainer(containerID int) error {
 	err := db.Model(&deviceContainer).Where("id = ? AND deleted_on = ? ", containerID, 0).Updates(
 		DeviceContainer{
 			Active: "stopping",
+		}).Error
+	if err != nil {
+		logging.Warn(err)
+		return err
+	}
+	return nil
+}
+
+func StartContainer(containerID int) error {
+	var deviceContainer DeviceContainer
+	err := db.Model(&deviceContainer).Where("id = ? AND deleted_on = ? ", containerID, 0).Updates(
+		DeviceContainer{
+			Active: "starting",
 		}).Error
 	if err != nil {
 		logging.Warn(err)
@@ -107,4 +135,43 @@ func GetMachineIDByContainerID(containerID int) (string, error) {
 		return "", err
 	}
 	return device.MachineID, nil
+}
+
+func GetContainerStop(containerID int) (DeviceContainer, error) {
+	var deviceContainer DeviceContainer
+	err := db.Where("id = ? AND deleted_on = ?", containerID, 0).First(&deviceContainer).Error
+
+	if err != nil {
+		logging.Warn(err)
+		return deviceContainer, err
+	}
+	return deviceContainer, nil
+}
+
+func CheckStatusStartStop(containerID int) (DeviceContainer, error) {
+	var deviceContainer DeviceContainer
+	err := db.Where("id = ? AND deleted_on = ?", containerID, 0).First(&deviceContainer).Error
+	if err != nil {
+		logging.Warn(err)
+		return deviceContainer, err
+	}
+	if deviceContainer.Active == "starting" || deviceContainer.Active == "stopping" {
+		logging.Warn(errors.New("Status fail"))
+		return deviceContainer, errors.New("Status fail")
+	}
+	return deviceContainer, nil
+}
+
+func UpdateStatusContainer(id int, active string) (DeviceContainer, error) {
+	var deviceContainer DeviceContainer
+	err := db.Model(&deviceContainer).Where("id = ? AND deleted_on = ? ", id, 0).Updates(
+		DeviceContainer{
+			Active: active,
+		}).Error
+	if err != nil {
+		logging.Warn(err)
+		return deviceContainer, err
+	}
+
+	return deviceContainer, nil
 }

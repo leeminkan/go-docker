@@ -65,14 +65,19 @@ var MsgFlags = map[int]string{
 	ERROR_TAG_CREATE:               "Cannot create an tag for repo when push image!",
 	ERROR_GET_LIST_TAG_BY_REPO_ID:  "Cannot get list tag by repo id!",
 
-	ERROR_DEVICE_UPDATE_STATUS_IMAGE_PULL:         "Cannot update status image pull in device",
-	ERROR_DEVICE_GET_LIST_IMAGES:                  "Cannot get list images in device",
-	ERROR_DEVICE_GET_MACHINE_ID_FROM_ID:           "Cannot get machine id from id",
-	ERROR_DEVICE_GET_IMAGE_STATUS:                 "Cannot get image to watch status in device",
-	ERROR_DEVICE_GET_CONTAINER_STATUS:             "Cannot get container to watch status in device",
-	ERROR_DEVICE_STOP_CONTAINER:                   "Cannot stop container in device",
-	ERROR_DEVICE_GET_MACHINE_ID_FROM_CONTAINER_ID: "Cannot get machine id from container",
-	ERROR_DEVICE_UPDATE_STATUS_PULL_FIRST:         "Cannot update status device pull on progress in the first time",
+	ERROR_DEVICE_UPDATE_STATUS_IMAGE_PULL:           "Cannot update status image pull in device",
+	ERROR_DEVICE_GET_LIST_IMAGES:                    "Cannot get list images in device",
+	ERROR_DEVICE_GET_MACHINE_ID_FROM_ID:             "Cannot get machine id from id",
+	ERROR_DEVICE_GET_IMAGE_STATUS:                   "Cannot get image to watch status in device",
+	ERROR_DEVICE_GET_CONTAINER_STATUS:               "Cannot get container to watch status in device",
+	ERROR_DEVICE_STOP_CONTAINER:                     "Cannot stop container in device",
+	ERROR_DEVICE_GET_MACHINE_ID_FROM_CONTAINER_ID:   "Cannot get machine id from container",
+	ERROR_DEVICE_UPDATE_STATUS_PULL_FIRST:           "Cannot update status device pull on progress in the first time",
+	ERROR_DEVICE_CONTAINER_RUN_FIRST:                "Cannot create container run device in the first time",
+	ERROR_DEVICE_GET_CONTAINER_FAIL:                 "Cannot get container to stop it",
+	ERROR_DEVICE_START_CONTAINER:                    "Cannot start container in device",
+	ERROR_DEVICE_STATUS_START_STOP_CONTAINER:        "Cannot start or stop container",
+	ERROR_DEVICE_UPDATE_STATUS_START_STOP_CONTAINER: "Cannot update status start stop container in device",
 }
 
 // GetMsg get error information based on Code

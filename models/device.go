@@ -63,9 +63,11 @@ func ExistDeviceByID(id int) (bool, error) {
 }
 
 func GetMachineID(id int) (string, error) {
+	logging.Warn(id)
 	var device Device
 	err := db.Select("machine_id").Where("id = ? AND deleted_on = ? ", id, 0).First(&device).Error
 	if err != nil && err == gorm.ErrRecordNotFound {
+		logging.Warn(err)
 		return "", err
 	}
 	return device.MachineID, nil
