@@ -77,6 +77,7 @@ func FindDeviceByMachineID(id string) (bool, Device, error) {
 	var device Device
 	err := db.Select("id").Where("machine_id = ? AND deleted_on = ? ", id, 0).First(&device).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
+		logging.Warn(err)
 		return false, device, err
 	}
 

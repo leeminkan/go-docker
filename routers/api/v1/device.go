@@ -147,6 +147,7 @@ func ConnectDevice(c *gin.Context) {
 	httpCode, errCode := app.BindAndValid(c, &form)
 
 	if errCode != e.SUCCESS {
+		logging.Warn(errCode)
 		appG.Response(httpCode, errCode, nil)
 		return
 	}

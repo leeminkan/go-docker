@@ -133,6 +133,18 @@ func InitRouter() *gin.Engine {
 	////////////////////////////////////////////////////////////////////
 
 	apiDevice := apiv1.Group("/")
+	//Create device
+	apiDevice.POST("/devices", v1.CreateDevice)
+	//Remove device
+	apiDevice.DELETE("/devices/:id", v1.RemoveDevice)
+	//Connect device
+	apiDevice.POST("/devices/connect", v1.ConnectDevice)
+	//Update status image pull from devices
+	apiDevice.POST("/update/devices/pull/status", v1.UpdateStatusImagePull)
+	//Update status container run from devices
+	apiDevice.POST("/update/devices/run", v1.UpdateStatusContainerRun)
+	//Update status start stop container in device
+	apiDevice.POST("/device/update/container/status", v1.UpdateStatusContainer)
 	apiDevice.Use(jwt.JWTCustom())
 	{
 		//Control a device pull image from dockerhub
@@ -156,19 +168,6 @@ func InitRouter() *gin.Engine {
 		//Get list devices
 		apiDevice.GET("/devices", v1.GetListDevices)
 	}
-
-	//Create device
-	apiDevice.POST("/devices", v1.CreateDevice)
-	//Remove device
-	apiDevice.DELETE("/devices/:id", v1.RemoveDevice)
-	//Connect device
-	apiDevice.POST("/devices/connect", v1.ConnectDevice)
-	//Update status image pull from devices
-	apiDevice.POST("/update/devices/pull/status", v1.UpdateStatusImagePull)
-	//Update status container run from devices
-	apiDevice.POST("/update/devices/run", v1.UpdateStatusContainerRun)
-	//Update status start stop container in device
-	apiDevice.POST("/device/update/container/status", v1.UpdateStatusContainer)
 
 	////////////////////////////////////////////////////////////////////
 	///////						End-Device						////////
