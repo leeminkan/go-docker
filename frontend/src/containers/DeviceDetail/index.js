@@ -175,10 +175,10 @@ class DeviceDetail extends Component {
 
     let columnsContainer = [
       {
-        key: "id",
+        key: "image_id",
         Header: "ID",
-        id: "id",
-        accessor: "id",
+        accessor: "image_id",
+        id: "image_id",
         width: 60,
       },
       {
@@ -186,13 +186,6 @@ class DeviceDetail extends Component {
         Header: "Container Name",
         id: "container_name",
         accessor: "container_name",
-        width: 250,
-      },
-      {
-        key: "image_id",
-        Header: "Image ID",
-        accessor: "image_id",
-        id: "image_id",
       },
       {
         key: "active",
@@ -240,6 +233,35 @@ class DeviceDetail extends Component {
           if (data) {
             return ConvertTime(data.value);
           }
+        },
+      },
+      {
+        key: "action",
+        Header: "Action",
+        accessor: "action",
+        width: 174,
+        align: "left",
+        Cell: (data) => {
+          return (
+            <Fragment>
+              <Button
+                variant="outlined"
+                color="primary"
+                className={classes.icon}
+                //onClick={() => this.onOpenModalRunImage(data.original.id)}
+              >
+                Run
+              </Button>
+              <Button
+                variant="outlined"
+                color="secondary"
+                className={classes.icon}
+                //onClick={() => this.openModalEditLearn(data.original)}
+              >
+                Delete
+              </Button>
+            </Fragment>
+          );
         },
       },
     ];
@@ -337,6 +359,17 @@ class DeviceDetail extends Component {
                   this.props.DeviceDetailActionCreators.getListContainerInDevice(
                     id
                   );
+                }}
+                getTdProps={(state, rowInfo, column) => {
+                  return {
+                    style: {
+                      padding: "12px 9px 9px 9px",
+                      background:
+                        rowInfo && rowInfo.original.status === "on progress"
+                          ? "#fdde53"
+                          : "",
+                    },
+                  };
                 }}
               />
             </CardContent>

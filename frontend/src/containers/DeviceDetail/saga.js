@@ -30,7 +30,7 @@ const apiGetListImageInDevice = async (data) => {
     method: "GET",
     url: `${api.API_GET_LIST_IMAGE_IN_DEVICE}/${data.payload.data}`,
     headers: {
-      Authorization: `Bear ${token}`,
+      Authorization: `Bearer ${token}`,
     },
     cancelToken: new CancelToken((c) => (cancel = c)),
   });
@@ -58,7 +58,7 @@ const apiGetListContainerInDevice = async (data) => {
     method: "GET",
     url: `${api.API_GET_LIST_CONTAINER_IN_DEVICE}/${data.payload.data}`,
     headers: {
-      Authorization: `Bear ${token}`,
+      Authorization: `Bearer ${token}`,
     },
     cancelToken: new CancelToken((c) => (cancel = c)),
   });
@@ -80,9 +80,14 @@ function* getListContainerInDevice({ payload }) {
 }
 
 const apiPullImage = async (data) => {
+  let token = await localStorage.getItem("JWT_TOKEN");
+
   let result = await axios({
     method: "POST",
     url: `${api.API_PULL_IMAGE}`,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
     data: data,
   });
   return result;
@@ -110,9 +115,13 @@ function* pullImage({ payload }) {
 }
 
 const apiGetDeviceImageById = async (data) => {
+  let token = await localStorage.getItem("JWT_TOKEN");
   let result = await axios({
     method: "GET",
     url: `${api.API_GET_IMAGE_DEVICE_BY_ID}/${data}`,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
   return result;
 };
@@ -138,10 +147,14 @@ function* getDeviceImageByIdSaga({ payload }) {
 }
 
 const apiRunImageDevice = async (data) => {
+  let token = await localStorage.getItem("JWT_TOKEN");
   let result = await axios({
     method: "POST",
     url: `${api.API_RUN_IMAGE_IN_DEVICE}`,
     data: data,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
   return result;
 };
@@ -150,6 +163,8 @@ function* runImageDevice({ payload }) {
   try {
     let image = payload.data;
     const resp = yield call(apiRunImageDevice, image);
+    yield delay(1000);
+    showLoading(false);
     toastWarning("Run Image is progressing. Please wait");
     const { data, status } = resp;
     if (status === 200) {
@@ -158,18 +173,20 @@ function* runImageDevice({ payload }) {
       yield put(getDeviceContainerById(data.data.id));
     }
   } catch (error) {
+    yield delay(1000);
+    showLoading(false);
     yield put(runImageDeviceFail(error));
   }
 }
 
 const apiGetDeviceContainerById = async (data) => {
-  // let token = await localStorage.getItem("JWT_TOKEN");
+  let token = await localStorage.getItem("JWT_TOKEN");
   let result = await axios({
     method: "GET",
     url: `${api.API_GET_CONTAINER_IN_DEVICE_BY_ID}/${data}`,
-    // headers: {
-    //   Authorization: `Bear ${token}`,
-    // },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
   return result;
 };
