@@ -16,9 +16,9 @@ class PushImage extends Component {
   };
 
   onClose = () => {
-    this.props.onCloseModalPI();
     const { reset } = this.props;
     reset();
+    this.props.onCloseModalPI();
   };
 
   onrenderSelect = () => {

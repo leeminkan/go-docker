@@ -83,7 +83,7 @@ const apiPullImage = async (data) => {
   let result = await axios({
     method: "POST",
     url: `${api.API_PULL_IMAGE}`,
-    data,
+    data: data,
   });
   return result;
 };
@@ -103,6 +103,8 @@ function* pullImage({ payload }) {
       yield put(getDeviceImageById(data.data.id));
     }
   } catch (error) {
+    yield delay(1000);
+    showLoading(false);
     yield put(pullImageFail(error));
   }
 }
@@ -136,14 +138,10 @@ function* getDeviceImageByIdSaga({ payload }) {
 }
 
 const apiRunImageDevice = async (data) => {
-  let token = await localStorage.getItem("JWT_TOKEN");
-
   let result = await axios({
     method: "POST",
-    url: `${api.API_RUN_IMAGE_IN_DEVICE}/${data.id}`,
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    url: `${api.API_RUN_IMAGE_IN_DEVICE}`,
+    data: data,
   });
   return result;
 };
@@ -165,13 +163,13 @@ function* runImageDevice({ payload }) {
 }
 
 const apiGetDeviceContainerById = async (data) => {
-  let token = await localStorage.getItem("JWT_TOKEN");
+  // let token = await localStorage.getItem("JWT_TOKEN");
   let result = await axios({
     method: "GET",
     url: `${api.API_GET_CONTAINER_IN_DEVICE_BY_ID}/${data}`,
-    headers: {
-      Authorization: `Bear ${token}`,
-    },
+    // headers: {
+    //   Authorization: `Bear ${token}`,
+    // },
   });
   return result;
 };

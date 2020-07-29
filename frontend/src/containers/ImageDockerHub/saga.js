@@ -72,6 +72,8 @@ function* pushImage({ payload }) {
       yield put(getDHImageById(data.data.id));
     }
   } catch (error) {
+    yield delay(1000);
+    showLoading(false);
     yield put(pushImageFail(error));
   }
 }

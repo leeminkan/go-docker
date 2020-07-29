@@ -12,6 +12,21 @@ export const closeModalPullImage = () => {
   };
 };
 
+export const openModalRunImage = (data) => {
+  return {
+    type: types.OPEN_MODAL_RUN_IMAGE,
+    payload: {
+      data,
+    },
+  };
+};
+
+export const closeModalRunImage = () => {
+  return {
+    type: types.CLOSE_MODAL_RUN_IMAGE,
+  };
+};
+
 export const getListImageInDevice = (data) => {
   return {
     type: types.GET_LIST_IMAGE_IN_DEVICE,

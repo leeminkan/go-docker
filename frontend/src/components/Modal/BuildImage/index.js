@@ -39,12 +39,12 @@ class BuildImage extends Component {
   };
 
   onClose = () => {
-    this.props.onCloseModalBI();
     this.setState({
       file: [],
     });
     const { reset } = this.props;
     reset();
+    this.props.onCloseModalBI();
   };
 
   render() {

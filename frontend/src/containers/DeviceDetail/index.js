@@ -20,6 +20,7 @@ import * as DockerHubImageAction from "../ImageDockerHub/action";
 import logo from "../../assets/img/pending.gif";
 import ConvertTime from "../../helpers/convertTime";
 import { showLoading } from "../../helpers/loading";
+import RunImage from "../../components/Modal/RunImage";
 
 class DeviceDetail extends Component {
   componentDidMount() {
@@ -32,8 +33,16 @@ class DeviceDetail extends Component {
     this.props.DeviceDetailActionCreators.closeModalPullImage();
   };
 
-  openModalPullImage = () => {
+  onOpenModalPullImage = () => {
     this.props.DeviceDetailActionCreators.openModalPullImage();
+  };
+
+  onCloseModalRunImage = () => {
+    this.props.DeviceDetailActionCreators.closeModalRunImage();
+  };
+
+  onOpenModalRunImage = (data) => {
+    this.props.DeviceDetailActionCreators.openModalRunImage(data);
   };
 
   onSubmit = (data) => {
@@ -47,14 +56,22 @@ class DeviceDetail extends Component {
     this.props.DeviceDetailActionCreators.closeModalPullImage();
   };
 
-  onRunContainer = (data) => {
+  onRunContainer = (a) => {
+    let data = {
+      containerName: a.name,
+      imagePullID: this.props.runID,
+    };
+    console.log(data);
+    showLoading(true);
     this.props.DeviceDetailActionCreators.runImageDevice(data);
+    this.props.DeviceDetailActionCreators.closeModalRunImage();
   };
 
   render() {
     const {
       classes,
       openModalPullImage,
+      openModalRunImage,
       dockerHubImage,
       imageInDevice,
       containerInDevice,
@@ -138,9 +155,9 @@ class DeviceDetail extends Component {
                 variant="outlined"
                 color="primary"
                 className={classes.icon}
-                //onClick={() => this.openModalEditLearn(data.original)}
+                onClick={() => this.onOpenModalRunImage(data.original.id)}
               >
-                Edit
+                Run
               </Button>
               <Button
                 variant="outlined"
@@ -165,11 +182,11 @@ class DeviceDetail extends Component {
         width: 60,
       },
       {
-        key: "repo_name",
-        Header: "Repository Name",
-        id: "repo_name",
-        accessor: "repo_name",
-        width: 150,
+        key: "container_name",
+        Header: "Container Name",
+        id: "container_name",
+        accessor: "container_name",
+        width: 250,
       },
       {
         key: "image_id",
@@ -178,10 +195,10 @@ class DeviceDetail extends Component {
         id: "image_id",
       },
       {
-        key: "tag",
-        Header: "Tag",
-        accessor: "tag",
-        id: "tag",
+        key: "active",
+        Header: "Active",
+        accessor: "active",
+        id: "active",
         width: 100,
         Cell: (data) => {
           if (data.value) {
@@ -236,6 +253,11 @@ class DeviceDetail extends Component {
             onSave={this.onSubmit}
             dockerHubImage={dockerHubImage}
           />
+          <RunImage
+            openModalRI={openModalRunImage}
+            onCloseModalRI={this.onCloseModalRunImage}
+            onSave={this.onRunContainer}
+          />
           <Grid container>
             <Grid item xs={10}>
               <Typography
@@ -254,7 +276,7 @@ class DeviceDetail extends Component {
                   size="small"
                   color="primary"
                   className={classes.button}
-                  onClick={this.openModalPullImage}
+                  onClick={this.onOpenModalPullImage}
                 >
                   Pull Image
                 </Button>
@@ -329,8 +351,10 @@ const mapStateToProps = (state) => {
   return {
     dockerHubImage: state.DHImage.listDHImage,
     openModalPullImage: state.deviceDetail.openModalPullImage,
+    openModalRunImage: state.deviceDetail.openModalRunImage,
     imageInDevice: state.deviceDetail.imageInDevice,
     containerInDevice: state.deviceDetail.containerInDevice,
+    runID: state.deviceDetail.runID,
   };
 };
 

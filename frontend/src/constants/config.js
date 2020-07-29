@@ -27,9 +27,9 @@ export const API_GET_LIST_DEVICE = `${HOST}/devices`;
 // DEVICE DETAIL
 export const API_GET_LIST_IMAGE_IN_DEVICE = `${HOST}/device/images`;
 export const API_PULL_IMAGE = `${HOST}/control/devices/pull`;
-export const API_GET_IMAGE_DEVICE_BY_ID = `${HOST}/device/image`;
+export const API_GET_IMAGE_DEVICE_BY_ID = `${HOST}/device/container`;
 
-export const API_RUN_IMAGE_IN_DEVICE = `${HOST}/images-list-build`;
+export const API_RUN_IMAGE_IN_DEVICE = `${HOST}/control/devices/run`;
 
 export const API_GET_LIST_CONTAINER_IN_DEVICE = `${HOST}/device/containers`;
 export const API_STOP_CONTAINER_IN_DEVICE = `${HOST}/images-list-build`;

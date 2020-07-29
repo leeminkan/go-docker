@@ -4,7 +4,9 @@ import { toastSuccess, toastError } from "../../helpers/toastHelper";
 const initialState = {
   imageInDevice: [],
   openModalPullImage: false,
+  openModalRunImage: false,
   containerInDevice: [],
+  runID: "",
 };
 
 const reducer = (state = initialState, action) => {
@@ -19,6 +21,21 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         openModalPullImage: false,
+      };
+    }
+    case types.OPEN_MODAL_RUN_IMAGE: {
+      const { data } = action.payload;
+      return {
+        ...state,
+        openModalRunImage: true,
+        runID: data,
+      };
+    }
+    case types.CLOSE_MODAL_RUN_IMAGE: {
+      return {
+        ...state,
+        openModalRunImage: false,
+        runID: "",
       };
     }
     case types.GET_LIST_IMAGE_IN_DEVICE: {

@@ -16,9 +16,9 @@ class PullImage extends Component {
   };
 
   onClose = () => {
-    this.props.onCloseModalPullImage();
     const { reset } = this.props;
     reset();
+    this.props.onCloseModalPullImage();
   };
 
   onrenderSelect = () => {
