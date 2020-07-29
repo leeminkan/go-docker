@@ -34,6 +34,8 @@ func UpdatePull(repoName string, machineID string, imageID string, status string
 			Status:       status,
 		}
 		errCreate := db.Create(&deviceImageCreate).Error
+		db.Where("full_repo_name = ? AND device_id = ? AND deleted_on = ? ", repoName, results[0].DeviceID, 0).First(&deviceImage)
+
 		if errCreate != nil {
 			logging.Warn(errCreate)
 			return deviceImageCreate, errCreate

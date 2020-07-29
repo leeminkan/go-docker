@@ -25,7 +25,7 @@ type ControlDeviceRun struct {
 
 type UpdateStatusDeviceRun struct {
 	ContainerName string `form:"container_name" valid:"Required"`
-	ImagePullID   int    `form:"imagepull_id" valid:"Required"`
+	ImagePullID   string `form:"imagepull_id" valid:"Required"`
 	Status        string `form:"status" valid:"Required"`
 	Active        string `form:"active" valid:"Required"`
 }
@@ -34,6 +34,15 @@ type StopContainer struct {
 	ContainerID int `form:"container_id" valid:"Required"`
 }
 
+type StartContainer struct {
+	ContainerID int `form:"container_id" valid:"Required"`
+}
+
 type StopAllContainer struct {
 	DeviceID int `form:"device_id" valid:"Required"`
+}
+
+type UpdateStatusContainer struct {
+	ContainerID string `form:"container_id" valid:"Required"`
+	Active      string `form:"active" valid:"Required"`
 }

@@ -6,11 +6,11 @@ import (
 
 type UpdateRun struct {
 	ContainerName string
-	ImagePullID   int
+	ImagePullID   string
 	Status        string
 	Active        string
 }
 
-func (t *UpdateRun) UpdateContainerRunStatus() error {
+func (t *UpdateRun) UpdateContainerRunStatus() (models.DeviceContainer, error) {
 	return models.UpdateRun(t.ContainerName, t.ImagePullID, t.Status, t.Active)
 }

@@ -159,8 +159,12 @@ func InitRouter() *gin.Engine {
 	apiDevice.GET("/device/container/:id", v1.GetContainerDeviceByID)
 	//Stop a container in device
 	apiDevice.POST("/device/stop/container", v1.StopContainer)
+	//Start a container in device
+	apiDevice.POST("/device/start/container", v1.StartContainer)
 	//Stop all container in device
 	apiDevice.POST("/device/stop/container/all", v1.StopAllContainer)
+	//Update status start stop container in device
+	apiDevice.POST("/device/update/container/status", v1.UpdateStatusContainer)
 
 	////////////////////////////////////////////////////////////////////
 	///////						End-Device						////////
