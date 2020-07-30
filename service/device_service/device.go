@@ -10,10 +10,11 @@ type Device struct {
 	DeviceName string
 	OS         string
 	MachineID  string
+	Status     string
 }
 
 func (d *Device) Create() error {
-	return models.CreateDevice(d.DeviceName, d.OS, d.MachineID)
+	return models.CreateDevice(d.DeviceName, d.OS, d.MachineID, d.Status)
 }
 
 func GetList() ([]models.Device, error) {
@@ -48,4 +49,8 @@ func (t *Device) GetListImagesByID() ([]models.DeviceImage, error) {
 
 func (t *Device) GetListContainersByID() ([]models.DeviceContainer, error) {
 	return models.GetListContainers(t.ID)
+}
+
+func CheckDeviceConnected(deviceID int) (bool, error) {
+	return models.Connected(deviceID)
 }

@@ -4,6 +4,7 @@ type CreateDeviceInput struct {
 	DeviceName string `form:"device_name" valid:"Required"`
 	OS         string `form:"os" valid:"Required"`
 	MachineID  string `form:"machine_id" valid:"Required"`
+	Status     string `form:"status" valid:"Required"`
 }
 
 type ControlDevicePull struct {
@@ -45,4 +46,17 @@ type StopAllContainer struct {
 type UpdateStatusContainer struct {
 	ContainerID string `form:"container_id" valid:"Required"`
 	Active      string `form:"active" valid:"Required"`
+}
+
+type DeleteContainer struct {
+	ContainerID int `form:"container_id" valid:"Required"`
+}
+
+type UpdateDeleteContainer struct {
+	ContainerID string `form:"container_id" valid:"Required"`
+	DeletedOn   string `form:"delete_on" valid:"Required"`
+}
+
+type DeleteImage struct {
+	ImageID int `form:"image_id" valid:"Required"`
 }

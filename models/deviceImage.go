@@ -34,13 +34,13 @@ func UpdatePull(repoName string, machineID string, imageID string, status string
 			Status:       status,
 		}
 		errCreate := db.Create(&deviceImageCreate).Error
-		db.Where("full_repo_name = ? AND device_id = ? AND deleted_on = ? ", repoName, results[0].DeviceID, 0).First(&deviceImage)
+		db.Where("full_repo_name = ? AND device_id = ? AND deleted_on = ? ", repoName, device.ID, 0).First(&deviceImage)
 
 		if errCreate != nil {
 			logging.Warn(errCreate)
-			return deviceImageCreate, errCreate
+			return deviceImage, errCreate
 		}
-		return deviceImageCreate, nil
+		return deviceImage, nil
 	}
 
 	errUpdate := db.Model(&deviceImage).Where("full_repo_name = ? AND device_id = ? AND deleted_on = ? ", repoName, results[0].DeviceID, 0).Updates(DeviceImage{FullRepoName: repoName, DeviceID: results[0].DeviceID, ImageID: imageID, Status: status}).Error
@@ -106,4 +106,21 @@ func CreatePull(deviceID int, repoID int) (DeviceImage, error) {
 		return deviceImageResult, err
 	}
 	return deviceImageResult, nil
+}
+
+func IsDeleteImage(id int) (bool, error) {
+
+	type SelectData struct {
+		DeviceID     int
+		FullRepoName string
+	}
+	var results []SelectData
+	err := db.Table("device_image").Select("device_image.device_id, device_image.full_repo_name").Joins("left join device_container on device_image.id = device_container.image_id").Where("device_container.image_id = ? AND device.deleted_on = ? AND device_image.deleted_on = ?", id, 0, 0).Scan(&results).Error
+
+	if err != nil {
+		logging.Warn(err)
+		return false, err
+	}
+
+	return true, nil
 }

@@ -22,6 +22,12 @@ type ComeinandStopContainer struct {
 	ContainerID   int
 }
 
+type ComeinandRemoveContainer struct {
+	MachineID     string
+	ContainerName string
+	ContainerID   int
+}
+
 func SetValueComeinandPull(machineID string, repoName string) ([]byte, error) {
 	comeinandRaw := ComeinandPull{
 		MachineID: machineID,
@@ -50,6 +56,19 @@ func SetValueComeinandRun(containerName string, machineID string, repoName strin
 
 func SetValueComeinandStopContainer(machineID string, containerName string, containerID int) ([]byte, error) {
 	comeinandRaw := ComeinandStopContainer{
+		MachineID:     machineID,
+		ContainerName: containerName,
+		ContainerID:   containerID,
+	}
+	comeinandJSON, err := json.Marshal(comeinandRaw)
+	if err != nil {
+		return nil, err
+	}
+	return comeinandJSON, nil
+}
+
+func SetValueComeinandRemoveContainer(machineID string, containerName string, containerID int) ([]byte, error) {
+	comeinandRaw := ComeinandRemoveContainer{
 		MachineID:     machineID,
 		ContainerName: containerName,
 		ContainerID:   containerID,

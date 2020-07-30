@@ -14,7 +14,7 @@ type DeviceContainer struct {
 	ContainerName string `json:"container_name"`
 	ImageID       int    `json:"image_id"`
 	Status        string `json:"status" gorm:"type:enum('on progress', 'done', 'fail');default:'on progress'"`
-	Active        string `json:"active" gorm:"type:enum('start', 'starting', 'stop', 'stopping');default:'stop'"`
+	Active        string `json:"active" gorm:"type:enum('started', 'starting', 'stopped', 'stopping', 'fail');default:'fail'"`
 }
 
 func CheckValueRun(imagePullID int, containerName string) (DeviceImage, bool, error) {
@@ -168,6 +168,34 @@ func UpdateStatusContainer(id int, active string) (DeviceContainer, error) {
 		DeviceContainer{
 			Active: active,
 		}).Error
+	if err != nil {
+		logging.Warn(err)
+		return deviceContainer, err
+	}
+
+	return deviceContainer, nil
+}
+
+func IsDelete(id int) (bool, error) {
+	var deviceContainer DeviceContainer
+	err := db.Where("id = ? AND deleted_on = ?", id, 0).First(&deviceContainer).Error
+	if err != nil {
+		logging.Warn(err)
+		return false, err
+	}
+
+	if deviceContainer.Active != "stopped" && deviceContainer.Status != "done" {
+		return false, nil
+	}
+
+	return true, nil
+}
+
+func UpdateDelete(id int, delete int) (DeviceContainer, error) {
+	var deviceContainer DeviceContainer
+	err := db.Model(&deviceContainer).Where("id = ? AND deleted_on = ? ", id, 0).Update(
+		"delete_on", delete,
+	).Error
 	if err != nil {
 		logging.Warn(err)
 		return deviceContainer, err
