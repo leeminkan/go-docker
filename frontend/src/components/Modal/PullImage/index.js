@@ -25,11 +25,14 @@ class PullImage extends Component {
     let xml = null;
     if (this.props.dockerHubImage) {
       xml = this.props.dockerHubImage.map((item, index) => {
-        return (
-          <option key={index} value={item.id}>
-            {item.full_repo_name}
-          </option>
-        );
+        if (item.status === "done") {
+          return (
+            <option key={index} value={item.id}>
+              {item.full_repo_name}
+            </option>
+          );
+        }
+        return null;
       });
     }
     return xml;

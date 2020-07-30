@@ -156,47 +156,60 @@ const reducer = (state = initialState, action) => {
       };
     }
 
-    // case types.START_CONTAINER: {
-    //   return {
-    //     ...state,
-    //   };
-    // }
-    // case types.START_CONTAINER_SUCCESS: {
-    //   toastSuccess("Pull Image From Docker Hub thành công");
-    //   let newImage = action.payload.data.data;
-    //   const { imageInDevice } = state;
-    //   const index = imageInDevice.findIndex((item) => item.id === newImage.id);
-    //   if (index !== -1) {
-    //     const newList = [
-    //       ...imageInDevice.slice(0, index),
-    //       newImage,
-    //       ...imageInDevice.slice(index + 1),
-    //     ];
-    //     return {
-    //       ...state,
-    //       imageInDevice: newList,
-    //     };
-    //   }
-    //   return {
-    //     ...state,
-    //   };
-    // }
-    // case types.START_CONTAINER_PENDING: {
-    //   let newImage = action.payload.data.data;
-    //   let dataNewImage = [newImage].concat(state.imageInDevice);
-    //   return {
-    //     ...state,
-    //     imageInDevice: dataNewImage,
-    //   };
-    // }
-    // case types.START_CONTAINER_FAIL: {
-    //   const { data } = action.payload;
-    //   console.log(data);
-    //   toastError(data);
-    //   return {
-    //     ...state,
-    //   };
-    // }
+    case types.START_CONTAINER: {
+      return {
+        ...state,
+      };
+    }
+    case types.START_CONTAINER_SUCCESS: {
+      let startContainer = action.payload.data.data;
+      const { containerInDevice } = state;
+      const index = containerInDevice.findIndex(
+        (item) => item.id === startContainer.id
+      );
+      if (index !== -1) {
+        const newList = [
+          ...containerInDevice.slice(0, index),
+          startContainer,
+          ...containerInDevice.slice(index + 1),
+        ];
+        return {
+          ...state,
+          containerInDevice: newList,
+        };
+      }
+      return {
+        ...state,
+      };
+    }
+    case types.START_CONTAINER_PENDING: {
+      let startContainer = action.payload.data.data;
+      const { containerInDevice } = state;
+      const index = containerInDevice.findIndex(
+        (item) => item.id === startContainer.id
+      );
+      if (index !== -1) {
+        const newList = [
+          ...containerInDevice.slice(0, index),
+          startContainer,
+          ...containerInDevice.slice(index + 1),
+        ];
+        return {
+          ...state,
+          containerInDevice: newList,
+        };
+      }
+      return {
+        ...state,
+      };
+    }
+    case types.START_CONTAINER_FAIL: {
+      const { data } = action.payload;
+      toastError(data);
+      return {
+        ...state,
+      };
+    }
 
     case types.STOP_CONTAINER: {
       return {

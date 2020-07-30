@@ -25,11 +25,14 @@ class PushImage extends Component {
     let xml = null;
     if (this.props.localImage) {
       xml = this.props.localImage.map((item, index) => {
-        return (
-          <option key={index} value={item.id}>
-            {item.repo_name}
-          </option>
-        );
+        if (item.status === "done") {
+          return (
+            <option key={index} value={item.id}>
+              {item.repo_name}
+            </option>
+          );
+        }
+        return null;
       });
     }
     return xml;

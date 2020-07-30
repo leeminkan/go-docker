@@ -61,8 +61,6 @@ class DeviceDetail extends Component {
       containerName: a.name,
       imagePullID: this.props.runID,
     };
-    console.log(data);
-    showLoading(true);
     this.props.DeviceDetailActionCreators.runImageDevice(data);
     this.props.DeviceDetailActionCreators.closeModalRunImage();
   };
@@ -72,7 +70,6 @@ class DeviceDetail extends Component {
   };
 
   onStopContainer = (data) => {
-    showLoading(true);
     this.props.DeviceDetailActionCreators.stopContainer(data);
   };
 
@@ -184,10 +181,10 @@ class DeviceDetail extends Component {
 
     let columnsContainer = [
       {
-        key: "image_id",
+        key: "id",
         Header: "ID",
-        accessor: "image_id",
-        id: "image_id",
+        accessor: "id",
+        id: "id",
         width: 60,
       },
       {
@@ -269,7 +266,12 @@ class DeviceDetail extends Component {
                 variant="outlined"
                 color="primary"
                 className={classes.icon}
-                disabled={data.original.active === "stop" ? false : true}
+                disabled={
+                  data.original.active === "stopped" &&
+                  data.original.status === "done"
+                    ? false
+                    : true
+                }
                 onClick={() => this.onStartContainer(data.original.id)}
               >
                 Start
@@ -278,7 +280,7 @@ class DeviceDetail extends Component {
                 variant="outlined"
                 color="secondary"
                 className={classes.icon}
-                disabled={data.original.active === "start" ? false : true}
+                disabled={data.original.active === "started" ? false : true}
                 onClick={() => this.onStopContainer(data.original.id)}
               >
                 Stop
@@ -352,6 +354,10 @@ class DeviceDetail extends Component {
                         rowInfo && rowInfo.original.status === "on progress"
                           ? "#fdde53"
                           : "",
+                      color:
+                        rowInfo && rowInfo.original.status === "fail"
+                          ? "red"
+                          : "",
                     },
                   };
                 }}
@@ -393,6 +399,12 @@ class DeviceDetail extends Component {
                           rowInfo.original.active === "stopping" ||
                           rowInfo.original.active === "starting")
                           ? "#fdde53"
+                          : "",
+                      color:
+                        rowInfo && rowInfo.original.active === "started"
+                          ? "green"
+                          : rowInfo && rowInfo.original.status === "fail"
+                          ? "red"
                           : "",
                     },
                   };

@@ -190,6 +190,10 @@ class DockerHubImage extends Component {
                       rowInfo && rowInfo.original.status === "on progress"
                         ? "#fdde53"
                         : "",
+                    color:
+                      rowInfo && rowInfo.original.status === "fail"
+                        ? "red"
+                        : "",
                   },
                 };
               }}

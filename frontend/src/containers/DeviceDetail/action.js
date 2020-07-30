@@ -162,9 +162,9 @@ export const runImageDeviceFail = (data) => {
   };
 };
 
-export const getDeviceContainerById = (data) => {
+export const getDeviceContainerById3 = (data) => {
   return {
-    type: types.GET_DEVICE_CONTAINER_BY_ID,
+    type: types.GET_DEVICE_CONTAINER_BY_ID_3,
     payload: {
       data,
     },
