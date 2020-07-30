@@ -11,7 +11,7 @@ const reducer = (state = initialState, action) => {
       };
     }
     case constRegister.REGISTER_SUCCESS: {
-      toastSuccess("Đăng ký thành công");
+      toastSuccess("Register success");
       return {
         ...state,
       };

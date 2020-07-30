@@ -34,7 +34,7 @@ class BuildImage extends Component {
       };
       this.props.onSave(payload);
     } else {
-      toastError("Vui lòng upload file");
+      toastError("Please upload file !!!");
     }
   };
 

@@ -36,3 +36,6 @@ export const API_GET_CONTAINER_IN_DEVICE_BY_ID = `${HOST}/device/container`;
 
 export const API_STOP_CONTAINER_IN_DEVICE = `${HOST}/device/stop/container`;
 export const API_START_CONTAINER_IN_DEVICE = `${HOST}/device/start/container`;
+
+export const API_DELETE_CONTAINER_IN_DEVICE = `${HOST}/device/delete/container`;
+export const API_DELETE_IMAGE_IN_DEVICE = `${HOST}/device/delete/image`;

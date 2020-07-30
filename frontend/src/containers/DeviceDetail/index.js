@@ -73,6 +73,14 @@ class DeviceDetail extends Component {
     this.props.DeviceDetailActionCreators.stopContainer(data);
   };
 
+  onDeleteContainer = (data) => {
+    this.props.DeviceDetailActionCreators.deleteContainer(data);
+  };
+
+  onDeleteImage = (data) => {
+    this.props.DeviceDetailActionCreators.deleteImage(data);
+  };
+
   render() {
     const {
       classes,
@@ -165,14 +173,14 @@ class DeviceDetail extends Component {
               >
                 Run
               </Button>
-              {/* <Button
+              <Button
                 variant="outlined"
                 color="secondary"
                 className={classes.icon}
-                onClick={() => this.openModalEditLearn(data.original)}
+                onClick={() => this.onDeleteImage(data.original.id)}
               >
                 Delete
-              </Button> */}
+              </Button>
             </Fragment>
           );
         },
@@ -186,6 +194,13 @@ class DeviceDetail extends Component {
         accessor: "id",
         id: "id",
         width: 60,
+      },
+      {
+        key: "image_id",
+        Header: "Image ID",
+        accessor: "image_id",
+        id: "image_id",
+        width: 80,
       },
       {
         key: "container_name",
@@ -257,7 +272,7 @@ class DeviceDetail extends Component {
         key: "action",
         Header: "Action",
         accessor: "action",
-        width: 174,
+        width: 245,
         align: "left",
         Cell: (data) => {
           return (
@@ -284,6 +299,15 @@ class DeviceDetail extends Component {
                 onClick={() => this.onStopContainer(data.original.id)}
               >
                 Stop
+              </Button>
+              <Button
+                variant="outlined"
+                color="secondary"
+                className={classes.icon}
+                disabled={data.original.active === "stopped" ? false : true}
+                onClick={() => this.onDeleteContainer(data.original.id)}
+              >
+                Delete
               </Button>
             </Fragment>
           );

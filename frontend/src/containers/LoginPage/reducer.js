@@ -11,7 +11,7 @@ const reducer = (state = initialState, action) => {
       };
     }
     case constLogin.LOGIN_SUCCESS: {
-      toastSuccess("Đăng nhập thành công");
+      toastSuccess("Login success");
       return {
         ...state,
       };

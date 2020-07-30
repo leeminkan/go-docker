@@ -20,6 +20,10 @@ import {
   startContainerPending,
   startContainerFail,
   startContainerSuccess,
+  deleteContainerSuccess,
+  deleteImageSuccess,
+  deleteImageFail,
+  deleteContainerFail,
 } from "./action";
 import * as types from "./constant";
 import * as api from "../../constants/config";
@@ -328,6 +332,64 @@ function* getDeviceContainerById3Saga({ payload }) {
   }
 }
 
+const apiDeleteContainerDevice = async (data) => {
+  let token = await localStorage.getItem("JWT_TOKEN");
+  let result = await axios({
+    method: "POST",
+    url: `${api.API_DELETE_CONTAINER_IN_DEVICE}`,
+    data: {
+      containerID: data,
+    },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return result;
+};
+
+function* deleteContainerDevice({ payload }) {
+  try {
+    let id = payload.data;
+    const resp = yield call(apiDeleteContainerDevice, id);
+    const { data, status } = resp;
+    if (status === 200) {
+      toastSuccess("Delete Container Success");
+      yield put(deleteContainerSuccess(data.data.id));
+    }
+  } catch (error) {
+    yield put(deleteContainerFail(error));
+  }
+}
+
+const apiDeleteImageDevice = async (data) => {
+  let token = await localStorage.getItem("JWT_TOKEN");
+  let result = await axios({
+    method: "POST",
+    url: `${api.API_DELETE_IMAGE_IN_DEVICE}`,
+    data: {
+      imageID: data,
+    },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return result;
+};
+
+function* deleteImageDevice({ payload }) {
+  try {
+    let id = payload.data;
+    const resp = yield call(apiDeleteImageDevice, id);
+    const { data, status } = resp;
+    if (status === 200) {
+      toastSuccess("Delete Container Success");
+      yield put(deleteImageSuccess(data.data.id));
+    }
+  } catch (error) {
+    yield put(deleteImageFail(error));
+  }
+}
+
 function* onDeviceDetail() {
   yield takeLatest(types.GET_LIST_IMAGE_IN_DEVICE, getListImageInDevice);
   yield takeLatest(
@@ -351,6 +413,8 @@ function* onDeviceDetail() {
   );
   yield takeLatest(types.STOP_CONTAINER, stopContainerDevice);
   yield takeLatest(types.START_CONTAINER, startContainerDevice);
+  yield takeLatest(types.DELETE_CONTAINER, deleteContainerDevice);
+  yield takeLatest(types.DELETE_IMAGE, deleteImageDevice);
 }
 
 export default onDeviceDetail();

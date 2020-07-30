@@ -31,7 +31,7 @@ class HomePage extends Component {
           </Typography>
         </div>
         <Grid container spacing={2}>
-          <Grid item xs={6} sm={3}>
+          <Grid item xs={6} sm={4}>
             <Card className={classes.card}>
               <CardContent>
                 <div className={classes.cardBody}>
@@ -55,7 +55,7 @@ class HomePage extends Component {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={6} sm={3}>
+          <Grid item xs={6} sm={4}>
             <Card className={classes.card}>
               <CardContent>
                 <div className={classes.cardBody}>
@@ -79,7 +79,7 @@ class HomePage extends Component {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={6} sm={3}>
+          <Grid item xs={6} sm={4}>
             <Card className={classes.card}>
               <CardContent>
                 <div className={classes.cardBody}>
@@ -98,30 +98,6 @@ class HomePage extends Component {
                     className={classes.number}
                   >
                     {device ? device.length : 0}
-                  </Typography>
-                </div>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={6} sm={3}>
-            <Card className={classes.card}>
-              <CardContent>
-                <div className={classes.cardBody}>
-                  <Typography
-                    gutterBottom
-                    variant="h5"
-                    component="h2"
-                    className={classes.title}
-                  >
-                    Account
-                  </Typography>
-                  <Typography
-                    gutterBottom
-                    variant="h3"
-                    component="h1"
-                    className={classes.number}
-                  >
-                    5
                   </Typography>
                 </div>
               </CardContent>

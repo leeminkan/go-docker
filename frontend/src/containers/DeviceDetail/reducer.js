@@ -266,6 +266,74 @@ const reducer = (state = initialState, action) => {
       };
     }
 
+    case types.DELETE_CONTAINER: {
+      return {
+        ...state,
+      };
+    }
+    case types.DELETE_CONTAINER_SUCCESS: {
+      let deleteContainer = action.payload.data;
+      const { containerInDevice } = state;
+      const index = containerInDevice.findIndex(
+        (item) => item.id === deleteContainer
+      );
+      if (index !== -1) {
+        const newList = [
+          ...containerInDevice.slice(0, index),
+          ...containerInDevice.slice(index + 1),
+        ];
+        return {
+          ...state,
+          containerInDevice: newList,
+        };
+      }
+      return {
+        ...state,
+      };
+    }
+
+    case types.DELETE_CONTAINER_FAIL: {
+      const { data } = action.payload;
+      toastError(data);
+      return {
+        ...state,
+      };
+    }
+
+    case types.DELETE_IMAGE: {
+      return {
+        ...state,
+      };
+    }
+    case types.DELETE_IMAGE_SUCCESS: {
+      let deleteImage = action.payload.data;
+      const { imageInDevice } = state;
+      const index = imageInDevice.findIndex((item) => item.id === deleteImage);
+      if (index !== -1) {
+        const newList = [
+          ...imageInDevice.slice(0, index),
+          ...imageInDevice.slice(index + 1),
+        ];
+        return {
+          ...state,
+          imageInDevice: newList,
+        };
+      }
+      return {
+        ...state,
+      };
+    }
+
+    case types.DELETE_IMAGE_FAIL: {
+      //const { data } = action.payload;
+      toastError(
+        "Please stop and delete container built by image before delete image"
+      );
+      return {
+        ...state,
+      };
+    }
+
     default:
       return state;
   }

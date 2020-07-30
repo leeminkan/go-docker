@@ -260,3 +260,57 @@ export const stopContainerFail = (data) => {
     },
   };
 };
+
+export const deleteContainer = (data) => {
+  return {
+    type: types.DELETE_CONTAINER,
+    payload: {
+      data,
+    },
+  };
+};
+
+export const deleteContainerSuccess = (data) => {
+  return {
+    type: types.DELETE_CONTAINER_SUCCESS,
+    payload: {
+      data,
+    },
+  };
+};
+
+export const deleteContainerFail = (data) => {
+  return {
+    type: types.DELETE_CONTAINER_FAIL,
+    payload: {
+      data,
+    },
+  };
+};
+
+export const deleteImage = (data) => {
+  return {
+    type: types.DELETE_IMAGE,
+    payload: {
+      data,
+    },
+  };
+};
+
+export const deleteImageSuccess = (data) => {
+  return {
+    type: types.DELETE_IMAGE_SUCCESS,
+    payload: {
+      data,
+    },
+  };
+};
+
+export const deleteImageFail = (data) => {
+  return {
+    type: types.DELETE_IMAGE_FAIL,
+    payload: {
+      data,
+    },
+  };
+};
