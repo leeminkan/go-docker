@@ -10,6 +10,6 @@ func CheckDeleteImage(imageID int) (bool, error) {
 	return models.IsDeleteImage(imageID)
 }
 
-func (t *DeleteImage) GetMachineIDByImageID(string, error) {
-	return models.IsDeleteImage(t.ImageID)
+func (t *DeleteImage) GetMachineIDByImageID() (string, error) {
+	return models.GetMachineIDByImageID(t.ImageID)
 }
