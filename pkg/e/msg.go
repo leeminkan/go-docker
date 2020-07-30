@@ -82,6 +82,9 @@ var MsgFlags = map[int]string{
 	ERROR_DEVICE_CHECK_CONNECTED:                    "Cannot control because device is disconnected",
 	ERROR_DEVICE_SQL_DELETE_CONTAINER:               "Cannot delete container in device error SQL",
 	ERROR_DEVICE_CHECK_DELETE_CONTAINER:             "Cannot delete container in device",
+	ERROR_DEVICE_SQL_DELETE_IMAGE:                   "Cannot delete image in device error SQL",
+	ERROR_DEVICE_CHECK_DELETE_IMAGE:                 "Cannot delete image in device",
+	ERROR_DEVICE_GET_MACHINE_ID_FROM_IMAGE_ID:       "Cannot get machine id from image id",
 }
 
 // GetMsg get error information based on Code
