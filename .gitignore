@@ -1,7 +1,8 @@
 .idea/
 .DS_Store
 
-runtime/*
+runtime/fonts
+runtime/logs
 !runtime/qrcode/bg.jpg
 !runtime/fonts
 /vendor

@@ -1,0 +1,1 @@
+{"version":3,"sources":["styles.css"],"names":[],"mappings":"AAAA,UACE,iBAAkB,CAClB,YAAa,CACb,sBAA0B,CAC1B,wBAAyB,CACzB,aAAc,CAEd,kBACF","file":"main.bdeecb0e.chunk.css","sourcesContent":[".dropzone {\r\n  text-align: center;\r\n  padding: 20px;\r\n  border: 3px dashed #eeeeee;\r\n  background-color: #fafafa;\r\n  color: #bdbdbd;\r\n\r\n  margin-bottom: 20px;\r\n}\r\n"]}
