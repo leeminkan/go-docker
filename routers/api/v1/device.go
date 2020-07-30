@@ -941,5 +941,5 @@ func DeleteImage(c *gin.Context) {
 	// 	tokenPub.Wait()
 	// }
 
-	appG.Response(http.StatusOK, e.SUCCESS, nil)
+	appG.Response(http.StatusOK, e.SUCCESS, machineID)
 }
