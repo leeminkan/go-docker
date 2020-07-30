@@ -10,7 +10,7 @@ import {
 import * as types from "./constant";
 import * as api from "../../constants/config";
 import axios from "axios";
-import { toastWarning } from "../../helpers/toastHelper";
+import { toastWarning, toastSuccess } from "../../helpers/toastHelper";
 import { push } from "connected-react-router";
 import { showLoading } from "../../helpers/loading";
 
@@ -77,9 +77,9 @@ function* buildImage({ payload }) {
     const resp = yield call(apiBuildImage, image);
     yield delay(1000);
     showLoading(false);
-    toastWarning("Build Image is progressing. Please wait");
     const { data, status } = resp;
     if (status === 200) {
+      toastWarning("Build Image is progressing. Please wait");
       yield put(buildImagePending(data));
       yield delay(5000);
       yield put(getImageById(data.data.id));
@@ -113,8 +113,10 @@ function* getLocalImageById({ payload }) {
         yield delay(15000);
         yield put(getImageById(abc.data.data.id));
       } else if (abc.data.data.status === "fail") {
-        yield put(buildImageFail("Build image lỗi"));
+        toastError("Build Image fail");
+        yield put(buildImageSuccess(data));
       } else {
+        toastSuccess("Build Image success");
         yield put(buildImageSuccess(data));
       }
     }

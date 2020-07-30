@@ -44,7 +44,6 @@ const reducer = (state = initialState, action) => {
       };
     }
     case types.BUILD_IMAGE_SUCCESS: {
-      toastSuccess("Build Image thành công");
       let newImage = action.payload.data.data;
       const { listLocalImage } = state;
       const index = listLocalImage.findIndex((item) => item.id === newImage.id);
@@ -73,7 +72,6 @@ const reducer = (state = initialState, action) => {
     }
     case types.BUILD_IMAGE_FAIL: {
       const { data } = action.payload;
-      console.log(data);
       toastError(data);
       return {
         ...state,

@@ -10,7 +10,11 @@ import {
 import * as types from "./constant";
 import * as api from "../../constants/config";
 import axios from "axios";
-import { toastWarning } from "../../helpers/toastHelper";
+import {
+  toastWarning,
+  toastError,
+  toastSuccess,
+} from "../../helpers/toastHelper";
 import { push } from "connected-react-router";
 import { showLoading } from "../../helpers/loading";
 
@@ -64,9 +68,9 @@ function* pushImage({ payload }) {
     const resp = yield call(apiPushImage, image);
     yield delay(1000);
     showLoading(false);
-    toastWarning("Push Image is progressing. Please wait");
     const { data, status } = resp;
     if (status === 200) {
+      toastWarning("Push Image is progressing. Please wait");
       yield put(pushImagePending(data));
       yield delay(15000);
       yield put(getDHImageById(data.data.id));
@@ -100,8 +104,10 @@ function* getDockerHubImageById({ payload }) {
         yield delay(15000);
         yield put(getDHImageById(abc.data.data.id));
       } else if (abc.data.data.status === "fail") {
-        yield put(pushImageFail("Push image lỗi"));
+        toastError("Push Image fail");
+        yield put(pushImageSuccess(data));
       } else {
+        toastSuccess("Push Image Success");
         yield put(pushImageSuccess(data));
       }
     }

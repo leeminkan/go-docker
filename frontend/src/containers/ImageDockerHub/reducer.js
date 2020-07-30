@@ -44,7 +44,6 @@ const reducer = (state = initialState, action) => {
       };
     }
     case types.PUSH_IMAGE_SUCCESS: {
-      toastSuccess("Push Image To Docker Hub thành công");
       let newImage = action.payload.data.data;
       const { listDHImage } = state;
       const index = listDHImage.findIndex((item) => item.id === newImage.id);
@@ -73,7 +72,6 @@ const reducer = (state = initialState, action) => {
     }
     case types.PUSH_IMAGE_FAIL: {
       const { data } = action.payload;
-      console.log(data);
       toastError(data);
       return {
         ...state,
