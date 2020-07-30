@@ -924,7 +924,7 @@ func DeleteImage(c *gin.Context) {
 	}
 
 	// //control device stop container throw mqtt
-	// container, err := device_service.GetContainer(form.ContainerID)
+	// container, err := device_service.Get
 
 	// if err != nil {
 	// 	appG.Response(http.StatusBadRequest, e.ERROR_DEVICE_GET_CONTAINER_FAIL, nil)
