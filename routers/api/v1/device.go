@@ -865,7 +865,7 @@ func UpdateDeleteContainer(c *gin.Context) {
 	}
 
 	intContainerID, _ := strconv.Atoi(form.ContainerID)
-	intDeleteOn, _ := strconv.Atoi(form.DeletedOn)
+	intDeleteOn, _ := strconv.Atoi(form.DeleteOn)
 
 	deviceService := device_service.DeleteContainer{
 		ContainerID: intContainerID,
@@ -923,23 +923,61 @@ func DeleteImage(c *gin.Context) {
 		return
 	}
 
-	// //control device stop container throw mqtt
-	// container, err := device_service.Get
+	//control device stop container throw mqtt
+	image, err := device_service.GetImage(form.ImageID)
 
-	// if err != nil {
-	// 	appG.Response(http.StatusBadRequest, e.ERROR_DEVICE_GET_CONTAINER_FAIL, nil)
-	// 	return
-	// }
+	if err != nil {
+		appG.Response(http.StatusBadRequest, e.ERROR_DEVICE_GET_IMAGE_FAIL, nil)
+		return
+	}
 
-	// value, err := mqtt.SetValueComeinandRemoveContainer(machineID, container.ContainerName, form.ContainerID)
-	// if err != nil {
-	// 	appG.Response(http.StatusInternalServerError, e.ERROR_SET_MESSAGE_MQTT, nil)
-	// 	return
-	// }
-	// if value != nil {
-	// 	tokenPub := GlobalClient.Publish("container/delete", 0, false, value)
-	// 	tokenPub.Wait()
-	// }
+	value, err := mqtt.SetValueComeinandRemoveImage(machineID, image.ImageID, form.ImageID)
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_SET_MESSAGE_MQTT, nil)
+		return
+	}
+	if value != nil {
+		tokenPub := GlobalClient.Publish("image/delete", 0, false, value)
+		tokenPub.Wait()
+	}
 
-	appG.Response(http.StatusOK, e.SUCCESS, machineID)
+	appG.Response(http.StatusOK, e.SUCCESS, image)
+}
+
+// @Summary Update status delete a Image
+// @Produce  json
+// @Accept  application/json
+// @Tags  Devices
+// @Param body body device.UpdateDeleteImage true "body"
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Router /device/update/image/delete [post]
+func UpdateDeleteImage(c *gin.Context) {
+	var (
+		appG = app.Gin{C: c}
+		form deviceType.UpdateDeleteImage
+	)
+
+	httpCode, errCode := app.BindAndValid(c, &form)
+
+	if errCode != e.SUCCESS {
+		appG.Response(httpCode, errCode, nil)
+		return
+	}
+
+	intImageID, _ := strconv.Atoi(form.ImageID)
+	intDeleteOn, _ := strconv.Atoi(form.DeleteOn)
+
+	deviceService := device_service.DeleteImage{
+		ImageID:  intImageID,
+		DeleteOn: intDeleteOn,
+	}
+
+	image, err := deviceService.UpdateDeleteImage()
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_DEVICE_UPDATE_STATUS_DELETE_IMAGE, nil)
+		return
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, image)
 }

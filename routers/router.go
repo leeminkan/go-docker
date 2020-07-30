@@ -145,8 +145,10 @@ func InitRouter() *gin.Engine {
 	apiDevice.POST("/update/devices/run", v1.UpdateStatusContainerRun)
 	//Update status start stop container in device
 	apiDevice.POST("/device/update/container/status", v1.UpdateStatusContainer)
-	//Update status start stop container in device
+	//Update status delete container in device
 	apiDevice.POST("/device/update/container/delete", v1.UpdateDeleteContainer)
+	//Update status delete image in device
+	apiDevice.POST("/device/update/image/delete", v1.UpdateDeleteImage)
 	apiDevice.Use(jwt.JWTCustom())
 	{
 		//Control a device pull image from dockerhub
