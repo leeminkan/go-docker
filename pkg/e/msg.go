@@ -85,6 +85,8 @@ var MsgFlags = map[int]string{
 	ERROR_DEVICE_SQL_DELETE_IMAGE:                   "Cannot delete image in device error SQL",
 	ERROR_DEVICE_CHECK_DELETE_IMAGE:                 "Cannot delete image in device",
 	ERROR_DEVICE_GET_MACHINE_ID_FROM_IMAGE_ID:       "Cannot get machine id from image id",
+	ERROR_DEVICE_GET_IMAGE_FAIL:                     "Cannot get image by id",
+	ERROR_DEVICE_UPDATE_STATUS_DELETE_IMAGE:         "Cannot update status delete image in device",
 }
 
 // GetMsg get error information based on Code

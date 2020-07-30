@@ -22,6 +22,12 @@ type ComeinandStopContainer struct {
 	ContainerID   int
 }
 
+type ComeinandDeleteImage struct {
+	MachineID string
+	ImageID   int
+	Digest    string
+}
+
 type ComeinandRemoveContainer struct {
 	MachineID     string
 	ContainerName string
@@ -72,6 +78,19 @@ func SetValueComeinandRemoveContainer(machineID string, containerName string, co
 		MachineID:     machineID,
 		ContainerName: containerName,
 		ContainerID:   containerID,
+	}
+	comeinandJSON, err := json.Marshal(comeinandRaw)
+	if err != nil {
+		return nil, err
+	}
+	return comeinandJSON, nil
+}
+
+func SetValueComeinandRemoveImage(machineID string, digest string, imageID int) ([]byte, error) {
+	comeinandRaw := ComeinandDeleteImage{
+		MachineID: machineID,
+		ImageID:   imageID,
+		Digest:    digest,
 	}
 	comeinandJSON, err := json.Marshal(comeinandRaw)
 	if err != nil {

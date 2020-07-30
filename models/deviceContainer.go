@@ -194,7 +194,7 @@ func IsDelete(id int) (bool, error) {
 func UpdateDelete(id int, delete int) (DeviceContainer, error) {
 	var deviceContainer DeviceContainer
 	err := db.Model(&deviceContainer).Where("id = ? AND deleted_on = ? ", id, 0).Update(
-		"delete_on", delete,
+		"deleted_on", delete,
 	).Error
 	if err != nil {
 		logging.Warn(err)

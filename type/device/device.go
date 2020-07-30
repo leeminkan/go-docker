@@ -54,9 +54,14 @@ type DeleteContainer struct {
 
 type UpdateDeleteContainer struct {
 	ContainerID string `form:"container_id" valid:"Required"`
-	DeletedOn   string `form:"delete_on" valid:"Required"`
+	DeleteOn    string `form:"delete_on" valid:"Required"`
 }
 
 type DeleteImage struct {
 	ImageID int `form:"image_id" valid:"Required"`
+}
+
+type UpdateDeleteImage struct {
+	ImageID  string `form:"image_id" valid:"Required"`
+	DeleteOn string `form:"delete_on" valid:"Required"`
 }

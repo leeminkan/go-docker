@@ -138,3 +138,25 @@ func GetMachineIDByImageID(id int) (string, error) {
 	}
 	return device.MachineID, nil
 }
+
+func GetImageByID(id int) (DeviceImage, error) {
+	var deviceImage DeviceImage
+	err := db.Where("id = ? AND deleted_on = ?", id, 0).First(&deviceImage).Error
+	if err != nil {
+		logging.Warn(err)
+		return deviceImage, err
+	}
+	return deviceImage, nil
+}
+
+func UpdateDeleteImage(id int, delete int) (DeviceImage, error) {
+	var deviceImage DeviceImage
+	err := db.Model(&deviceImage).Where("id = ? AND deleted_on = ? ", id, 0).Update(
+		"deleted_on", delete,
+	).Error
+	if err != nil {
+		logging.Warn(err)
+		return deviceImage, err
+	}
+	return deviceImage, nil
+}
