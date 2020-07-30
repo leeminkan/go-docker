@@ -25,7 +25,7 @@ const apiGetListDockerHubImage = async (data) => {
     method: "GET",
     url: `${api.API_GET_LIST_PUSH}`,
     headers: {
-      Authorization: `Bear ${token}`,
+      Authorization: `Bearer ${token}`,
     },
     cancelToken: new CancelToken((c) => (cancel = c)),
   });
@@ -84,7 +84,7 @@ const apiGetDockerHubImageById = async (data) => {
     method: "GET",
     url: `${api.API_GET_IMAGE_PUSH_BY_ID}/${data}`,
     headers: {
-      Authorization: `Bear ${token}`,
+      Authorization: `Bearer ${token}`,
     },
   });
   return result;

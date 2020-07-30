@@ -170,3 +170,93 @@ export const getDeviceContainerById = (data) => {
     },
   };
 };
+
+export const getDeviceContainerById1 = (data) => {
+  return {
+    type: types.GET_DEVICE_CONTAINER_BY_ID_1,
+    payload: {
+      data,
+    },
+  };
+};
+
+export const getDeviceContainerById2 = (data) => {
+  return {
+    type: types.GET_DEVICE_CONTAINER_BY_ID_2,
+    payload: {
+      data,
+    },
+  };
+};
+
+export const startContainer = (data) => {
+  return {
+    type: types.START_CONTAINER,
+    payload: {
+      data,
+    },
+  };
+};
+
+export const startContainerSuccess = (data) => {
+  return {
+    type: types.START_CONTAINER_SUCCESS,
+    payload: {
+      data,
+    },
+  };
+};
+
+export const startContainerPending = (data) => {
+  return {
+    type: types.START_CONTAINER_PENDING,
+    payload: {
+      data,
+    },
+  };
+};
+
+export const startContainerFail = (data) => {
+  return {
+    type: types.START_CONTAINER_FAIL,
+    payload: {
+      data,
+    },
+  };
+};
+
+export const stopContainer = (data) => {
+  return {
+    type: types.STOP_CONTAINER,
+    payload: {
+      data,
+    },
+  };
+};
+
+export const stopContainerSuccess = (data) => {
+  return {
+    type: types.STOP_CONTAINER_SUCCESS,
+    payload: {
+      data,
+    },
+  };
+};
+
+export const stopContainerPending = (data) => {
+  return {
+    type: types.STOP_CONTAINER_PENDING,
+    payload: {
+      data,
+    },
+  };
+};
+
+export const stopContainerFail = (data) => {
+  return {
+    type: types.STOP_CONTAINER_FAIL,
+    payload: {
+      data,
+    },
+  };
+};

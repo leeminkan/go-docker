@@ -5,18 +5,26 @@ import {
   getListContainerInDeviceSuccess,
   getListContainerInDeviceFail,
   getDeviceImageById,
+  getDeviceContainerById2,
   pullImagePending,
   pullImageFail,
   pullImageSuccess,
-  getDeviceContainerById,
+  getDeviceContainerById1,
   runImageDevicePending,
   runImageDeviceFail,
   runImageDeviceSuccess,
+  stopContainerPending,
+  stopContainerFail,
+  stopContainerSuccess,
 } from "./action";
 import * as types from "./constant";
 import * as api from "../../constants/config";
 import axios from "axios";
-import { toastWarning } from "../../helpers/toastHelper";
+import {
+  toastWarning,
+  toastSuccess,
+  toastError,
+} from "../../helpers/toastHelper";
 import { push } from "connected-react-router";
 import { showLoading } from "../../helpers/loading";
 
@@ -99,10 +107,9 @@ function* pullImage({ payload }) {
     const resp = yield call(apiPullImage, image);
     yield delay(1000);
     showLoading(false);
-    toastWarning("Pull Image is progressing. Please wait");
     const { data, status } = resp;
-    console.log(resp);
     if (status === 200) {
+      toastWarning("Pull Image is progressing. Please wait");
       yield put(pullImagePending(data));
       yield delay(15000);
       yield put(getDeviceImageById(data.data.id));
@@ -136,8 +143,10 @@ function* getDeviceImageByIdSaga({ payload }) {
         yield delay(15000);
         yield put(getDeviceImageById(abc.data.data.id));
       } else if (abc.data.data.status === "fail") {
-        yield put(pullImageFail("Pull image lỗi"));
+        toastError("Pull Image fail");
+        yield put(pullImageSuccess(data));
       } else {
+        toastSuccess("Pull Image success");
         yield put(pullImageSuccess(data));
       }
     }
@@ -165,12 +174,12 @@ function* runImageDevice({ payload }) {
     const resp = yield call(apiRunImageDevice, image);
     yield delay(1000);
     showLoading(false);
-    toastWarning("Run Image is progressing. Please wait");
     const { data, status } = resp;
     if (status === 200) {
+      toastWarning("Run Image is progressing. Please wait");
       yield put(runImageDevicePending(data));
       yield delay(15000);
-      yield put(getDeviceContainerById(data.data.id));
+      yield put(getDeviceContainerById1(data.data.id));
     }
   } catch (error) {
     yield delay(1000);
@@ -191,7 +200,7 @@ const apiGetDeviceContainerById = async (data) => {
   return result;
 };
 
-function* getDeviceContainerByIdSaga({ payload }) {
+function* getDeviceContainerById1Saga({ payload }) {
   try {
     let id = payload.data;
     const abc = yield call(apiGetDeviceContainerById, id);
@@ -199,15 +208,74 @@ function* getDeviceContainerByIdSaga({ payload }) {
     if (status === 200) {
       if (abc.data.data.status === "on progress") {
         yield delay(15000);
-        yield put(getDeviceContainerById(abc.data.data.id));
+        yield put(getDeviceContainerById1(abc.data.data.id));
       } else if (abc.data.data.status === "fail") {
-        yield put(runImageDeviceFail("Push image lỗi"));
+        toastError("Run Image fail");
+        yield put(runImageDeviceSuccess(data));
       } else {
+        toastSuccess("Run Image thành công");
         yield put(runImageDeviceSuccess(data));
       }
     }
   } catch (error) {
     yield put(runImageDeviceFail(error));
+  }
+}
+
+const apiStopContainerDevice = async (data) => {
+  let token = await localStorage.getItem("JWT_TOKEN");
+  let result = await axios({
+    method: "POST",
+    url: `${api.API_STOP_CONTAINER_IN_DEVICE}`,
+    data: {
+      containerID: data,
+    },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return result;
+};
+
+function* stopContainerDevice({ payload }) {
+  try {
+    let id = payload.data;
+    const resp = yield call(apiStopContainerDevice, id);
+    yield delay(1000);
+    showLoading(false);
+    const { data, status } = resp;
+    if (status === 200) {
+      toastWarning("Stop Container is progressing. Please wait");
+      yield put(stopContainerPending(data));
+      yield delay(15000);
+      yield put(getDeviceContainerById2(data.data.id));
+    }
+  } catch (error) {
+    yield delay(1000);
+    showLoading(false);
+    yield put(stopContainerFail(error));
+  }
+}
+
+function* getDeviceContainerById2Saga({ payload }) {
+  try {
+    let id = payload.data;
+    const abc = yield call(apiGetDeviceContainerById, id);
+    const { data, status } = abc;
+    if (status === 200) {
+      if (abc.data.data.active === "stopping") {
+        yield delay(15000);
+        yield put(getDeviceContainerById2(abc.data.data.id));
+      } else if (abc.data.data.status === "fail") {
+        toastError("Stop container fail");
+        yield put(stopContainerSuccess(data));
+      } else {
+        toastSuccess("Stop container success");
+        yield put(stopContainerSuccess(data));
+      }
+    }
+  } catch (error) {
+    yield put(stopContainerFail(error));
   }
 }
 
@@ -221,9 +289,14 @@ function* onDeviceDetail() {
   yield takeLatest(types.GET_DEVICE_IMAGE_BY_ID, getDeviceImageByIdSaga);
   yield takeLatest(types.RUN_IMAGE_DEVICE, runImageDevice);
   yield takeLatest(
-    types.GET_DEVICE_CONTAINER_BY_ID,
-    getDeviceContainerByIdSaga
+    types.GET_DEVICE_CONTAINER_BY_ID_1,
+    getDeviceContainerById1Saga
   );
+  yield takeLatest(
+    types.GET_DEVICE_CONTAINER_BY_ID_2,
+    getDeviceContainerById2Saga
+  );
+  yield takeLatest(types.STOP_CONTAINER, stopContainerDevice);
 }
 
 export default onDeviceDetail();

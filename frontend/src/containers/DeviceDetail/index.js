@@ -67,6 +67,15 @@ class DeviceDetail extends Component {
     this.props.DeviceDetailActionCreators.closeModalRunImage();
   };
 
+  onStartContainer = (data) => {
+    this.props.DeviceDetailActionCreators.startContainer(data);
+  };
+
+  onStopContainer = (data) => {
+    showLoading(true);
+    this.props.DeviceDetailActionCreators.stopContainer(data);
+  };
+
   render() {
     const {
       classes,
@@ -159,14 +168,14 @@ class DeviceDetail extends Component {
               >
                 Run
               </Button>
-              <Button
+              {/* <Button
                 variant="outlined"
                 color="secondary"
                 className={classes.icon}
-                //onClick={() => this.openModalEditLearn(data.original)}
+                onClick={() => this.openModalEditLearn(data.original)}
               >
                 Delete
-              </Button>
+              </Button> */}
             </Fragment>
           );
         },
@@ -194,8 +203,20 @@ class DeviceDetail extends Component {
         id: "active",
         width: 100,
         Cell: (data) => {
-          if (data.value) {
-            return <div className={classes.status}>{data.value}</div>;
+          if (data.value === "stopping" || data.value === "starting") {
+            return (
+              <Fragment>
+                <div className={classes.logoImage}>
+                  <img src={logo} alt="logo" className={classes.img} />
+                </div>
+              </Fragment>
+            );
+          } else {
+            return (
+              <div className={classes.status}>
+                {data.value.charAt(0).toUpperCase() + data.value.slice(1)}
+              </div>
+            );
           }
         },
       },
@@ -248,17 +269,19 @@ class DeviceDetail extends Component {
                 variant="outlined"
                 color="primary"
                 className={classes.icon}
-                //onClick={() => this.onOpenModalRunImage(data.original.id)}
+                disabled={data.original.active === "stop" ? false : true}
+                onClick={() => this.onStartContainer(data.original.id)}
               >
-                Run
+                Start
               </Button>
               <Button
                 variant="outlined"
                 color="secondary"
                 className={classes.icon}
-                //onClick={() => this.openModalEditLearn(data.original)}
+                disabled={data.original.active === "start" ? false : true}
+                onClick={() => this.onStopContainer(data.original.id)}
               >
-                Delete
+                Stop
               </Button>
             </Fragment>
           );
@@ -365,7 +388,10 @@ class DeviceDetail extends Component {
                     style: {
                       padding: "12px 9px 9px 9px",
                       background:
-                        rowInfo && rowInfo.original.status === "on progress"
+                        rowInfo &&
+                        (rowInfo.original.status === "on progress" ||
+                          rowInfo.original.active === "stopping" ||
+                          rowInfo.original.active === "starting")
                           ? "#fdde53"
                           : "",
                     },

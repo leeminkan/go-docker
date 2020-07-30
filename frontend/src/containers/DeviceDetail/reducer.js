@@ -80,7 +80,6 @@ const reducer = (state = initialState, action) => {
       };
     }
     case types.PULL_IMAGE_SUCCESS: {
-      toastSuccess("Pull Image From Docker Hub thành công");
       let newImage = action.payload.data.data;
       const { imageInDevice } = state;
       const index = imageInDevice.findIndex((item) => item.id === newImage.id);
@@ -109,7 +108,6 @@ const reducer = (state = initialState, action) => {
     }
     case types.PULL_IMAGE_FAIL: {
       const { data } = action.payload;
-      console.log(data);
       toastError(data);
       return {
         ...state,
@@ -121,7 +119,6 @@ const reducer = (state = initialState, action) => {
       };
     }
     case types.RUN_IMAGE_DEVICE_SUCCESS: {
-      toastSuccess("Run Image thành công");
       let newContainer = action.payload.data.data;
       const { containerInDevice } = state;
       const index = containerInDevice.findIndex(
@@ -153,6 +150,103 @@ const reducer = (state = initialState, action) => {
     case types.RUN_IMAGE_DEVICE_FAIL: {
       const { data } = action.payload;
       console.log(data);
+      toastError(data);
+      return {
+        ...state,
+      };
+    }
+
+    // case types.START_CONTAINER: {
+    //   return {
+    //     ...state,
+    //   };
+    // }
+    // case types.START_CONTAINER_SUCCESS: {
+    //   toastSuccess("Pull Image From Docker Hub thành công");
+    //   let newImage = action.payload.data.data;
+    //   const { imageInDevice } = state;
+    //   const index = imageInDevice.findIndex((item) => item.id === newImage.id);
+    //   if (index !== -1) {
+    //     const newList = [
+    //       ...imageInDevice.slice(0, index),
+    //       newImage,
+    //       ...imageInDevice.slice(index + 1),
+    //     ];
+    //     return {
+    //       ...state,
+    //       imageInDevice: newList,
+    //     };
+    //   }
+    //   return {
+    //     ...state,
+    //   };
+    // }
+    // case types.START_CONTAINER_PENDING: {
+    //   let newImage = action.payload.data.data;
+    //   let dataNewImage = [newImage].concat(state.imageInDevice);
+    //   return {
+    //     ...state,
+    //     imageInDevice: dataNewImage,
+    //   };
+    // }
+    // case types.START_CONTAINER_FAIL: {
+    //   const { data } = action.payload;
+    //   console.log(data);
+    //   toastError(data);
+    //   return {
+    //     ...state,
+    //   };
+    // }
+
+    case types.STOP_CONTAINER: {
+      return {
+        ...state,
+      };
+    }
+    case types.STOP_CONTAINER_SUCCESS: {
+      let stopContainer = action.payload.data.data;
+      const { containerInDevice } = state;
+      const index = containerInDevice.findIndex(
+        (item) => item.id === stopContainer.id
+      );
+      if (index !== -1) {
+        const newList = [
+          ...containerInDevice.slice(0, index),
+          stopContainer,
+          ...containerInDevice.slice(index + 1),
+        ];
+        return {
+          ...state,
+          containerInDevice: newList,
+        };
+      }
+      return {
+        ...state,
+      };
+    }
+    case types.STOP_CONTAINER_PENDING: {
+      let stopContainer = action.payload.data.data;
+      const { containerInDevice } = state;
+      const index = containerInDevice.findIndex(
+        (item) => item.id === stopContainer.id
+      );
+      if (index !== -1) {
+        const newList = [
+          ...containerInDevice.slice(0, index),
+          stopContainer,
+          ...containerInDevice.slice(index + 1),
+        ];
+        return {
+          ...state,
+          containerInDevice: newList,
+        };
+      }
+      return {
+        ...state,
+      };
+    }
+    case types.STOP_CONTAINER_FAIL: {
+      const { data } = action.payload;
       toastError(data);
       return {
         ...state,

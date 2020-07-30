@@ -97,7 +97,7 @@ const apiGetLocalImageById = async (data) => {
     method: "GET",
     url: `${api.API_GET_LOCAL_IMAGE_BY_ID}/${data}`,
     headers: {
-      Authorization: `Bear ${token}`,
+      Authorization: `Bearer ${token}`,
     },
   });
   return result;

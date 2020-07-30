@@ -32,5 +32,5 @@ export const API_GET_IMAGE_DEVICE_BY_ID = `${HOST}/device/image`;
 export const API_RUN_IMAGE_IN_DEVICE = `${HOST}/control/devices/run`;
 
 export const API_GET_LIST_CONTAINER_IN_DEVICE = `${HOST}/device/containers`;
-export const API_STOP_CONTAINER_IN_DEVICE = `${HOST}/images-list-build`;
+export const API_STOP_CONTAINER_IN_DEVICE = `${HOST}/device/stop/container`;
 export const API_GET_CONTAINER_IN_DEVICE_BY_ID = `${HOST}/device/container`;
