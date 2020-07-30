@@ -156,6 +156,7 @@ func ConnectDevice(c *gin.Context) {
 		DeviceName: form.DeviceName,
 		OS:         form.OS,
 		MachineID:  form.MachineID,
+		Status:     form.Status,
 	}
 
 	exists, device, err := deviceService.FindByMachineID()
@@ -165,7 +166,7 @@ func ConnectDevice(c *gin.Context) {
 	}
 
 	if exists {
-		err = device.Update(deviceService.DeviceName, deviceService.OS, deviceService.MachineID)
+		err = device.Update(deviceService.DeviceName, deviceService.OS, deviceService.MachineID, deviceService.Status)
 		if err != nil {
 			appG.Response(http.StatusInternalServerError, e.ERROR_CONNECT_DEVICE_FAIL, nil)
 			return
@@ -204,6 +205,16 @@ func ControlDevicePull(c *gin.Context) {
 
 	if errCode != e.SUCCESS {
 		appG.Response(httpCode, errCode, nil)
+		return
+	}
+
+	connected, errConnected := device_service.CheckDeviceConnected(form.DeviceID)
+	if errConnected != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_DEVICE_SQL_CHECK_CONNECTED, nil)
+		return
+	}
+	if !connected {
+		appG.Response(http.StatusInternalServerError, e.ERROR_DEVICE_CHECK_CONNECTED, nil)
 		return
 	}
 
@@ -328,6 +339,16 @@ func ControlDeviceRun(c *gin.Context) {
 		return
 	}
 
+	connected, errConnected := device_service.CheckDeviceConnected(deviceImage.DeviceID)
+	if errConnected != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_DEVICE_SQL_CHECK_CONNECTED, nil)
+		return
+	}
+	if !connected {
+		appG.Response(http.StatusInternalServerError, e.ERROR_DEVICE_CHECK_CONNECTED, nil)
+		return
+	}
+
 	machineID, err := device_service.GetMachineIDFromID(deviceImage.DeviceID)
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_DEVICE_GET_MACHINE_ID_FROM_ID, nil)
@@ -405,6 +426,16 @@ func GetImagesDeviceByID(c *gin.Context) {
 
 	id := com.StrTo(c.Param("id")).MustInt()
 
+	connected, errConnected := device_service.CheckDeviceConnected(id)
+	if errConnected != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_DEVICE_SQL_CHECK_CONNECTED, nil)
+		return
+	}
+	if !connected {
+		appG.Response(http.StatusInternalServerError, e.ERROR_DEVICE_CHECK_CONNECTED, nil)
+		return
+	}
+
 	deviceService := device_service.Device{
 		ID: id,
 	}
@@ -434,6 +465,16 @@ func GetContainersDeviceByID(c *gin.Context) {
 	)
 
 	id := com.StrTo(c.Param("id")).MustInt()
+
+	connected, errConnected := device_service.CheckDeviceConnected(id)
+	if errConnected != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_DEVICE_SQL_CHECK_CONNECTED, nil)
+		return
+	}
+	if !connected {
+		appG.Response(http.StatusInternalServerError, e.ERROR_DEVICE_CHECK_CONNECTED, nil)
+		return
+	}
 
 	deviceService := device_service.Device{
 		ID: id,
@@ -734,6 +775,132 @@ func UpdateStatusContainer(c *gin.Context) {
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_DEVICE_UPDATE_STATUS_START_STOP_CONTAINER, nil)
 		return
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, container)
+}
+
+// @Summary Delete a Container
+// @Produce  json
+// @Security ApiKeyAuth
+// @Accept  application/json
+// @Tags  Devices
+// @Param body body device.DeleteContainer true "body"
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Router /device/delete/container [post]
+func DeleteContainer(c *gin.Context) {
+	var (
+		appG = app.Gin{C: c}
+		form deviceType.DeleteContainer
+	)
+
+	httpCode, errCode := app.BindAndValid(c, &form)
+
+	if errCode != e.SUCCESS {
+		appG.Response(httpCode, errCode, nil)
+		return
+	}
+
+	delete, errc := device_service.CheckDeleteContainer(form.ContainerID)
+	if errc != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_DEVICE_SQL_DELETE_CONTAINER, nil)
+		return
+	}
+	if !delete {
+		appG.Response(http.StatusInternalServerError, e.ERROR_DEVICE_CHECK_DELETE_CONTAINER, nil)
+		return
+	}
+
+	deviceService := device_service.StopContainer{
+		ContainerID: form.ContainerID,
+	}
+
+	machineID, err := deviceService.GetMachineIDByContainerID()
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_DEVICE_GET_MACHINE_ID_FROM_CONTAINER_ID, nil)
+		return
+	}
+
+	//control device stop container throw mqtt
+	container, err := device_service.GetContainer(form.ContainerID)
+
+	if err != nil {
+		appG.Response(http.StatusBadRequest, e.ERROR_DEVICE_GET_CONTAINER_FAIL, nil)
+		return
+	}
+
+	value, err := mqtt.SetValueComeinandRemoveContainer(machineID, container.ContainerName, form.ContainerID)
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_SET_MESSAGE_MQTT, nil)
+		return
+	}
+	if value != nil {
+		tokenPub := GlobalClient.Publish("container/delete", 0, false, value)
+		tokenPub.Wait()
+	}
+
+	appG.Response(http.StatusOK, e.SUCCESS, container)
+}
+
+// @Summary Delete a Image
+// @Produce  json
+// @Security ApiKeyAuth
+// @Accept  application/json
+// @Tags  Devices
+// @Param body body device.DeleteImage true "body"
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Router /device/delete/container [delete]
+func DeleteImage(c *gin.Context) {
+	var (
+		appG = app.Gin{C: c}
+		form deviceType.DeleteImage
+	)
+
+	httpCode, errCode := app.BindAndValid(c, &form)
+
+	if errCode != e.SUCCESS {
+		appG.Response(httpCode, errCode, nil)
+		return
+	}
+
+	delete, errc := device_service.CheckDeleteContainer(form.ContainerID)
+	if errc != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_DEVICE_SQL_DELETE_CONTAINER, nil)
+		return
+	}
+	if !delete {
+		appG.Response(http.StatusInternalServerError, e.ERROR_DEVICE_CHECK_DELETE_CONTAINER, nil)
+		return
+	}
+
+	deviceService := device_service.StopContainer{
+		ContainerID: form.ContainerID,
+	}
+
+	machineID, err := deviceService.GetMachineIDByContainerID()
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_DEVICE_GET_MACHINE_ID_FROM_CONTAINER_ID, nil)
+		return
+	}
+
+	//control device stop container throw mqtt
+	container, err := device_service.GetContainer(form.ContainerID)
+
+	if err != nil {
+		appG.Response(http.StatusBadRequest, e.ERROR_DEVICE_GET_CONTAINER_FAIL, nil)
+		return
+	}
+
+	value, err := mqtt.SetValueComeinandRemoveContainer(machineID, container.ContainerName, form.ContainerID)
+	if err != nil {
+		appG.Response(http.StatusInternalServerError, e.ERROR_SET_MESSAGE_MQTT, nil)
+		return
+	}
+	if value != nil {
+		tokenPub := GlobalClient.Publish("container/delete", 0, false, value)
+		tokenPub.Wait()
 	}
 
 	appG.Response(http.StatusOK, e.SUCCESS, container)

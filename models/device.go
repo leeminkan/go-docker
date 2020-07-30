@@ -12,13 +12,15 @@ type Device struct {
 	DeviceName string `json:"device_name"`
 	OS         string `json:"os"`
 	MachineID  string `json:"machine_id"`
+	Status     string `json:"status" gorm:"type:enum('connected', 'disconnected');default:'disconnected'"`
 }
 
-func CreateDevice(device_name string, os string, machine_id string) error {
+func CreateDevice(device_name string, os string, machine_id string, status string) error {
 	device := Device{
 		DeviceName: device_name,
 		OS:         os,
 		MachineID:  machine_id,
+		Status:     status,
 	}
 	if err := db.Create(&device).Error; err != nil {
 		logging.Warn(err)
@@ -88,8 +90,8 @@ func FindDeviceByMachineID(id string) (bool, Device, error) {
 	return false, device, nil
 }
 
-func (d *Device) Update(device_name string, os string, machine_id string) error {
-	err := db.Model(&d).Updates(Device{DeviceName: device_name, OS: os, MachineID: machine_id}).Error
+func (d *Device) Update(device_name string, os string, machine_id string, status string) error {
+	err := db.Model(&d).Updates(Device{DeviceName: device_name, OS: os, MachineID: machine_id, Status: status}).Error
 	if err != nil {
 		return err
 	}
@@ -108,4 +110,19 @@ func CheckDevice(deviceId int) (string, bool, error) {
 	}
 
 	return "", false, nil
+}
+
+func Connected(id int) (bool, error) {
+	var device Device
+	err := db.Where("deleted_on = ? AND id = ? ", 0, id).First(&device).Error
+	if err != nil {
+		logging.Warn(err)
+		return false, err
+	}
+
+	if device.Status == "disconnected" {
+		return false, nil
+	}
+
+	return true, nil
 }

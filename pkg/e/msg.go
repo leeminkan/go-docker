@@ -78,6 +78,10 @@ var MsgFlags = map[int]string{
 	ERROR_DEVICE_START_CONTAINER:                    "Cannot start container in device",
 	ERROR_DEVICE_STATUS_START_STOP_CONTAINER:        "Cannot start or stop container",
 	ERROR_DEVICE_UPDATE_STATUS_START_STOP_CONTAINER: "Cannot update status start stop container in device",
+	ERROR_DEVICE_SQL_CHECK_CONNECTED:                "Cannot get device in db, check connected",
+	ERROR_DEVICE_CHECK_CONNECTED:                    "Cannot control because device is disconnected",
+	ERROR_DEVICE_SQL_DELETE_CONTAINER:               "Cannot delete container in device error SQL",
+	ERROR_DEVICE_CHECK_DELETE_CONTAINER:             "Cannot delete container in device",
 }
 
 // GetMsg get error information based on Code
