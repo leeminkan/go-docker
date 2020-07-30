@@ -1,5 +1,5 @@
 import * as types from "./constant";
-import { toastSuccess, toastError } from "../../helpers/toastHelper";
+import { toastError } from "../../helpers/toastHelper";
 
 const initialState = {
   listLocalImage: [],
