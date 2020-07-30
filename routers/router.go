@@ -171,8 +171,8 @@ func InitRouter() *gin.Engine {
 		apiDevice.GET("/devices", v1.GetListDevices)
 		//Delete a container in device
 		apiDevice.POST("/device/delete/container", v1.DeleteContainer)
-		//Delete a container in device
-		apiDevice.DELETE("/device/delete/image", v1.DeleteImage)
+		//Delete a image in device
+		apiDevice.POST("/device/delete/image", v1.DeleteImage)
 	}
 
 	////////////////////////////////////////////////////////////////////

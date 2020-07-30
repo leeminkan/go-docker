@@ -109,18 +109,32 @@ func CreatePull(deviceID int, repoID int) (DeviceImage, error) {
 }
 
 func IsDeleteImage(id int) (bool, error) {
-
 	type SelectData struct {
-		DeviceID     int
-		FullRepoName string
+		ImageID int
+		ID      int
 	}
 	var results []SelectData
-	err := db.Table("device_image").Select("device_image.device_id, device_image.full_repo_name").Joins("left join device_container on device_image.id = device_container.image_id").Where("device_container.image_id = ? AND device.deleted_on = ? AND device_image.deleted_on = ?", id, 0, 0).Scan(&results).Error
+	err := db.Table("device_image").Select("device_container.image_id, device_container.id").Joins("left join device_container on device_image.id = device_container.image_id").Where("device_image.id = ? AND device_image.deleted_on = ? AND device_container.deleted_on = ?", id, 0, 0).Scan(&results).Error
 
 	if err != nil {
 		logging.Warn(err)
 		return false, err
 	}
 
-	return true, nil
+	if len(results) == 0 {
+		return true, nil
+	}
+	return false, nil
+}
+
+func GetMachineIDByImageID(id int) (string, error) {
+	var deviceImage DeviceImage
+	db.Where("id = ? AND deleted_on = ?", id, 0).First(&deviceImage)
+	var device Device
+	err := db.Where("id = ? AND deleted_on = ?", deviceImage.DeviceID, 0).First(&device).Error
+	if err != nil {
+		logging.Warn(err)
+		return "", err
+	}
+	return device.MachineID, nil
 }
