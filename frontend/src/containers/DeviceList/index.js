@@ -31,7 +31,7 @@ class DeviceList extends Component {
         Header: "Device Name",
         id: "device_name",
         accessor: "device_name",
-        width: 200,
+        width: 250,
         Cell: (data) => {
           if (data.original.device_name) {
             return (
@@ -45,7 +45,7 @@ class DeviceList extends Component {
         Header: "OS",
         id: "os",
         accessor: "os",
-        width: 100,
+        width: 120,
         Cell: (data) => {
           if (data.original) {
             return <div className={classes.status}>{data.original.os}</div>;

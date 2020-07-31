@@ -168,6 +168,7 @@ class DeviceDetail extends Component {
               <Button
                 variant="outlined"
                 color="primary"
+                disabled={data.original.status === "done" ? false : true}
                 className={classes.icon}
                 onClick={() => this.onOpenModalRunImage(data.original.id)}
               >

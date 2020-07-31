@@ -71,7 +71,7 @@ class DockerHubImage extends Component {
         Header: "Tag",
         id: "tag",
         accessor: "tag",
-        width: 120,
+        width: 150,
         Cell: (data) => {
           if (data.original.TagDockerHub) {
             return (
@@ -111,7 +111,7 @@ class DockerHubImage extends Component {
         Header: "Created User",
         id: "username",
         accessor: "username",
-        width: 120,
+        width: 180,
         Cell: (data) => {
           if (data.original.User) {
             return (
