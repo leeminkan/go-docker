@@ -117,7 +117,7 @@ class LocalImage extends Component {
               component="h2"
               className={classes.titlePage}
             >
-              list local image
+              list image in server
             </Typography>
           </Grid>
           <Grid item xs={2}>

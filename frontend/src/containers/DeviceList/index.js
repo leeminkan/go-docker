@@ -63,7 +63,7 @@ class DeviceList extends Component {
             component="h2"
             className={classes.titlePage}
           >
-            list edge node
+            list edge node device
           </Typography>
           <Card>
             <CardContent>

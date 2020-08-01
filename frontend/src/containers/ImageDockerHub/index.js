@@ -152,7 +152,7 @@ class DockerHubImage extends Component {
               component="h2"
               className={classes.titlePage}
             >
-              list docker hub image
+              list Repository in docker hub
             </Typography>
           </Grid>
           <Grid item xs={2}>
