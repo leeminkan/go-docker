@@ -37,6 +37,8 @@ function* onLogin({ payload }) {
       yield put(loginSuccess(data));
     }
   } catch (error) {
+    yield delay(1000);
+    showLoading(false);
     toastError(error);
   }
 }

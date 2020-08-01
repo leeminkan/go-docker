@@ -338,7 +338,7 @@ class DeviceDetail extends Component {
                 component="h2"
                 className={classes.titlePage}
               >
-                list image
+                images
               </Typography>
             </Grid>
             <Grid item xs={2}>
@@ -396,7 +396,7 @@ class DeviceDetail extends Component {
             component="h2"
             className={classes.titlePage}
           >
-            list container
+            containers
           </Typography>
           <Card>
             <CardContent>

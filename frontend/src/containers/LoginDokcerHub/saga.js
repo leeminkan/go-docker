@@ -42,6 +42,7 @@ function* onLoginDockerHub({ payload }) {
       yield put(push("/"));
     }
   } catch (error) {
+    showLoading(false);
     toastError(error);
   }
 }
